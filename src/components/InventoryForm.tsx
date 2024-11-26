@@ -21,10 +21,21 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!sapNumber) {
+
+    // Validate all required fields
+    if (!bolNumber) {
       toast({
         title: "Error",
-        description: "SAP Item # is required",
+        description: "BOL # is required",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!barcode) {
+      toast({
+        title: "Error",
+        description: "Barcode is required",
         variant: "destructive",
       });
       return;
@@ -38,13 +49,22 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
       });
       return;
     }
+
+    if (!sapNumber) {
+      toast({
+        title: "Error",
+        description: "SAP Item # is required",
+        variant: "destructive",
+      });
+      return;
+    }
     
     onSubmit({
       sapNumber,
       quantity,
-      barcode: barcode || undefined,
+      barcode,
       storeLocation,
-      bolNumber: bolNumber || undefined,
+      bolNumber,
     });
 
     // Reset form
@@ -70,7 +90,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
       const cleanBarcode = newValue.replace(/\n/g, '');
       setBarcode(cleanBarcode);
       // Auto submit if we have the required fields
-      if (sapNumber && storeLocation) {
+      if (sapNumber && storeLocation && bolNumber) {
         handleSubmit(new Event('submit') as any);
       }
     }
@@ -90,7 +110,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
     <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 sm:p-6 rounded-lg shadow-sm">
       <div className="space-y-2">
         <label htmlFor="bolNumber" className="text-sm font-medium text-gray-700">
-          BOL #
+          BOL # *
         </label>
         <Input
           id="bolNumber"
@@ -98,6 +118,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
           onChange={(e) => setBolNumber(e.target.value)}
           placeholder="Enter BOL number"
           className="w-full"
+          required
         />
       </div>
 
@@ -105,7 +126,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
 
       <div className="space-y-2">
         <label htmlFor="barcode" className="text-sm font-medium text-gray-700">
-          Scan Barcode
+          Scan Barcode *
         </label>
         <Input
           id="barcode"
@@ -114,12 +135,13 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
           onChange={handleBarcodeChange}
           placeholder="Scan or enter barcode"
           className="w-full"
+          required
         />
       </div>
 
       <div className="space-y-2">
         <label htmlFor="storeLocation" className="text-sm font-medium text-gray-700">
-          Store Location
+          Store Location *
         </label>
         <Input
           id="storeLocation"
@@ -127,12 +149,13 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
           onChange={(e) => setStoreLocation(e.target.value)}
           placeholder="Enter store location number"
           className="w-full"
+          required
         />
       </div>
 
       <div className="space-y-2">
         <label htmlFor="sapNumber" className="text-sm font-medium text-gray-700">
-          SAP Item #
+          SAP Item # *
         </label>
         <Input
           id="sapNumber"
@@ -140,12 +163,13 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
           onChange={(e) => setSapNumber(e.target.value)}
           placeholder="Enter SAP Item number"
           className="w-full"
+          required
         />
       </div>
 
       <div className="space-y-2">
         <label htmlFor="quantity" className="text-sm font-medium text-gray-700">
-          Quantity
+          Quantity *
         </label>
         <div className="flex items-center space-x-2">
           <Button 
@@ -164,6 +188,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
             value={quantity}
             onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
             className="w-20 text-center"
+            required
           />
           <Button 
             type="button"

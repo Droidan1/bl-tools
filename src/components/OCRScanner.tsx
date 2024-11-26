@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createWorker } from 'tesseract.js';
+import { createWorker, Worker } from 'tesseract.js';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/components/ui/use-toast";
 import { ScanText } from "lucide-react";
@@ -45,9 +45,7 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     const imageData = canvas.toDataURL('image/png');
 
     try {
-      const worker = await createWorker();
-      await worker.loadLanguage('eng');
-      await worker.initialize('eng');
+      const worker = await createWorker('eng');
       
       toast({
         title: "Processing Image",

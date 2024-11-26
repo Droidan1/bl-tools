@@ -48,7 +48,7 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
     // Cleanup function
     return () => {
       if (codeReaderRef.current) {
-        codeReaderRef.current.reset();
+        codeReaderRef.current.stopAsyncDecode();
       }
     };
   }, [onScan, onClose]);

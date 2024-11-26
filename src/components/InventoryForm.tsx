@@ -13,6 +13,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
   const [sapNumber, setSapNumber] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [barcode, setBarcode] = useState('');
+  const [storeLocation, setStoreLocation] = useState('');
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -26,11 +27,21 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
       });
       return;
     }
+
+    if (!storeLocation) {
+      toast({
+        title: "Error",
+        description: "Store Location is required",
+        variant: "destructive",
+      });
+      return;
+    }
     
     onSubmit({
       sapNumber,
       quantity,
       barcode: barcode || undefined,
+      storeLocation,
     });
 
     // Reset form
@@ -50,6 +61,33 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-sm">
+      <div className="space-y-2">
+        <label htmlFor="barcode" className="text-sm font-medium text-gray-700">
+          Scan Barcode
+        </label>
+        <Input
+          id="barcode"
+          ref={barcodeInputRef}
+          value={barcode}
+          onChange={(e) => setBarcode(e.target.value)}
+          placeholder="Scan or enter barcode"
+          className="w-full"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="storeLocation" className="text-sm font-medium text-gray-700">
+          Store Location
+        </label>
+        <Input
+          id="storeLocation"
+          value={storeLocation}
+          onChange={(e) => setStoreLocation(e.target.value)}
+          placeholder="Enter store location number"
+          className="w-full"
+        />
+      </div>
+
       <div className="space-y-2">
         <label htmlFor="sapNumber" className="text-sm font-medium text-gray-700">
           SAP Item #
@@ -93,20 +131,6 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
             <Plus className="h-4 w-4" />
           </Button>
         </div>
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="barcode" className="text-sm font-medium text-gray-700">
-          Scan Barcode
-        </label>
-        <Input
-          id="barcode"
-          ref={barcodeInputRef}
-          value={barcode}
-          onChange={(e) => setBarcode(e.target.value)}
-          placeholder="Scan or enter barcode"
-          className="w-full"
-        />
       </div>
 
       <Button type="submit" className="w-full bg-primary hover:bg-primary/90">

@@ -19,6 +19,7 @@ export const InventoryTable = ({ items }: InventoryTableProps) => {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Store Location</TableHead>
             <TableHead>SAP Item #</TableHead>
             <TableHead>Quantity</TableHead>
             <TableHead>Barcode</TableHead>
@@ -28,7 +29,8 @@ export const InventoryTable = ({ items }: InventoryTableProps) => {
         <TableBody>
           {items.map((item) => (
             <TableRow key={item.id}>
-              <TableCell className="font-medium">{item.sapNumber}</TableCell>
+              <TableCell className="font-medium">{item.storeLocation}</TableCell>
+              <TableCell>{item.sapNumber}</TableCell>
               <TableCell>{item.quantity}</TableCell>
               <TableCell>{item.barcode || '-'}</TableCell>
               <TableCell>{item.timestamp.toLocaleString()}</TableCell>
@@ -36,7 +38,7 @@ export const InventoryTable = ({ items }: InventoryTableProps) => {
           ))}
           {items.length === 0 && (
             <TableRow>
-              <TableCell colSpan={4} className="text-center text-muted-foreground">
+              <TableCell colSpan={5} className="text-center text-muted-foreground">
                 No items added yet
               </TableCell>
             </TableRow>

@@ -3,5 +3,6 @@ export interface InventoryItem {
   sapNumber: string;
   quantity: number;
   barcode?: string;
+  storeLocation: string;
   timestamp: Date;
 }

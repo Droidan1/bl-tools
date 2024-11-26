@@ -51,9 +51,6 @@ const Index = () => {
         
         <div className="grid gap-6 sm:gap-8">
           <div className="w-full">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">
-              Add New Item
-            </h2>
             <InventoryForm onSubmit={handleAddItem} />
           </div>
           

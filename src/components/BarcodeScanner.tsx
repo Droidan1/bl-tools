@@ -48,8 +48,7 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
     // Cleanup function
     return () => {
       if (codeReaderRef.current) {
-        // Stop the video stream
-        codeReaderRef.current.stopStreams();
+        codeReaderRef.current.reset();
       }
     };
   }, [onScan, onClose]);

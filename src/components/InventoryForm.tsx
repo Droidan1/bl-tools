@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Camera } from "lucide-react";
+import { Camera, ScanText } from "lucide-react";
 import { BarcodeScanner } from './BarcodeScanner';
+import { OCRScanner } from './OCRScanner';
 import { FormField } from './inventory/FormField';
 import { QuantityInput } from './inventory/QuantityInput';
 import type { InventoryItem } from '@/types/inventory';
@@ -19,6 +20,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
   const [bolNumber, setBolNumber] = useState('');
   const [lastScanTime, setLastScanTime] = useState(0);
   const [showScanner, setShowScanner] = useState(false);
+  const [showOCRScanner, setShowOCRScanner] = useState(false);
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -83,7 +85,6 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
     setBarcode(result);
     setShowScanner(false);
     
-    // Auto submit if all required fields are filled
     if (sapNumber && storeLocation && bolNumber) {
       const syntheticEvent = new Event('submit') as any;
       handleSubmit(syntheticEvent);
@@ -93,6 +94,18 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
         description: "Please fill in all required fields before scanning",
       });
     }
+  };
+
+  const handleOCRScan = (fields: {
+    sapNumber?: string;
+    barcode?: string;
+    storeLocation?: string;
+    bolNumber?: string;
+  }) => {
+    if (fields.sapNumber) setSapNumber(fields.sapNumber);
+    if (fields.barcode) setBarcode(fields.barcode);
+    if (fields.storeLocation) setStoreLocation(fields.storeLocation);
+    if (fields.bolNumber) setBolNumber(fields.bolNumber);
   };
 
   const incrementQuantity = () => setQuantity(prev => prev + 1);
@@ -138,6 +151,15 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
           >
             <Camera className="h-4 w-4" />
           </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            onClick={() => setShowOCRScanner(true)}
+            className="shrink-0"
+          >
+            <ScanText className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -174,6 +196,13 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
         <BarcodeScanner
           onScan={handleCameraScan}
           onClose={() => setShowScanner(false)}
+        />
+      )}
+
+      {showOCRScanner && (
+        <OCRScanner
+          onScan={handleOCRScan}
+          onClose={() => setShowOCRScanner(false)}
         />
       )}
     </form>

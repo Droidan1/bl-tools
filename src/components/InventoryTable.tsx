@@ -15,25 +15,25 @@ interface InventoryTableProps {
 
 export const InventoryTable = ({ items }: InventoryTableProps) => {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Store Location</TableHead>
-            <TableHead>SAP Item #</TableHead>
-            <TableHead>Quantity</TableHead>
-            <TableHead>Barcode</TableHead>
-            <TableHead>Timestamp</TableHead>
+            <TableHead className="whitespace-nowrap">Store Location</TableHead>
+            <TableHead className="whitespace-nowrap">SAP Item #</TableHead>
+            <TableHead className="whitespace-nowrap">Quantity</TableHead>
+            <TableHead className="whitespace-nowrap">Barcode</TableHead>
+            <TableHead className="whitespace-nowrap">Timestamp</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {items.map((item) => (
             <TableRow key={item.id}>
-              <TableCell className="font-medium">{item.storeLocation}</TableCell>
-              <TableCell>{item.sapNumber}</TableCell>
-              <TableCell>{item.quantity}</TableCell>
-              <TableCell>{item.barcode || '-'}</TableCell>
-              <TableCell>{item.timestamp.toLocaleString()}</TableCell>
+              <TableCell className="font-medium whitespace-nowrap">{item.storeLocation}</TableCell>
+              <TableCell className="whitespace-nowrap">{item.sapNumber}</TableCell>
+              <TableCell className="whitespace-nowrap">{item.quantity}</TableCell>
+              <TableCell className="whitespace-nowrap">{item.barcode || '-'}</TableCell>
+              <TableCell className="whitespace-nowrap">{item.timestamp.toLocaleString()}</TableCell>
             </TableRow>
           ))}
           {items.length === 0 && (

@@ -60,7 +60,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
   }, []);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-lg shadow-sm">
+    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 sm:p-6 rounded-lg shadow-sm">
       <div className="space-y-2">
         <label htmlFor="barcode" className="text-sm font-medium text-gray-700">
           Scan Barcode
@@ -111,6 +111,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
             variant="outline"
             size="icon"
             onClick={decrementQuantity}
+            className="h-10 w-10"
           >
             <Minus className="h-4 w-4" />
           </Button>
@@ -127,6 +128,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
             variant="outline"
             size="icon"
             onClick={incrementQuantity}
+            className="h-10 w-10"
           >
             <Plus className="h-4 w-4" />
           </Button>

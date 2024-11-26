@@ -24,21 +24,21 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container py-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+      <div className="container px-4 sm:px-6 py-4 sm:py-8 mx-auto max-w-7xl">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">
           Inventory Management
         </h1>
         
-        <div className="grid gap-8 lg:grid-cols-2">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        <div className="grid gap-6 sm:gap-8">
+          <div className="w-full">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">
               Add New Item
             </h2>
             <InventoryForm onSubmit={handleAddItem} />
           </div>
           
-          <div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          <div className="w-full overflow-x-auto">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">
               Recent Entries
             </h2>
             <InventoryTable items={items} />

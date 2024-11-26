@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { BrowserMultiFormatReader } from '@zxing/browser';
+import { BrowserQRCodeReader, IScannerControls } from '@zxing/library';
 import { Button } from '@/components/ui/button';
 
 interface BarcodeScannerProps {
@@ -9,28 +9,28 @@ interface BarcodeScannerProps {
 
 export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null);
+  const controlsRef = useRef<IScannerControls | null>(null);
 
   useEffect(() => {
     const startScanning = async () => {
       try {
-        // Create new instance
-        codeReaderRef.current = new BrowserMultiFormatReader();
+        const codeReader = new BrowserQRCodeReader();
         
-        // Get video devices using static method
-        const videoInputDevices = await BrowserMultiFormatReader.listVideoInputDevices();
+        // Get video devices
+        const devices = await codeReader.listVideoInputDevices();
         
         // Prefer environment-facing (rear) camera
-        const selectedDeviceId = videoInputDevices.find(device => 
+        const selectedDeviceId = devices.find(device => 
           device.label.toLowerCase().includes('back') || 
           device.label.toLowerCase().includes('rear')
-        )?.deviceId || videoInputDevices[0]?.deviceId;
+        )?.deviceId || devices[0]?.deviceId;
 
         if (selectedDeviceId && videoRef.current) {
-          await codeReaderRef.current.decodeFromVideoDevice(
+          // Start continuous scanning
+          controlsRef.current = await codeReader.decodeFromVideoDevice(
             selectedDeviceId,
             videoRef.current,
-            (result, error) => {
+            (result) => {
               if (result) {
                 onScan(result.getText());
                 onClose();
@@ -47,8 +47,8 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
 
     // Cleanup function
     return () => {
-      if (codeReaderRef.current) {
-        codeReaderRef.current.stopContinuousDecode();
+      if (controlsRef.current) {
+        controlsRef.current.stop();
       }
     };
   }, [onScan, onClose]);

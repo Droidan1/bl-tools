@@ -44,33 +44,35 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container px-4 sm:px-6 py-4 sm:py-8 mx-auto max-w-7xl">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">
+      <div className="container px-4 py-4 mx-auto">
+        <h1 className="text-2xl font-bold text-gray-900 mb-6 text-center sm:text-left">
           Inventory Receiver
         </h1>
         
-        <div className="grid gap-6 sm:gap-8">
-          <div className="w-full">
+        <div className="grid gap-6">
+          <div className="w-full flex justify-center">
             <InventoryForm onSubmit={handleAddItem} />
           </div>
           
           <div className="w-full">
-            <div className="flex justify-between items-center mb-3 sm:mb-4">
-              <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
+              <h2 className="text-lg font-semibold text-gray-800 order-1 sm:order-none">
                 Recent Entries
               </h2>
               <Button 
                 onClick={handleSendReport}
                 variant="outline"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 w-full sm:w-auto order-2 sm:order-none"
                 disabled={items.length === 0}
               >
                 <Mail className="h-4 w-4" />
                 Send Report
               </Button>
             </div>
-            <div className="overflow-x-auto">
-              <InventoryTable items={items} />
+            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <InventoryTable items={items} />
+              </div>
             </div>
           </div>
         </div>

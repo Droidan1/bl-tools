@@ -24,38 +24,10 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validate all required fields
-    if (!bolNumber) {
+    if (!bolNumber || !barcode || !storeLocation || !sapNumber) {
       toast({
         title: "Error",
-        description: "BOL # is required",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!barcode) {
-      toast({
-        title: "Error",
-        description: "Barcode is required",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!storeLocation) {
-      toast({
-        title: "Error",
-        description: "Store Location is required",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!sapNumber) {
-      toast({
-        title: "Error",
-        description: "SAP Item # is required",
+        description: "Please fill in all required fields",
         variant: "destructive",
       });
       return;
@@ -69,7 +41,6 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
       bolNumber,
     });
 
-    // Reset form
     setSapNumber('');
     setQuantity(1);
     setBarcode('');
@@ -81,7 +52,6 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
     const newValue = e.target.value;
     setBarcode(newValue);
     
-    // Check if this is a barcode scanner input
     const currentTime = new Date().getTime();
     const timeDiff = currentTime - lastScanTime;
     
@@ -98,6 +68,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
 
   const handleCameraScan = (result: string) => {
     setBarcode(result);
+    setShowScanner(false);
     if (sapNumber && storeLocation && bolNumber) {
       handleSubmit(new Event('submit') as any);
     }
@@ -111,7 +82,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
   }, []);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 rounded-lg shadow-sm w-full max-w-md mx-auto">
       <div className="space-y-2">
         <label htmlFor="bolNumber" className="text-sm font-medium text-gray-700">
           BOL # *
@@ -126,7 +97,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
         />
       </div>
 
-      <h2 className="text-lg sm:text-xl font-semibold text-gray-800">Add New Pallet</h2>
+      <h2 className="text-lg font-semibold text-gray-800 pt-2">Add New Pallet</h2>
 
       <div className="space-y-2">
         <label htmlFor="barcode" className="text-sm font-medium text-gray-700">
@@ -147,6 +118,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
             variant="outline"
             size="icon"
             onClick={() => setShowScanner(true)}
+            className="shrink-0"
           >
             <Camera className="h-4 w-4" />
           </Button>
@@ -161,7 +133,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
           id="storeLocation"
           value={storeLocation}
           onChange={(e) => setStoreLocation(e.target.value)}
-          placeholder="Enter store location number"
+          placeholder="Enter store location"
           className="w-full"
           required
         />
@@ -185,13 +157,13 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
         <label htmlFor="quantity" className="text-sm font-medium text-gray-700">
           Quantity *
         </label>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <Button 
             type="button"
             variant="outline"
             size="icon"
             onClick={decrementQuantity}
-            className="h-10 w-10"
+            className="h-10 w-10 shrink-0"
           >
             <Minus className="h-4 w-4" />
           </Button>
@@ -209,7 +181,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
             variant="outline"
             size="icon"
             onClick={incrementQuantity}
-            className="h-10 w-10"
+            className="h-10 w-10 shrink-0"
           >
             <Plus className="h-4 w-4" />
           </Button>

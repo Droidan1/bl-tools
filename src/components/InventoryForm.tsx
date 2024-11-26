@@ -14,6 +14,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
   const [quantity, setQuantity] = useState(1);
   const [barcode, setBarcode] = useState('');
   const [storeLocation, setStoreLocation] = useState('');
+  const [bolNumber, setBolNumber] = useState('');
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -42,12 +43,14 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
       quantity,
       barcode: barcode || undefined,
       storeLocation,
+      bolNumber: bolNumber || undefined,
     });
 
     // Reset form
     setSapNumber('');
     setQuantity(1);
     setBarcode('');
+    setBolNumber('');
     barcodeInputRef.current?.focus();
   };
 
@@ -61,6 +64,19 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 sm:p-6 rounded-lg shadow-sm">
+      <div className="space-y-2">
+        <label htmlFor="bolNumber" className="text-sm font-medium text-gray-700">
+          BOL #
+        </label>
+        <Input
+          id="bolNumber"
+          value={bolNumber}
+          onChange={(e) => setBolNumber(e.target.value)}
+          placeholder="Enter BOL number"
+          className="w-full"
+        />
+      </div>
+
       <div className="space-y-2">
         <label htmlFor="barcode" className="text-sm font-medium text-gray-700">
           Scan Barcode

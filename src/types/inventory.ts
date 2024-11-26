@@ -4,5 +4,6 @@ export interface InventoryItem {
   quantity: number;
   barcode?: string;
   storeLocation: string;
+  bolNumber?: string;
   timestamp: Date;
 }

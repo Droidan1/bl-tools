@@ -15,6 +15,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
   const [barcode, setBarcode] = useState('');
   const [storeLocation, setStoreLocation] = useState('');
   const [bolNumber, setBolNumber] = useState('');
+  const [lastScanTime, setLastScanTime] = useState(0);
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -54,6 +55,29 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
     barcodeInputRef.current?.focus();
   };
 
+  const handleBarcodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setBarcode(newValue);
+    
+    // Check if this is a barcode scanner input
+    const currentTime = new Date().getTime();
+    const timeDiff = currentTime - lastScanTime;
+    
+    // If input comes in very quickly (less than 100ms between characters)
+    // and ends with a return character, treat it as a scanner
+    if (timeDiff < 100 && newValue.includes('\n')) {
+      // Remove the return character
+      const cleanBarcode = newValue.replace(/\n/g, '');
+      setBarcode(cleanBarcode);
+      // Auto submit if we have the required fields
+      if (sapNumber && storeLocation) {
+        handleSubmit(new Event('submit') as any);
+      }
+    }
+    
+    setLastScanTime(currentTime);
+  };
+
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
 
@@ -87,7 +111,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
           id="barcode"
           ref={barcodeInputRef}
           value={barcode}
-          onChange={(e) => setBarcode(e.target.value)}
+          onChange={handleBarcodeChange}
           placeholder="Scan or enter barcode"
           className="w-full"
         />

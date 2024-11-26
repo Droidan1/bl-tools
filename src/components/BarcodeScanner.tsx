@@ -14,6 +14,25 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
   const [permissionGranted, setPermissionGranted] = useState<boolean | null>(null);
   const { toast } = useToast();
 
+  const stopCamera = () => {
+    if (controlsRef.current) {
+      controlsRef.current.stop();
+      controlsRef.current = null;
+    }
+    
+    // Stop all video tracks
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  const handleClose = () => {
+    stopCamera();
+    onClose();
+  };
+
   useEffect(() => {
     const requestCameraPermission = async () => {
       try {
@@ -49,7 +68,7 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
             (result) => {
               if (result) {
                 onScan(result.getText());
-                onClose();
+                handleClose();
               }
             }
           );
@@ -67,9 +86,7 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
     requestCameraPermission();
 
     return () => {
-      if (controlsRef.current) {
-        controlsRef.current.stop();
-      }
+      stopCamera();
     };
   }, [onScan, onClose, toast]);
 
@@ -81,7 +98,7 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
           <p className="text-sm text-gray-600 mb-4">
             Please enable camera access in your browser settings to scan barcodes.
           </p>
-          <Button onClick={onClose}>Close</Button>
+          <Button onClick={handleClose}>Close</Button>
         </div>
       </div>
     );
@@ -94,7 +111,7 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
           <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
             <video ref={videoRef} className="h-full w-full object-cover" />
             <Button 
-              onClick={onClose}
+              onClick={handleClose}
               className="absolute top-2 right-2 z-10"
               variant="secondary"
               size="sm"

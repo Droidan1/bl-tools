@@ -46,7 +46,7 @@ const Index = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="container px-4 sm:px-6 py-4 sm:py-8 mx-auto max-w-7xl">
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 sm:mb-8">
-          Inventory Management
+          Inventory Receiver
         </h1>
         
         <div className="grid gap-6 sm:gap-8">

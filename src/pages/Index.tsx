@@ -3,6 +3,8 @@ import { InventoryForm } from '@/components/InventoryForm';
 import { InventoryTable } from '@/components/InventoryTable';
 import type { InventoryItem } from '@/types/inventory';
 import { useToast } from "@/components/ui/use-toast";
+import { Button } from "@/components/ui/button";
+import { Mail } from "lucide-react";
 
 const Index = () => {
   const [items, setItems] = useState<InventoryItem[]>([]);
@@ -22,6 +24,24 @@ const Index = () => {
     });
   };
 
+  const handleSendReport = () => {
+    const csvContent = items.map(item => 
+      `${item.storeLocation},${item.sapNumber},${item.quantity},${item.barcode || 'N/A'},${item.timestamp.toLocaleString()}`
+    ).join('\n');
+
+    const header = 'Store Location,SAP Item #,Quantity,Barcode,Timestamp\n';
+    const fullContent = header + csvContent;
+    
+    const mailtoLink = `mailto:kbowers@retjg.com?subject=Inventory Report ${new Date().toLocaleDateString()}&body=${encodeURIComponent(fullContent)}`;
+    
+    window.location.href = mailtoLink;
+    
+    toast({
+      title: "Email Client Opened",
+      description: "The report has been prepared for sending",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container px-4 sm:px-6 py-4 sm:py-8 mx-auto max-w-7xl">
@@ -37,11 +57,24 @@ const Index = () => {
             <InventoryForm onSubmit={handleAddItem} />
           </div>
           
-          <div className="w-full overflow-x-auto">
-            <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-3 sm:mb-4">
-              Recent Entries
-            </h2>
-            <InventoryTable items={items} />
+          <div className="w-full">
+            <div className="flex justify-between items-center mb-3 sm:mb-4">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-800">
+                Recent Entries
+              </h2>
+              <Button 
+                onClick={handleSendReport}
+                variant="outline"
+                className="flex items-center gap-2"
+                disabled={items.length === 0}
+              >
+                <Mail className="h-4 w-4" />
+                Send Report
+              </Button>
+            </div>
+            <div className="overflow-x-auto">
+              <InventoryTable items={items} />
+            </div>
           </div>
         </div>
       </div>

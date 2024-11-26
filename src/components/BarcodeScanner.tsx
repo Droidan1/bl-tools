@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import { Button } from '@/components/ui/button';
-import { Camera } from 'lucide-react';
 
 interface BarcodeScannerProps {
   onScan: (result: string) => void;
@@ -10,13 +9,17 @@ interface BarcodeScannerProps {
 
 export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const codeReaderRef = useRef<BrowserMultiFormatReader | null>(null);
 
   useEffect(() => {
-    const codeReader = new BrowserMultiFormatReader();
-
     const startScanning = async () => {
       try {
-        const videoInputDevices = await codeReader.listVideoInputDevices();
+        // Create new instance
+        codeReaderRef.current = new BrowserMultiFormatReader();
+        
+        // Get video devices using static method
+        const videoInputDevices = await BrowserMultiFormatReader.listVideoInputDevices();
+        
         // Prefer environment-facing (rear) camera
         const selectedDeviceId = videoInputDevices.find(device => 
           device.label.toLowerCase().includes('back') || 
@@ -24,7 +27,7 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
         )?.deviceId || videoInputDevices[0]?.deviceId;
 
         if (selectedDeviceId && videoRef.current) {
-          await codeReader.decodeFromVideoDevice(
+          await codeReaderRef.current.decodeFromVideoDevice(
             selectedDeviceId,
             videoRef.current,
             (result, error) => {
@@ -42,8 +45,12 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
 
     startScanning();
 
+    // Cleanup function
     return () => {
-      codeReader.reset();
+      if (codeReaderRef.current) {
+        // Stop the video stream
+        codeReaderRef.current.stopStreams();
+      }
     };
   }, [onScan, onClose]);
 

@@ -55,7 +55,6 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       const { data: { text } } = await worker.recognize(imageData);
       await worker.terminate();
 
-      // Simple text parsing based on common patterns
       const fields = {
         sapNumber: text.match(/SAP[:\s]*(\d+)/i)?.[1],
         barcode: text.match(/barcode[:\s]*([A-Z0-9]+)/i)?.[1],
@@ -83,7 +82,11 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
   useEffect(() => {
     const requestCameraPermission = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: 'environment' }
+          }
+        });
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
         }

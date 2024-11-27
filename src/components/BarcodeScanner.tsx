@@ -20,7 +20,6 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
       controlsRef.current = null;
     }
     
-    // Stop all video tracks
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach(track => track.stop());
@@ -36,8 +35,12 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
   useEffect(() => {
     const requestCameraPermission = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        stream.getTracks().forEach(track => track.stop()); // Stop the test stream
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            facingMode: { ideal: 'environment' }
+          }
+        });
+        stream.getTracks().forEach(track => track.stop());
         setPermissionGranted(true);
         startScanning();
       } catch (error) {
@@ -56,6 +59,7 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
         const codeReader = new BrowserQRCodeReader();
         const devices = await codeReader.listVideoInputDevices();
         
+        // Try to find a back camera
         const selectedDeviceId = devices.find(device => 
           device.label.toLowerCase().includes('back') || 
           device.label.toLowerCase().includes('rear')

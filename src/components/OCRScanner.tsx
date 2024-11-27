@@ -122,8 +122,8 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg w-full max-w-sm mx-auto">
-        <div className="p-4">
+      <div className="bg-white rounded-lg w-full max-w-2xl mx-auto">
+        <div className="p-6">
           <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
             <video 
               ref={videoRef} 
@@ -131,25 +131,26 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
               playsInline 
               className="h-full w-full object-cover" 
             />
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-2">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
               <Button
                 onClick={captureImage}
                 variant="secondary"
-                size="sm"
+                size="lg"
+                className="px-6"
               >
                 Capture & Scan
               </Button>
             </div>
             <Button 
               onClick={handleClose}
-              className="absolute top-2 right-2 z-10"
+              className="absolute top-4 right-4 z-10"
               variant="secondary"
               size="sm"
             >
               Close
             </Button>
           </div>
-          <p className="text-sm text-center mt-4 text-muted-foreground">
+          <p className="text-sm text-center mt-6 text-muted-foreground">
             Position the text within the camera view and tap "Capture & Scan"
           </p>
         </div>

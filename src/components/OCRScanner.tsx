@@ -122,9 +122,9 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg w-full max-w-2xl mx-auto">
-        <div className="p-6">
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
+      <div className="bg-white rounded-lg w-full max-w-2xl mx-auto h-[75vh]">
+        <div className="p-6 h-full flex flex-col">
+          <div className="relative flex-1 overflow-hidden rounded-lg bg-muted">
             <video 
               ref={videoRef} 
               autoPlay 

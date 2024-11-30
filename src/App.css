@@ -5,38 +5,41 @@
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+body {
+  background: linear-gradient(135deg, #0854A0 0%, #063A75 100%);
+  min-height: 100vh;
 }
 
 .card {
   padding: 2em;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.05);
 }
 
-.read-the-docs {
-  color: #888;
+.form-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+}
+
+.button-primary {
+  background: linear-gradient(45deg, #FF4D8D 0%, #FF6B9D 100%);
+  transition: all 0.3s ease;
+}
+
+.button-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 77, 141, 0.2);
+}
+
+.input-field {
+  border: 2px solid #E5E7EB;
+  transition: all 0.2s ease;
+}
+
+.input-field:focus {
+  border-color: #0854A0;
+  box-shadow: 0 0 0 2px rgba(8, 84, 160, 0.1);
 }

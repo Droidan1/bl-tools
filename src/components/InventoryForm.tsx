@@ -6,6 +6,8 @@ import { BarcodeScanner } from './BarcodeScanner';
 import { OCRScanner } from './OCRScanner';
 import { FormField } from './inventory/FormField';
 import { QuantityInput } from './inventory/QuantityInput';
+import { FormHeader } from './inventory/FormHeader';
+import { formStyles } from './inventory/styles';
 import type { InventoryItem } from '@/types/inventory';
 
 interface InventoryFormProps {
@@ -108,31 +110,21 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
     if (fields.bolNumber) setBolNumber(fields.bolNumber);
   };
 
-  const incrementQuantity = () => setQuantity(prev => prev + 1);
-  const decrementQuantity = () => setQuantity(prev => Math.max(1, prev - 1));
-
   useEffect(() => {
     barcodeInputRef.current?.focus();
   }, []);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 bg-white p-4 rounded-lg shadow-sm w-full max-w-md mx-auto">
-      <FormField
-        id="bolNumber"
-        label="BOL #"
-        value={bolNumber}
-        onChange={setBolNumber}
-        placeholder="Enter BOL number"
-        required
-      />
+    <form onSubmit={handleSubmit} className={formStyles.container}>
+      <FormHeader bolNumber={bolNumber} setBolNumber={setBolNumber} />
 
-      <h2 className="text-lg font-semibold text-gray-800 pt-2">Add New Pallet</h2>
+      <h2 className={formStyles.title}>Add New Pallet</h2>
 
-      <div className="space-y-2">
+      <div className={formStyles.inputContainer}>
         <label htmlFor="barcode" className="text-sm font-medium text-gray-700">
           Scan Barcode *
         </label>
-        <div className="flex gap-2">
+        <div className={formStyles.scannerContainer}>
           <input
             id="barcode"
             ref={barcodeInputRef}
@@ -183,14 +175,16 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
 
       <QuantityInput
         quantity={quantity}
-        onIncrement={incrementQuantity}
-        onDecrement={decrementQuantity}
+        onIncrement={() => setQuantity(prev => prev + 1)}
+        onDecrement={() => setQuantity(prev => Math.max(1, prev - 1))}
         onChange={setQuantity}
       />
 
-      <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
-        Add Item
-      </Button>
+      <div className={formStyles.buttonContainer}>
+        <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+          Add Item
+        </Button>
+      </div>
 
       {showScanner && (
         <BarcodeScanner

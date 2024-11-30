@@ -121,7 +121,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
       <h2 className={formStyles.title}>Add New Pallet</h2>
 
       <div className={formStyles.inputContainer}>
-        <label htmlFor="barcode" className="text-sm font-medium text-gray-700">
+        <label htmlFor="barcode" className="text-sm font-medium text-white">
           Scan Barcode *
         </label>
         <div className={formStyles.scannerContainer}>

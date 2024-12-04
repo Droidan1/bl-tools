@@ -8,7 +8,6 @@ import { Mail } from "lucide-react";
 
 const Index = () => {
   const [items, setItems] = useState<InventoryItem[]>([]);
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('resendApiKey') || '');
   const { toast } = useToast();
 
   const handleAddItem = (newItem: Omit<InventoryItem, 'id' | 'timestamp'>) => {
@@ -25,61 +24,22 @@ const Index = () => {
     });
   };
 
-  const handleSendReport = async () => {
-    if (!apiKey) {
-      const key = prompt('Please enter your Resend API key (it will be saved in your browser):');
-      if (!key) {
-        toast({
-          title: "Error",
-          description: "API key is required to send emails",
-          variant: "destructive",
-        });
-        return;
-      }
-      localStorage.setItem('resendApiKey', key);
-      setApiKey(key);
-    }
-
+  const handleSendReport = () => {
     const csvContent = items.map(item => 
       `${item.storeLocation},${item.sapNumber},${item.quantity},${item.barcode || 'N/A'},${item.timestamp.toLocaleString()}`
     ).join('\n');
 
     const header = 'Store Location,SAP Item #,Quantity,Barcode,Timestamp\n';
     const fullContent = header + csvContent;
-
-    try {
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          from: 'onboarding@resend.dev',
-          to: 'kbowers@retjg.com',
-          subject: `Inventory Report ${new Date().toLocaleDateString()}`,
-          text: fullContent,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send email');
-      }
-
-      toast({
-        title: "Success",
-        description: "Report has been sent successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to send report. Please check your API key.",
-        variant: "destructive",
-      });
-      // Clear potentially invalid API key
-      localStorage.removeItem('resendApiKey');
-      setApiKey('');
-    }
+    
+    const mailtoLink = `mailto:kbowers@retjg.com?subject=Inventory Report ${new Date().toLocaleDateString()}&body=${encodeURIComponent(fullContent)}`;
+    
+    window.location.href = mailtoLink;
+    
+    toast({
+      title: "Email Client Opened",
+      description: "The report has been prepared for sending",
+    });
   };
 
   return (

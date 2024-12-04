@@ -32,13 +32,15 @@ const Index = () => {
     const header = 'Store Location,SAP Item #,Quantity,Barcode,Timestamp\n';
     const fullContent = header + csvContent;
     
-    const mailtoLink = `mailto:kbowers@retjg.com?subject=Inventory Report ${new Date().toLocaleDateString()}&body=${encodeURIComponent(fullContent)}`;
+    // Create Gmail-specific mailto link
+    const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${encodeURIComponent(`Inventory Report ${new Date().toLocaleDateString()}`)}&body=${encodeURIComponent(fullContent)}`;
     
-    window.location.href = mailtoLink;
+    // Open Gmail in a new tab
+    window.open(gmailLink, '_blank');
     
     toast({
-      title: "Email Client Opened",
-      description: "The report has been prepared for sending",
+      title: "Gmail Opened",
+      description: "The report has been prepared for sending in Gmail",
     });
   };
 

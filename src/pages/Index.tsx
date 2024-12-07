@@ -126,7 +126,7 @@ const Index = () => {
               <Button 
                 onClick={handleSendReport}
                 variant="outline"
-                className="flex items-center gap-2 w-full sm:w-auto order-2 sm:order-none bg-white text-gray-900 hover:bg-gray-50 border border-gray-200"
+                className="flex items-center gap-2 w-full sm:w-auto order-2 sm:order-none bg-white text-gray-900 hover:bg-black hover:text-white border border-gray-200"
                 disabled={items.length === 0}
               >
                 <Mail className="h-4 w-4" />

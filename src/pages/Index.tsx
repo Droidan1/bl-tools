@@ -97,7 +97,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="container px-4 py-4 mx-auto">
-        <div className="flex justify-between items-center mb-6 bg-[#2a8636] p-2 rounded-lg">
+        <div className="flex justify-between items-center mb-6 bg-[#2a8636] p-1 rounded-lg">
           <h1 className="text-4xl font-bold text-white">
             {editingItem ? 'Edit Item' : 'Inventory Receiver'}
           </h1>

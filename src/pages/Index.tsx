@@ -25,15 +25,31 @@ const Index = () => {
   };
 
   const handleSendReport = () => {
-    const csvContent = items.map(item => 
-      `${item.storeLocation},${item.sapNumber},${item.quantity},${item.barcode || 'N/A'},${item.timestamp.toLocaleString()}`
-    ).join('\n');
+    // Convert items to CSV format
+    const csvRows = items.map(item => {
+      // Escape fields that might contain commas
+      const escapeCsvField = (field: string) => {
+        if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+          return `"${field.replace(/"/g, '""')}"`;
+        }
+        return field;
+      };
 
-    const header = 'Store Location,SAP Item #,Quantity,Barcode,Timestamp\n';
-    const fullContent = header + csvContent;
+      return [
+        escapeCsvField(item.storeLocation),
+        escapeCsvField(item.bolNumber || ''),
+        escapeCsvField(item.sapNumber),
+        item.quantity.toString(),
+        escapeCsvField(item.barcode || ''),
+        escapeCsvField(item.timestamp.toLocaleString())
+      ].join(',');
+    });
+
+    const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp';
+    const csvContent = [header, ...csvRows].join('\n');
     
     // Create Gmail-specific mailto link
-    const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${encodeURIComponent(`Inventory Report ${new Date().toLocaleDateString()}`)}&body=${encodeURIComponent(fullContent)}`;
+    const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${encodeURIComponent(`Inventory Report ${new Date().toLocaleDateString()}`)}&body=${encodeURIComponent(csvContent)}`;
     
     // Open Gmail in a new tab
     window.open(gmailLink, '_blank');

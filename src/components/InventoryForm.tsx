@@ -150,7 +150,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
       />
 
       <div className={formStyles.buttonContainer}>
-        <Button type="submit" className="w-full bg-primary hover:bg-primary/90">
+        <Button type="submit" className="w-full bg-black hover:bg-black/90">
           Add Item
         </Button>
       </div>

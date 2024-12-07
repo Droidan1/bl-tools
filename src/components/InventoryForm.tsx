@@ -112,6 +112,15 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className={formStyles.container}>
+      <FormField
+        id="storeLocation"
+        label="Store Location"
+        value={storeLocation}
+        onChange={setStoreLocation}
+        placeholder="Enter store location"
+        required
+      />
+
       <FormHeader bolNumber={bolNumber} setBolNumber={setBolNumber} />
 
       <h2 className={formStyles.title}>Add New Pallet</h2>
@@ -122,15 +131,6 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
         onCameraClick={() => setShowScanner(true)}
         onOCRClick={() => setShowOCRScanner(true)}
         inputRef={barcodeInputRef}
-      />
-
-      <FormField
-        id="storeLocation"
-        label="Store Location"
-        value={storeLocation}
-        onChange={setStoreLocation}
-        placeholder="Enter store location"
-        required
       />
 
       <FormField

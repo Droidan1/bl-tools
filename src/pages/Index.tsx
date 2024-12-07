@@ -13,7 +13,6 @@ const Index = () => {
 
   const handleAddItem = (newItem: Omit<InventoryItem, 'id' | 'timestamp'>) => {
     if (editingItem) {
-      // Update existing item
       const updatedItems = items.map(item => 
         item.id === editingItem.id 
           ? { ...item, ...newItem }
@@ -26,7 +25,6 @@ const Index = () => {
         description: `Updated ${newItem.quantity} units of ${newItem.sapNumber}`,
       });
     } else {
-      // Add new item
       const item: InventoryItem = {
         ...newItem,
         id: crypto.randomUUID(),
@@ -42,14 +40,11 @@ const Index = () => {
 
   const handleEdit = (item: InventoryItem) => {
     setEditingItem(item);
-    // Scroll to form
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSendReport = () => {
-    // Convert items to CSV format
     const csvRows = items.map(item => {
-      // Escape fields that might contain commas
       const escapeCsvField = (field: string) => {
         if (field.includes(',') || field.includes('"') || field.includes('\n')) {
           return `"${field.replace(/"/g, '""')}"`;
@@ -63,30 +58,28 @@ const Index = () => {
         escapeCsvField(item.sapNumber),
         item.quantity.toString(),
         escapeCsvField(item.barcode || ''),
-        escapeCsvField(item.timestamp.toLocaleString())
+        escapeCsvField(item.timestamp.toLocaleDateString())
       ].join(',');
     });
 
     const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp';
     const csvContent = [header, ...csvRows].join('\n');
     
-    // Create a Blob containing the CSV data
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     
-    // Create a temporary link to download the file
     const link = document.createElement('a');
     const date = new Date().toLocaleDateString().replace(/\//g, '-');
     link.download = `inventory-report-${date}.csv`;
     link.href = url;
     link.click();
     
-    // Clean up
     URL.revokeObjectURL(url);
     
-    // Now open Gmail with a cleaner message
-    const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${encodeURIComponent(`Inventory Report ${date}`)}`;
-    window.open(gmailLink, '_blank');
+    // Fixed Gmail URL construction
+    const gmailSubject = encodeURIComponent(`Inventory Report ${date}`);
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${gmailSubject}`;
+    window.open(gmailUrl, '_blank');
     
     toast({
       title: "Report Downloaded",

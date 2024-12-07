@@ -8,20 +8,42 @@ import { Mail } from "lucide-react";
 
 const Index = () => {
   const [items, setItems] = useState<InventoryItem[]>([]);
+  const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const { toast } = useToast();
 
   const handleAddItem = (newItem: Omit<InventoryItem, 'id' | 'timestamp'>) => {
-    const item: InventoryItem = {
-      ...newItem,
-      id: crypto.randomUUID(),
-      timestamp: new Date(),
-    };
+    if (editingItem) {
+      // Update existing item
+      const updatedItems = items.map(item => 
+        item.id === editingItem.id 
+          ? { ...item, ...newItem }
+          : item
+      );
+      setItems(updatedItems);
+      setEditingItem(null);
+      toast({
+        title: "Item Updated",
+        description: `Updated ${newItem.quantity} units of ${newItem.sapNumber}`,
+      });
+    } else {
+      // Add new item
+      const item: InventoryItem = {
+        ...newItem,
+        id: crypto.randomUUID(),
+        timestamp: new Date(),
+      };
+      setItems(prev => [item, ...prev]);
+      toast({
+        title: "Item Added",
+        description: `Added ${newItem.quantity} units of ${newItem.sapNumber}`,
+      });
+    }
+  };
 
-    setItems(prev => [item, ...prev]);
-    toast({
-      title: "Item Added",
-      description: `Added ${newItem.quantity} units of ${newItem.sapNumber}`,
-    });
+  const handleEdit = (item: InventoryItem) => {
+    setEditingItem(item);
+    // Scroll to form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSendReport = () => {
@@ -77,7 +99,7 @@ const Index = () => {
       <div className="container px-4 py-4 mx-auto">
         <div className="flex justify-between items-center mb-6 bg-[#2a8636] p-4 rounded-lg">
           <h1 className="text-4xl font-bold text-white">
-            Inventory Receiver
+            {editingItem ? 'Edit Item' : 'Inventory Receiver'}
           </h1>
           <img 
             src="/lovable-uploads/c590340d-6c9e-4341-8686-91ba96211494.png" 
@@ -88,7 +110,10 @@ const Index = () => {
         
         <div className="grid gap-6">
           <div className="w-full flex justify-center">
-            <InventoryForm onSubmit={handleAddItem} />
+            <InventoryForm 
+              onSubmit={handleAddItem} 
+              initialValues={editingItem || undefined}
+            />
           </div>
           
           <div className="w-full">
@@ -108,7 +133,10 @@ const Index = () => {
             </div>
             <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
               <div className="overflow-x-auto">
-                <InventoryTable items={items} />
+                <InventoryTable 
+                  items={items} 
+                  onEdit={handleEdit}
+                />
               </div>
             </div>
           </div>

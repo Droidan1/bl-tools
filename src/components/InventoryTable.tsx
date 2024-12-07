@@ -7,13 +7,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
 import type { InventoryItem } from '@/types/inventory';
 
 interface InventoryTableProps {
   items: InventoryItem[];
+  onEdit: (item: InventoryItem) => void;
 }
 
-export const InventoryTable = ({ items }: InventoryTableProps) => {
+export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
   return (
     <div className="rounded-md border overflow-x-auto">
       <Table>
@@ -25,6 +28,7 @@ export const InventoryTable = ({ items }: InventoryTableProps) => {
             <TableHead className="whitespace-nowrap">Quantity</TableHead>
             <TableHead className="whitespace-nowrap">Barcode</TableHead>
             <TableHead className="whitespace-nowrap">Timestamp</TableHead>
+            <TableHead className="whitespace-nowrap">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -36,11 +40,21 @@ export const InventoryTable = ({ items }: InventoryTableProps) => {
               <TableCell className="whitespace-nowrap">{item.quantity}</TableCell>
               <TableCell className="whitespace-nowrap">{item.barcode || '-'}</TableCell>
               <TableCell className="whitespace-nowrap">{item.timestamp.toLocaleString()}</TableCell>
+              <TableCell>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onEdit(item)}
+                  className="h-8 w-8"
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              </TableCell>
             </TableRow>
           ))}
           {items.length === 0 && (
             <TableRow>
-              <TableCell colSpan={6} className="text-center">
+              <TableCell colSpan={7} className="text-center">
                 No items added yet
               </TableCell>
             </TableRow>

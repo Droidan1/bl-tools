@@ -12,19 +12,30 @@ import type { InventoryItem } from '@/types/inventory';
 
 interface InventoryFormProps {
   onSubmit: (item: Omit<InventoryItem, 'id' | 'timestamp'>) => void;
+  initialValues?: InventoryItem;
 }
 
-export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
-  const [sapNumber, setSapNumber] = useState('');
-  const [quantity, setQuantity] = useState(1);
-  const [barcode, setBarcode] = useState('');
-  const [storeLocation, setStoreLocation] = useState('');
-  const [bolNumber, setBolNumber] = useState('');
+export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) => {
+  const [sapNumber, setSapNumber] = useState(initialValues?.sapNumber || '');
+  const [quantity, setQuantity] = useState(initialValues?.quantity || 1);
+  const [barcode, setBarcode] = useState(initialValues?.barcode || '');
+  const [storeLocation, setStoreLocation] = useState(initialValues?.storeLocation || '');
+  const [bolNumber, setBolNumber] = useState(initialValues?.bolNumber || '');
   const [lastScanTime, setLastScanTime] = useState(0);
   const [showScanner, setShowScanner] = useState(false);
   const [showOCRScanner, setShowOCRScanner] = useState(false);
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    if (initialValues) {
+      setSapNumber(initialValues.sapNumber);
+      setQuantity(initialValues.quantity);
+      setBarcode(initialValues.barcode || '');
+      setStoreLocation(initialValues.storeLocation);
+      setBolNumber(initialValues.bolNumber || '');
+    }
+  }, [initialValues]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,11 +57,13 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
       bolNumber,
     });
 
-    setSapNumber('');
-    setQuantity(1);
-    setBarcode('');
-    setBolNumber('');
-    barcodeInputRef.current?.focus();
+    if (!initialValues) {
+      setSapNumber('');
+      setQuantity(1);
+      setBarcode('');
+      setBolNumber('');
+      barcodeInputRef.current?.focus();
+    }
   };
 
   const handleBarcodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -107,8 +120,10 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
   };
 
   useEffect(() => {
-    barcodeInputRef.current?.focus();
-  }, []);
+    if (!initialValues) {
+      barcodeInputRef.current?.focus();
+    }
+  }, [initialValues]);
 
   return (
     <form onSubmit={handleSubmit} className={formStyles.container}>
@@ -123,7 +138,9 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
 
       <FormHeader bolNumber={bolNumber} setBolNumber={setBolNumber} />
 
-      <h2 className={formStyles.title}>Add New Pallet</h2>
+      <h2 className={formStyles.title}>
+        {initialValues ? 'Edit Pallet' : 'Add New Pallet'}
+      </h2>
 
       <BarcodeInputField
         barcode={barcode}
@@ -151,7 +168,7 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
 
       <div className={formStyles.buttonContainer}>
         <Button type="submit" className="w-full bg-black hover:bg-black/90">
-          Add Item
+          {initialValues ? 'Update Item' : 'Add Item'}
         </Button>
       </div>
 

@@ -96,24 +96,26 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container px-4 py-4 mx-auto">
-        <div className="flex justify-between items-center mb-6 bg-[#2a8636] p-1 rounded-lg">
-          <h1 className="text-4xl font-bold text-white">
+      <div className="container px-4 py-2 mx-auto max-w-7xl">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 bg-[#2a8636] p-1 rounded-lg">
+          <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-0">
             {editingItem ? 'Edit Item' : 'Inventory Receiver'}
           </h1>
           <img 
             src="/lovable-uploads/c590340d-6c9e-4341-8686-91ba96211494.png" 
             alt="Header Logo" 
-            className="h-48 w-auto"
+            className="h-32 sm:h-48 w-auto"
           />
         </div>
         
         <div className="grid gap-6">
           <div className="w-full flex justify-center">
-            <InventoryForm 
-              onSubmit={handleAddItem} 
-              initialValues={editingItem || undefined}
-            />
+            <div className="w-full max-w-md">
+              <InventoryForm 
+                onSubmit={handleAddItem} 
+                initialValues={editingItem || undefined}
+              />
+            </div>
           </div>
           
           <div className="w-full">
@@ -132,11 +134,13 @@ const Index = () => {
               </Button>
             </div>
             <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
-              <div className="overflow-x-auto">
-                <InventoryTable 
-                  items={items} 
-                  onEdit={handleEdit}
-                />
+              <div className="overflow-x-auto -mx-4 sm:mx-0">
+                <div className="min-w-full inline-block align-middle">
+                  <InventoryTable 
+                    items={items} 
+                    onEdit={handleEdit}
+                  />
+                </div>
               </div>
             </div>
           </div>

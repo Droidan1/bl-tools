@@ -75,9 +75,16 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#144272] to-[#0A2647]">
       <div className="container px-4 py-4 mx-auto">
-        <h1 className="text-2xl font-bold text-white mb-6 text-center sm:text-left">
-          Inventory Receiver
-        </h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold text-white">
+            Inventory Receiver
+          </h1>
+          <img 
+            src="/lovable-uploads/c590340d-6c9e-4341-8686-91ba96211494.png" 
+            alt="Header Logo" 
+            className="h-12 w-auto"
+          />
+        </div>
         
         <div className="grid gap-6">
           <div className="w-full flex justify-center">

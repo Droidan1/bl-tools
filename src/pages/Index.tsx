@@ -75,8 +75,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="container px-4 py-4 mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
+        <div className="flex justify-between items-center mb-6 bg-[#2a8636] p-4 rounded-lg">
+          <h1 className="text-2xl font-bold text-white">
             Inventory Receiver
           </h1>
           <img 

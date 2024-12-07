@@ -104,7 +104,7 @@ const Index = () => {
           <img 
             src="/lovable-uploads/c590340d-6c9e-4341-8686-91ba96211494.png" 
             alt="Header Logo" 
-            className="h-40 w-auto"
+            className="h-48 w-auto"
           />
         </div>
         

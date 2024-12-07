@@ -31,7 +31,8 @@ body {
 
 .button-primary:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 77, 141, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: black;
 }
 
 .input-field {

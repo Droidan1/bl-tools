@@ -27,7 +27,7 @@ export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
             <TableHead className="whitespace-nowrap">SAP Item #</TableHead>
             <TableHead className="whitespace-nowrap">Quantity</TableHead>
             <TableHead className="whitespace-nowrap">Barcode</TableHead>
-            <TableHead className="whitespace-nowrap">Timestamp</TableHead>
+            <TableHead className="whitespace-nowrap">Date</TableHead>
             <TableHead className="whitespace-nowrap">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -39,7 +39,7 @@ export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
               <TableCell className="whitespace-nowrap">{item.sapNumber}</TableCell>
               <TableCell className="whitespace-nowrap">{item.quantity}</TableCell>
               <TableCell className="whitespace-nowrap">{item.barcode || '-'}</TableCell>
-              <TableCell className="whitespace-nowrap">{item.timestamp.toLocaleString()}</TableCell>
+              <TableCell className="whitespace-nowrap">{item.timestamp.toLocaleDateString()}</TableCell>
               <TableCell>
                 <Button
                   variant="ghost"

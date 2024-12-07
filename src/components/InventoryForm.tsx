@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Camera, ScanText } from "lucide-react";
 import { BarcodeScanner } from './BarcodeScanner';
 import { OCRScanner } from './OCRScanner';
 import { FormField } from './inventory/FormField';
 import { QuantityInput } from './inventory/QuantityInput';
 import { FormHeader } from './inventory/FormHeader';
-import { formStyles } from './inventory/styles';
+import { BarcodeInputField } from './inventory/BarcodeInputField';
+import { formStyles } from './inventory/formStyles';
 import type { InventoryItem } from '@/types/inventory';
 
 interface InventoryFormProps {
@@ -57,18 +57,14 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
     const newValue = e.target.value;
     const currentTime = new Date().getTime();
     
-    // Update the barcode state
     setBarcode(newValue);
     
-    // Check if this is a scanner input (very fast input or ends with return)
     const isScannerInput = currentTime - lastScanTime < 100 || newValue.includes('\n');
     
     if (isScannerInput) {
-      // Clean up the barcode value (remove any return characters)
       const cleanBarcode = newValue.replace(/[\n\r]/g, '');
       setBarcode(cleanBarcode);
       
-      // Auto submit if all required fields are filled
       if (sapNumber && storeLocation && bolNumber) {
         const syntheticEvent = new Event('submit') as any;
         handleSubmit(syntheticEvent);
@@ -120,40 +116,13 @@ export const InventoryForm = ({ onSubmit }: InventoryFormProps) => {
 
       <h2 className={formStyles.title}>Add New Pallet</h2>
 
-      <div className={formStyles.inputContainer}>
-        <label htmlFor="barcode" className="text-sm font-medium text-white">
-          Scan Barcode *
-        </label>
-        <div className={formStyles.scannerContainer}>
-          <input
-            id="barcode"
-            ref={barcodeInputRef}
-            value={barcode}
-            onChange={handleBarcodeChange}
-            placeholder="Scan or enter barcode"
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            required
-          />
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={() => setShowScanner(true)}
-            className="shrink-0"
-          >
-            <Camera className="h-4 w-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            onClick={() => setShowOCRScanner(true)}
-            className="shrink-0"
-          >
-            <ScanText className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      <BarcodeInputField
+        barcode={barcode}
+        onChange={handleBarcodeChange}
+        onCameraClick={() => setShowScanner(true)}
+        onOCRClick={() => setShowOCRScanner(true)}
+        inputRef={barcodeInputRef}
+      />
 
       <FormField
         id="storeLocation"

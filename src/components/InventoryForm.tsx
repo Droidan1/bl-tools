@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { BarcodeScanner } from './BarcodeScanner';
-import { OCRScanner } from './OCRScanner';
 import { FormField } from './inventory/FormField';
 import { QuantityInput } from './inventory/QuantityInput';
 import { FormHeader } from './inventory/FormHeader';
 import { BarcodeInputField } from './inventory/BarcodeInputField';
-import { formStyles } from './inventory/formStyles';
+import { FormContainer } from './inventory/FormContainer';
+import { ScannerModals } from './inventory/ScannerModals';
+import { SubmitButton } from './inventory/SubmitButton';
 import type { InventoryItem } from '@/types/inventory';
 
 interface InventoryFormProps {
@@ -126,7 +125,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   }, [initialValues]);
 
   return (
-    <form onSubmit={handleSubmit} className={formStyles.container}>
+    <FormContainer onSubmit={handleSubmit}>
       <FormField
         id="storeLocation"
         label="Store Location"
@@ -138,7 +137,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
 
       <FormHeader bolNumber={bolNumber} setBolNumber={setBolNumber} />
 
-      <h2 className={formStyles.title}>
+      <h2 className="text-lg font-semibold text-white pt-2">
         {initialValues ? 'Edit Pallet' : 'Add New Pallet'}
       </h2>
 
@@ -166,25 +165,18 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
         onChange={setQuantity}
       />
 
-      <div className={formStyles.buttonContainer}>
-        <Button type="submit" className="w-full bg-black hover:bg-black/90">
-          {initialValues ? 'Update Item' : 'Add Item'}
-        </Button>
-      </div>
+      <SubmitButton isEditing={!!initialValues} />
 
-      {showScanner && (
-        <BarcodeScanner
-          onScan={handleCameraScan}
-          onClose={() => setShowScanner(false)}
-        />
-      )}
-
-      {showOCRScanner && (
-        <OCRScanner
-          onScan={handleOCRScan}
-          onClose={() => setShowOCRScanner(false)}
-        />
-      )}
-    </form>
+      <ScannerModals
+        showScanner={showScanner}
+        showOCRScanner={showOCRScanner}
+        onScan={handleCameraScan}
+        onOCRScan={handleOCRScan}
+        onClose={() => {
+          setShowScanner(false);
+          setShowOCRScanner(false);
+        }}
+      />
+    </FormContainer>
   );
 };

@@ -48,15 +48,27 @@ const Index = () => {
     const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp';
     const csvContent = [header, ...csvRows].join('\n');
     
-    // Create Gmail-specific mailto link
-    const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${encodeURIComponent(`Inventory Report ${new Date().toLocaleDateString()}`)}&body=${encodeURIComponent(csvContent)}`;
+    // Create a Blob containing the CSV data
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
     
-    // Open Gmail in a new tab
+    // Create a temporary link to download the file
+    const link = document.createElement('a');
+    const date = new Date().toLocaleDateString().replace(/\//g, '-');
+    link.download = `inventory-report-${date}.csv`;
+    link.href = url;
+    link.click();
+    
+    // Clean up
+    URL.revokeObjectURL(url);
+    
+    // Now open Gmail with a cleaner message
+    const gmailLink = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${encodeURIComponent(`Inventory Report ${date}`)}`;
     window.open(gmailLink, '_blank');
     
     toast({
-      title: "Gmail Opened",
-      description: "The report has been prepared for sending in Gmail",
+      title: "Report Downloaded",
+      description: "The CSV file has been downloaded. You can now attach it to the email.",
     });
   };
 

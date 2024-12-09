@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { createWorker } from 'tesseract.js';
-import { Camera, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from './ui/button';
 import { useToast } from './ui/use-toast';
+import { CameraPreview } from './scanner/CameraPreview';
+import { findBarcodeInText } from '../utils/ocrUtils';
 
 interface OCRScannerProps {
   onScan: (fields: {
@@ -33,6 +35,7 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
         title: "Camera Error",
         description: "Could not access camera. Please check permissions.",
         variant: "destructive",
+        duration: 3000,
       });
     }
   };
@@ -58,44 +61,6 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
     }
   };
 
-  const findBarcodeInText = (text: string): string | undefined => {
-    // First, clean and normalize the text
-    const lines = text.split('\n').map(line => 
-      line.trim().replace(/\s+/g, '').toUpperCase()
-    );
-    
-    // Common barcode patterns with more flexible matching
-    const barcodePatterns = [
-      /\d{12,14}/, // UPC/EAN (allowing partial matches)
-      /[0-9A-Z]{8,14}/, // Code 39 (more flexible)
-      /\d{8}/, // EAN-8
-      /[0-9A-Z\-]{6,}/, // General alphanumeric codes
-    ];
-
-    for (const line of lines) {
-      // Try to find any sequence that matches our patterns
-      for (const pattern of barcodePatterns) {
-        const match = line.match(pattern);
-        if (match) {
-          const potentialBarcode = match[0];
-          console.log('Found potential barcode:', potentialBarcode, 'in line:', line);
-          return potentialBarcode;
-        }
-      }
-    }
-
-    // If no exact matches found, try to find any sequence of numbers
-    for (const line of lines) {
-      const numberSequence = line.match(/\d{6,}/);
-      if (numberSequence) {
-        console.log('Found number sequence as fallback:', numberSequence[0], 'in line:', line);
-        return numberSequence[0];
-      }
-    }
-
-    return undefined;
-  };
-
   const processImage = async (imageUrl: string) => {
     setIsProcessing(true);
     try {
@@ -105,16 +70,20 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
 
       console.log('Extracted text:', text);
 
-      // Extract potential fields from the text
-      const lines = text.split('\n');
+      const detectedBarcode = findBarcodeInText(text);
       const fields: Record<string, string> = {};
 
-      // Try to find barcode first using our enhanced detection
-      const detectedBarcode = findBarcodeInText(text);
       if (detectedBarcode) {
         fields.barcode = detectedBarcode;
+        toast({
+          title: "Barcode Detected",
+          description: `Found barcode: ${detectedBarcode}`,
+          duration: 3000,
+        });
       }
 
+      // Extract other fields
+      const lines = text.split('\n');
       lines.forEach(line => {
         const cleanLine = line.toLowerCase().trim();
         if (cleanLine.includes('sap') || /^\d{8}$/.test(cleanLine)) {
@@ -129,24 +98,18 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
       });
 
       onScan(fields);
-      toast({
-        title: "OCR Complete",
-        description: fields.barcode 
-          ? "Barcode detected and text extracted successfully."
-          : "Text extracted successfully.",
-      });
     } catch (error) {
       toast({
         title: "OCR Error",
         description: "Failed to process the image. Please try again.",
         variant: "destructive",
+        duration: 3000,
       });
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // Start camera immediately when component mounts
   React.useEffect(() => {
     startCamera();
     return () => {
@@ -164,40 +127,12 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
           </Button>
         </div>
 
-        <div className="space-y-4">
-          <div className="relative">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              className="w-full rounded-lg"
-            />
-            {!isProcessing && !previewUrl && (
-              <Button
-                className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
-                onClick={captureImage}
-              >
-                <Camera className="mr-2 h-4 w-4" />
-                Capture
-              </Button>
-            )}
-          </div>
-
-          {previewUrl && (
-            <div className="relative">
-              <img
-                src={previewUrl}
-                alt="Preview"
-                className="w-full rounded-lg"
-              />
-              {isProcessing && (
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">
-                  <div className="text-white">Processing...</div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        <CameraPreview
+          videoRef={videoRef}
+          isProcessing={isProcessing}
+          previewUrl={previewUrl}
+          onCapture={captureImage}
+        />
       </div>
     </div>
   );

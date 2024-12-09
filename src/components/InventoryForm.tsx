@@ -5,7 +5,7 @@ import { QuantityInput } from './inventory/QuantityInput';
 import { FormHeader } from './inventory/FormHeader';
 import { BarcodeInputField } from './inventory/BarcodeInputField';
 import { FormContainer } from './inventory/FormContainer';
-import { ScannerModals } from './inventory/ScannerModals';
+import { BarcodeScanner } from './BarcodeScanner';
 import { SubmitButton } from './inventory/SubmitButton';
 import type { InventoryItem } from '@/types/inventory';
 
@@ -22,7 +22,6 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const [bolNumber, setBolNumber] = useState(initialValues?.bolNumber || '');
   const [lastScanTime, setLastScanTime] = useState(0);
   const [showScanner, setShowScanner] = useState(false);
-  const [showOCRScanner, setShowOCRScanner] = useState(false);
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -106,18 +105,6 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
     }
   };
 
-  const handleOCRScan = (fields: {
-    sapNumber?: string;
-    barcode?: string;
-    storeLocation?: string;
-    bolNumber?: string;
-  }) => {
-    if (fields.sapNumber) setSapNumber(fields.sapNumber);
-    if (fields.barcode) setBarcode(fields.barcode);
-    if (fields.storeLocation) setStoreLocation(fields.storeLocation);
-    if (fields.bolNumber) setBolNumber(fields.bolNumber);
-  };
-
   useEffect(() => {
     if (!initialValues) {
       barcodeInputRef.current?.focus();
@@ -145,7 +132,6 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
         barcode={barcode}
         onChange={handleBarcodeChange}
         onCameraClick={() => setShowScanner(true)}
-        onOCRClick={() => setShowOCRScanner(true)}
         inputRef={barcodeInputRef}
       />
 
@@ -167,16 +153,12 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
 
       <SubmitButton isEditing={!!initialValues} />
 
-      <ScannerModals
-        showScanner={showScanner}
-        showOCRScanner={showOCRScanner}
-        onScan={handleCameraScan}
-        onOCRScan={handleOCRScan}
-        onClose={() => {
-          setShowScanner(false);
-          setShowOCRScanner(false);
-        }}
-      />
+      {showScanner && (
+        <BarcodeScanner
+          onScan={handleCameraScan}
+          onClose={() => setShowScanner(false)}
+        />
+      )}
     </FormContainer>
   );
 };

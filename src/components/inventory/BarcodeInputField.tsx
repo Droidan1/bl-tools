@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Camera, ScanText } from "lucide-react";
+import { Camera } from "lucide-react";
 import { formStyles } from './formStyles';
 
 interface BarcodeInputFieldProps {
@@ -39,15 +39,6 @@ export const BarcodeInputField = ({
         className="shrink-0"
       >
         <Camera className="h-4 w-4" />
-      </Button>
-      <Button
-        type="button"
-        variant="outline"
-        size="icon"
-        onClick={onOCRClick}
-        className="shrink-0"
-      >
-        <ScanText className="h-4 w-4" />
       </Button>
     </div>
   </div>

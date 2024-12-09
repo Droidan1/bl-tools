@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { BrowserQRCodeReader, IScannerControls } from '@zxing/library';
+import { BrowserQRCodeReader } from '@zxing/library';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/components/ui/use-toast";
 
@@ -8,9 +8,14 @@ interface BarcodeScannerProps {
   onClose: () => void;
 }
 
+// Define the type for scanner controls based on the actual methods we use
+type ScannerControls = {
+  stop: () => void;
+};
+
 export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const controlsRef = useRef<IScannerControls | null>(null);
+  const controlsRef = useRef<ScannerControls | null>(null);
   const [permissionGranted, setPermissionGranted] = useState<boolean | null>(null);
   const { toast } = useToast();
 

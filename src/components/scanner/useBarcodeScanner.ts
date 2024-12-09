@@ -50,28 +50,40 @@ export const useBarcodeScanner = (
       if (selectedDeviceId && videoRef.current) {
         console.log('Starting barcode scanning with device:', selectedDeviceId);
         
-        const scanControls = codeReader.decodeFromVideoDevice(
-          selectedDeviceId,
-          videoRef.current,
-          (result, error) => {
-            if (result) {
-              console.log('Barcode detected:', result.getText());
-              onScan(result.getText());
-              handleClose();
+        try {
+          const controls = codeReader.decodeFromVideoDevice(
+            selectedDeviceId,
+            videoRef.current,
+            (result, error) => {
+              if (result) {
+                console.log('Barcode detected:', result.getText());
+                onScan(result.getText());
+                handleClose();
+              }
+              if (error) {
+                console.log('Scanning error:', error);
+              }
             }
-            if (error) {
-              console.log('Scanning error:', error);
-            }
-          }
-        );
+          );
 
-        if (scanControls) {
-          controlsRef.current = {
-            stop: () => {
-              scanControls.stop();
-            }
-          };
-          setPermissionGranted(true);
+          if (controls) {
+            controlsRef.current = {
+              stop: () => {
+                if (controls && typeof controls.stop === 'function') {
+                  controls.stop();
+                }
+              }
+            };
+            setPermissionGranted(true);
+          }
+        } catch (scanError) {
+          console.error('Error during scanning setup:', scanError);
+          setPermissionGranted(false);
+          toast({
+            title: "Scanner Error",
+            description: "Failed to initialize the barcode scanner",
+            variant: "destructive",
+          });
         }
       }
     } catch (error) {

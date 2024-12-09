@@ -75,21 +75,17 @@ const Index = () => {
     reader.onload = () => {
       const base64data = reader.result?.toString().split(',')[1];
       
-      // Create form data for the attachment
-      const formData = new FormData();
-      formData.append('attachment', blob, fileName);
-      
       // Construct Gmail URL with attachment
       const gmailSubject = encodeURIComponent(`Inventory Report ${date}`);
       const gmailBody = encodeURIComponent('Please find attached the inventory report.');
       
-      // Use mailto protocol which will open default email client with attachment
-      const mailtoUrl = `mailto:kbowers@retjg.com?subject=${gmailSubject}&body=${gmailBody}`;
-      window.location.href = mailtoUrl;
+      // Open Gmail compose window
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${gmailSubject}&body=${gmailBody}`;
+      window.open(gmailUrl, '_blank');
       
       toast({
-        title: "Email Client Opened",
-        description: "Your default email client has been opened. Please attach the downloaded report.",
+        title: "Email Prepared",
+        description: "Gmail compose window opened. Please attach the downloaded report.",
         duration: 3000,
       });
     };

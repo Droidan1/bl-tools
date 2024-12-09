@@ -2,25 +2,15 @@ import { useState, useRef, useEffect } from 'react';
 import { BrowserQRCodeReader } from '@zxing/library';
 import { useToast } from "@/components/ui/use-toast";
 
-type ScannerControls = {
-  stop: () => void;
-};
-
 export const useBarcodeScanner = (
   onScan: (result: string) => void,
   onClose: () => void
 ) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const controlsRef = useRef<ScannerControls | null>(null);
   const [permissionGranted, setPermissionGranted] = useState<boolean | null>(null);
   const { toast } = useToast();
 
   const stopCamera = () => {
-    if (controlsRef.current) {
-      controlsRef.current.stop();
-      controlsRef.current = null;
-    }
-    
     if (videoRef.current?.srcObject) {
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach(track => track.stop());
@@ -51,7 +41,7 @@ export const useBarcodeScanner = (
         console.log('Starting barcode scanning with device:', selectedDeviceId);
         
         try {
-          const controls = codeReader.decodeFromVideoDevice(
+          codeReader.decodeFromVideoDevice(
             selectedDeviceId,
             videoRef.current,
             (result, error) => {
@@ -65,17 +55,7 @@ export const useBarcodeScanner = (
               }
             }
           );
-
-          if (controls) {
-            controlsRef.current = {
-              stop: () => {
-                if (controls && typeof controls.stop === 'function') {
-                  controls.stop();
-                }
-              }
-            };
-            setPermissionGranted(true);
-          }
+          setPermissionGranted(true);
         } catch (scanError) {
           console.error('Error during scanning setup:', scanError);
           setPermissionGranted(false);

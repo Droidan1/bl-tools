@@ -5,7 +5,6 @@ import { QuantityInput } from './inventory/QuantityInput';
 import { FormHeader } from './inventory/FormHeader';
 import { BarcodeInputField } from './inventory/BarcodeInputField';
 import { FormContainer } from './inventory/FormContainer';
-import { BarcodeScanner } from './BarcodeScanner';
 import { SubmitButton } from './inventory/SubmitButton';
 import type { InventoryItem } from '@/types/inventory';
 
@@ -21,7 +20,6 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const [storeLocation, setStoreLocation] = useState(initialValues?.storeLocation || '');
   const [bolNumber, setBolNumber] = useState(initialValues?.bolNumber || '');
   const [lastScanTime, setLastScanTime] = useState(0);
-  const [showScanner, setShowScanner] = useState(false);
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -66,43 +64,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
 
   const handleBarcodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    const currentTime = new Date().getTime();
-    
     setBarcode(newValue);
-    
-    const isScannerInput = currentTime - lastScanTime < 100 || newValue.includes('\n');
-    
-    if (isScannerInput) {
-      const cleanBarcode = newValue.replace(/[\n\r]/g, '');
-      setBarcode(cleanBarcode);
-      
-      if (sapNumber && storeLocation && bolNumber) {
-        const syntheticEvent = new Event('submit') as any;
-        handleSubmit(syntheticEvent);
-      } else {
-        toast({
-          title: "Missing Fields",
-          description: "Please fill in all required fields before scanning",
-        });
-      }
-    }
-    
-    setLastScanTime(currentTime);
-  };
-
-  const handleCameraScan = (result: string) => {
-    setBarcode(result);
-    setShowScanner(false);
-    
-    if (sapNumber && storeLocation && bolNumber) {
-      const syntheticEvent = new Event('submit') as any;
-      handleSubmit(syntheticEvent);
-    } else {
-      toast({
-        title: "Missing Fields",
-        description: "Please fill in all required fields before scanning",
-      });
-    }
   };
 
   useEffect(() => {
@@ -131,7 +93,6 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       <BarcodeInputField
         barcode={barcode}
         onChange={handleBarcodeChange}
-        onCameraClick={() => setShowScanner(true)}
         inputRef={barcodeInputRef}
       />
 
@@ -152,13 +113,6 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       />
 
       <SubmitButton isEditing={!!initialValues} />
-
-      {showScanner && (
-        <BarcodeScanner
-          onScan={handleCameraScan}
-          onClose={() => setShowScanner(false)}
-        />
-      )}
     </FormContainer>
   );
 };

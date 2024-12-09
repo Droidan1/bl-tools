@@ -66,25 +66,38 @@ const Index = () => {
     const csvContent = [header, ...csvRows].join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    
-    const link = document.createElement('a');
     const date = new Date().toLocaleDateString().replace(/\//g, '-');
-    link.download = `inventory-report-${date}.csv`;
+    const fileName = `inventory-report-${date}.csv`;
+    
+    // Create a data URL from the blob
+    const reader = new FileReader();
+    reader.readAsDataURL(blob);
+    reader.onload = () => {
+      const base64data = reader.result?.toString().split(',')[1];
+      
+      // Construct Gmail URL with attachment
+      const gmailSubject = encodeURIComponent(`Inventory Report ${date}`);
+      const gmailBody = encodeURIComponent('Please find attached the inventory report.');
+      const attachment = encodeURIComponent(`data:text/csv;base64,${base64data}`);
+      
+      // Open Gmail compose window with attachment
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${gmailSubject}&body=${gmailBody}&attach=${attachment}`;
+      window.open(gmailUrl, '_blank');
+      
+      toast({
+        title: "Email Prepared",
+        description: "Gmail compose window opened with the report attached.",
+        duration: 3000,
+      });
+    };
+
+    // Also trigger the download
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = fileName;
     link.href = url;
     link.click();
-    
     URL.revokeObjectURL(url);
-    
-    // Fixed Gmail URL construction
-    const gmailSubject = encodeURIComponent(`Inventory Report ${date}`);
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${gmailSubject}`;
-    window.open(gmailUrl, '_blank');
-    
-    toast({
-      title: "Report Downloaded",
-      description: "The CSV file has been downloaded. You can now attach it to the email.",
-    });
   };
 
   return (

@@ -1,8 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { createWorker, Worker } from 'tesseract.js';
-import { Camera, Upload, X } from 'lucide-react';
+import { createWorker } from 'tesseract.js';
+import { Camera, X } from 'lucide-react';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
 import { useToast } from './ui/use-toast';
 
 interface OCRScannerProps {
@@ -18,13 +17,14 @@ interface OCRScannerProps {
 export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { toast } = useToast();
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'environment' }
+      });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
@@ -55,19 +55,6 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
       setPreviewUrl(imageUrl);
       stopCamera();
       processImage(imageUrl);
-    }
-  };
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const imageUrl = e.target?.result as string;
-        setPreviewUrl(imageUrl);
-        processImage(imageUrl);
-      };
-      reader.readAsDataURL(file);
     }
   };
 
@@ -116,54 +103,42 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
     }
   };
 
+  // Start camera immediately when component mounts
+  React.useEffect(() => {
+    startCamera();
+    return () => {
+      stopCamera();
+    };
+  }, []);
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-lg">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">OCR Scanner</h2>
+          <h2 className="text-xl font-semibold">Camera Scanner</h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-4 w-4" />
           </Button>
         </div>
 
         <div className="space-y-4">
-          {!previewUrl && !videoRef.current?.srcObject && (
-            <div className="flex gap-2 justify-center">
-              <Button onClick={startCamera}>
-                <Camera className="mr-2 h-4 w-4" />
-                Use Camera
-              </Button>
-              <Button onClick={() => fileInputRef.current?.click()}>
-                <Upload className="mr-2 h-4 w-4" />
-                Upload Image
-              </Button>
-              <Input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                ref={fileInputRef}
-                onChange={handleFileUpload}
-              />
-            </div>
-          )}
-
-          {videoRef.current?.srcObject && (
-            <div className="relative">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                className="w-full rounded-lg"
-              />
+          <div className="relative">
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              className="w-full rounded-lg"
+            />
+            {!isProcessing && !previewUrl && (
               <Button
                 className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
                 onClick={captureImage}
-                disabled={isProcessing}
               >
+                <Camera className="mr-2 h-4 w-4" />
                 Capture
               </Button>
-            </div>
-          )}
+            )}
+          </div>
 
           {previewUrl && (
             <div className="relative">

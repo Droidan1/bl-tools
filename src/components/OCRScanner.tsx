@@ -1,15 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createWorker, Worker } from 'tesseract.js';
+import { createWorker } from 'tesseract.js';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/components/ui/use-toast";
-import { ScanText, Loader2 } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { OCRControls } from './ocr/OCRControls';
+import { CameraView } from './ocr/CameraView';
+import { preprocessImage } from './ocr/OCRPreprocessor';
 
 interface OCRScannerProps {
   onScan: (fields: {
@@ -41,62 +36,10 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     onClose();
   };
 
-  const preprocessImage = (canvas: HTMLCanvasElement): HTMLCanvasElement => {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return canvas;
-
-    switch (preprocessOption) {
-      case 'grayscale':
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const data = imageData.data;
-        for (let i = 0; i < data.length; i += 4) {
-          const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-          data[i] = avg;
-          data[i + 1] = avg;
-          data[i + 2] = avg;
-        }
-        ctx.putImageData(imageData, 0, 0);
-        break;
-      case 'highContrast':
-        ctx.filter = 'contrast(150%)';
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = canvas.width;
-        tempCanvas.height = canvas.height;
-        const tempCtx = tempCanvas.getContext('2d');
-        if (tempCtx) {
-          tempCtx.filter = 'contrast(150%)';
-          tempCtx.drawImage(canvas, 0, 0);
-          ctx.drawImage(tempCanvas, 0, 0);
-        }
-        break;
-      default:
-        break;
-    }
-    return canvas;
-  };
-
-  const captureImage = async () => {
-    if (!videoRef.current) return;
-    setIsProcessing(true);
-
+  const processOCR = async (imageData: string) => {
     try {
-      const canvas = document.createElement('canvas');
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) throw new Error('Could not get canvas context');
-
-      ctx.drawImage(videoRef.current, 0, 0);
-      const processedCanvas = preprocessImage(canvas);
-      const imageData = processedCanvas.toDataURL('image/png');
-
       const worker = await createWorker('eng');
       
-      toast({
-        title: "Processing Image",
-        description: "Please wait while we scan the text...",
-      });
-
       const { data: { text } } = await worker.recognize(imageData);
       await worker.terminate();
 
@@ -111,6 +54,34 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
         throw new Error('No recognizable text found');
       }
 
+      return fields;
+    } catch (error) {
+      console.error('OCR Processing Error:', error);
+      throw error;
+    }
+  };
+
+  const captureImage = async () => {
+    if (!videoRef.current) return;
+    setIsProcessing(true);
+
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('Could not get canvas context');
+
+      ctx.drawImage(videoRef.current, 0, 0);
+      const processedCanvas = preprocessImage(canvas, preprocessOption);
+      const imageData = processedCanvas.toDataURL('image/png');
+
+      toast({
+        title: "Processing Image",
+        description: "Please wait while we scan the text...",
+      });
+
+      const fields = await processOCR(imageData);
       onScan(fields);
       handleClose();
 
@@ -154,7 +125,6 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     };
 
     requestCameraPermission();
-
     return () => {
       stopCamera();
     };
@@ -178,57 +148,18 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg w-full max-w-2xl mx-auto h-[75vh]">
         <div className="p-6 h-full flex flex-col">
-          <div className="mb-4">
-            <Select
-              value={preprocessOption}
-              onValueChange={setPreprocessOption}
-            >
-              <SelectTrigger className="w-[200px]">
-                <SelectValue placeholder="Image Processing" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="default">Default</SelectItem>
-                <SelectItem value="grayscale">Grayscale</SelectItem>
-                <SelectItem value="highContrast">High Contrast</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="relative flex-1 overflow-hidden rounded-lg bg-muted">
-            <video 
-              ref={videoRef} 
-              autoPlay 
-              playsInline 
-              className="h-full w-full object-cover" 
-            />
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-              <Button
-                onClick={captureImage}
-                variant="secondary"
-                size="lg"
-                className="px-6"
-                disabled={isProcessing}
-              >
-                {isProcessing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  'Capture & Scan'
-                )}
-              </Button>
-            </div>
-            <Button 
-              onClick={handleClose}
-              className="absolute top-4 right-4 z-10"
-              variant="secondary"
-              size="sm"
-            >
-              Close
-            </Button>
-          </div>
+          <OCRControls 
+            preprocessOption={preprocessOption}
+            setPreprocessOption={setPreprocessOption}
+          />
+          <CameraView
+            videoRef={videoRef}
+            isProcessing={isProcessing}
+            onCapture={captureImage}
+            onClose={handleClose}
+          />
           <p className="text-sm text-center mt-6 text-muted-foreground">
-            Position the text within the camera view and tap "Capture & Scan"
+            Position the text within the camera view and tap "Capture & Process"
           </p>
         </div>
       </div>

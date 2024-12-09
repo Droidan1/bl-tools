@@ -61,7 +61,7 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
         if (selectedDeviceId && videoRef.current) {
           console.log('Starting barcode scanning with device:', selectedDeviceId);
           
-          controlsRef.current = await codeReader.decodeFromVideoDevice(
+          const controls = await codeReader.decodeFromVideoDevice(
             selectedDeviceId,
             videoRef.current,
             (result, error) => {
@@ -75,6 +75,15 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
               }
             }
           );
+
+          // Create a ScannerControls object that matches our type
+          controlsRef.current = {
+            stop: () => {
+              if (controls) {
+                controls.stop();
+              }
+            }
+          };
 
           setPermissionGranted(true);
         }

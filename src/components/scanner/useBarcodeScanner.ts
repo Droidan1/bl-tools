@@ -50,7 +50,7 @@ export const useBarcodeScanner = (
       if (selectedDeviceId && videoRef.current) {
         console.log('Starting barcode scanning with device:', selectedDeviceId);
         
-        const controls = await codeReader.decodeFromVideoDevice(
+        const scanControls = await codeReader.decodeFromVideoDevice(
           selectedDeviceId,
           videoRef.current,
           (result, error) => {
@@ -65,9 +65,14 @@ export const useBarcodeScanner = (
           }
         );
 
-        controlsRef.current = controls ? {
-          stop: () => controls.stop()
-        } : null;
+        // Only set controls if we got a valid response
+        if (scanControls && typeof scanControls.stop === 'function') {
+          controlsRef.current = {
+            stop: () => {
+              if (scanControls) scanControls.stop();
+            }
+          };
+        }
 
         setPermissionGranted(true);
       }

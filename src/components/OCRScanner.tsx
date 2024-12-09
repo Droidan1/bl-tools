@@ -58,18 +58,47 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
     }
   };
 
+  const findBarcodeInText = (text: string): string | undefined => {
+    const lines = text.split('\n');
+    
+    // Common barcode patterns
+    const barcodePatterns = [
+      /^[0-9]{12,14}$/, // UPC/EAN
+      /^[0-9A-Z]{8,14}$/, // Code 39
+      /^[0-9]{8}$/, // EAN-8
+      /^[0-9A-Z\-]{6,}$/, // General pattern for alphanumeric codes
+    ];
+
+    for (const line of lines) {
+      const cleanLine = line.trim();
+      for (const pattern of barcodePatterns) {
+        if (pattern.test(cleanLine)) {
+          console.log('Found potential barcode:', cleanLine);
+          return cleanLine;
+        }
+      }
+    }
+    return undefined;
+  };
+
   const processImage = async (imageUrl: string) => {
     setIsProcessing(true);
     try {
       const worker = await createWorker();
-      await (worker as any).loadLanguage('eng');
-      await (worker as any).initialize('eng');
       const { data: { text } } = await worker.recognize(imageUrl);
       await worker.terminate();
+
+      console.log('Extracted text:', text);
 
       // Extract potential fields from the text
       const lines = text.split('\n');
       const fields: Record<string, string> = {};
+
+      // Try to find barcode first using our enhanced detection
+      const detectedBarcode = findBarcodeInText(text);
+      if (detectedBarcode) {
+        fields.barcode = detectedBarcode;
+      }
 
       lines.forEach(line => {
         const cleanLine = line.toLowerCase().trim();
@@ -79,9 +108,6 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
         if (cleanLine.includes('bol') || /^b\d{6}$/i.test(cleanLine)) {
           fields.bolNumber = cleanLine.replace(/[^0-9]/g, '');
         }
-        if (/^[0-9a-zA-Z-]{6,}$/.test(cleanLine)) {
-          fields.barcode = cleanLine;
-        }
         if (cleanLine.includes('store') || cleanLine.includes('location')) {
           fields.storeLocation = line.trim();
         }
@@ -90,7 +116,9 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
       onScan(fields);
       toast({
         title: "OCR Complete",
-        description: "Text has been extracted successfully.",
+        description: fields.barcode 
+          ? "Barcode detected and text extracted successfully."
+          : "Text extracted successfully.",
       });
     } catch (error) {
       toast({

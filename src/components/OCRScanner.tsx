@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { createWorker } from 'tesseract.js';
+import { createWorker, Worker } from 'tesseract.js';
 import { Camera, Upload, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -75,8 +75,8 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
     setIsProcessing(true);
     try {
       const worker = await createWorker();
-      await worker.loadLanguage('eng');
-      await worker.initialize('eng');
+      await (worker as any).loadLanguage('eng');
+      await (worker as any).initialize('eng');
       const { data: { text } } = await worker.recognize(imageUrl);
       await worker.terminate();
 

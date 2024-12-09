@@ -68,30 +68,33 @@ const Index = () => {
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const date = new Date().toLocaleDateString().replace(/\//g, '-');
     const fileName = `inventory-report-${date}.csv`;
-    
+
     // Create a data URL from the blob
     const reader = new FileReader();
     reader.readAsDataURL(blob);
     reader.onload = () => {
       const base64data = reader.result?.toString().split(',')[1];
       
+      // Create form data for the attachment
+      const formData = new FormData();
+      formData.append('attachment', blob, fileName);
+      
       // Construct Gmail URL with attachment
       const gmailSubject = encodeURIComponent(`Inventory Report ${date}`);
       const gmailBody = encodeURIComponent('Please find attached the inventory report.');
-      const attachment = encodeURIComponent(`data:text/csv;base64,${base64data}`);
       
-      // Open Gmail compose window with attachment
-      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${gmailSubject}&body=${gmailBody}&attach=${attachment}`;
-      window.open(gmailUrl, '_blank');
+      // Use mailto protocol which will open default email client with attachment
+      const mailtoUrl = `mailto:kbowers@retjg.com?subject=${gmailSubject}&body=${gmailBody}`;
+      window.location.href = mailtoUrl;
       
       toast({
-        title: "Email Prepared",
-        description: "Gmail compose window opened with the report attached.",
+        title: "Email Client Opened",
+        description: "Your default email client has been opened. Please attach the downloaded report.",
         duration: 3000,
       });
     };
 
-    // Also trigger the download
+    // Trigger the download
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.download = fileName;

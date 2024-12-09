@@ -59,25 +59,40 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
   };
 
   const findBarcodeInText = (text: string): string | undefined => {
-    const lines = text.split('\n');
+    // First, clean and normalize the text
+    const lines = text.split('\n').map(line => 
+      line.trim().replace(/\s+/g, '').toUpperCase()
+    );
     
-    // Common barcode patterns
+    // Common barcode patterns with more flexible matching
     const barcodePatterns = [
-      /^[0-9]{12,14}$/, // UPC/EAN
-      /^[0-9A-Z]{8,14}$/, // Code 39
-      /^[0-9]{8}$/, // EAN-8
-      /^[0-9A-Z\-]{6,}$/, // General pattern for alphanumeric codes
+      /\d{12,14}/, // UPC/EAN (allowing partial matches)
+      /[0-9A-Z]{8,14}/, // Code 39 (more flexible)
+      /\d{8}/, // EAN-8
+      /[0-9A-Z\-]{6,}/, // General alphanumeric codes
     ];
 
     for (const line of lines) {
-      const cleanLine = line.trim();
+      // Try to find any sequence that matches our patterns
       for (const pattern of barcodePatterns) {
-        if (pattern.test(cleanLine)) {
-          console.log('Found potential barcode:', cleanLine);
-          return cleanLine;
+        const match = line.match(pattern);
+        if (match) {
+          const potentialBarcode = match[0];
+          console.log('Found potential barcode:', potentialBarcode, 'in line:', line);
+          return potentialBarcode;
         }
       }
     }
+
+    // If no exact matches found, try to find any sequence of numbers
+    for (const line of lines) {
+      const numberSequence = line.match(/\d{6,}/);
+      if (numberSequence) {
+        console.log('Found number sequence as fallback:', numberSequence[0], 'in line:', line);
+        return numberSequence[0];
+      }
+    }
+
     return undefined;
   };
 

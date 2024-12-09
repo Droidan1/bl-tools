@@ -91,7 +91,7 @@ const Index = () => {
     <div className="min-h-screen bg-white">
       <div className="container px-4 py-2 mx-auto max-w-7xl">
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 bg-[#2a8636] p-1 rounded-lg">
-          <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-0">
+          <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-0 font-['Luckiest_Guy']">
             {editingItem ? 'Edit Item' : 'Inventory Receiver'}
           </h1>
           <img 

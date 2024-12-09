@@ -65,11 +65,9 @@ export const useBarcodeScanner = (
           }
         );
 
-        if (controls) {
-          controlsRef.current = {
-            stop: () => controls.stop()
-          };
-        }
+        controlsRef.current = controls ? {
+          stop: () => controls.stop()
+        } : null;
 
         setPermissionGranted(true);
       }

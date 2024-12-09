@@ -58,6 +58,12 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
       setPreviewUrl(imageUrl);
       stopCamera();
       processImage(imageUrl);
+      
+      toast({
+        title: "Image Captured",
+        description: "Processing image for text...",
+        duration: 3000,
+      });
     }
   };
 
@@ -78,6 +84,13 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
         toast({
           title: "Barcode Detected",
           description: `Found barcode: ${detectedBarcode}`,
+          duration: 3000,
+        });
+      } else {
+        toast({
+          title: "No Barcode Found",
+          description: "Could not detect a barcode in the image.",
+          variant: "destructive",
           duration: 3000,
         });
       }

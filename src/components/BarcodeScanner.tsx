@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { BrowserQRCodeReader } from '@zxing/library';
+import { BrowserQRCodeReader, IScannerControls } from '@zxing/library';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/components/ui/use-toast";
 
@@ -10,7 +10,7 @@ interface BarcodeScannerProps {
 
 export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const controlsRef = useRef<any>(null);
+  const controlsRef = useRef<IScannerControls | null>(null);
   const [permissionGranted, setPermissionGranted] = useState<boolean | null>(null);
   const { toast } = useToast();
 
@@ -33,29 +33,17 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
   };
 
   useEffect(() => {
-    const requestCameraPermission = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: { ideal: 'environment' }
-          }
-        });
-        stream.getTracks().forEach(track => track.stop());
-        setPermissionGranted(true);
-        startScanning();
-      } catch (error) {
-        console.error('Camera permission denied:', error);
-        setPermissionGranted(false);
-        toast({
-          title: "Camera Access Denied",
-          description: "Please allow camera access to scan barcodes",
-          variant: "destructive",
-        });
-      }
-    };
-
     const startScanning = async () => {
       try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' }
+        });
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play();
+        }
+
         const codeReader = new BrowserQRCodeReader();
         const devices = await codeReader.listVideoInputDevices();
         
@@ -66,19 +54,28 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
         )?.deviceId || devices[0]?.deviceId;
 
         if (selectedDeviceId && videoRef.current) {
+          console.log('Starting barcode scanning with device:', selectedDeviceId);
+          
           controlsRef.current = await codeReader.decodeFromVideoDevice(
             selectedDeviceId,
             videoRef.current,
-            (result) => {
+            (result, error) => {
               if (result) {
+                console.log('Barcode detected:', result.getText());
                 onScan(result.getText());
                 handleClose();
               }
+              if (error) {
+                console.log('Scanning error:', error);
+              }
             }
           );
+
+          setPermissionGranted(true);
         }
       } catch (error) {
         console.error('Error accessing camera:', error);
+        setPermissionGranted(false);
         toast({
           title: "Camera Error",
           description: "There was an error accessing your camera",
@@ -87,7 +84,7 @@ export const BarcodeScanner = ({ onScan, onClose }: BarcodeScannerProps) => {
       }
     };
 
-    requestCameraPermission();
+    startScanning();
 
     return () => {
       stopCamera();

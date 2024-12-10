@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
-import { createWorker } from 'tesseract.js';
-import { X } from 'lucide-react';
+import React, { useRef, useCallback } from 'react';
 import { Button } from './ui/button';
+import { X } from 'lucide-react';
 import { useToast } from './ui/use-toast';
+import { CameraPermissionError } from './scanner/CameraPermissionError';
 import { CameraPreview } from './scanner/CameraPreview';
-import { findBarcodeInText } from '../utils/ocrUtils';
+import { createWorker } from 'tesseract.js';
+import { extractFieldsFromText } from '@/utils/ocrUtils';
 
 interface OCRScannerProps {
   onScan: (fields: {
@@ -16,105 +17,91 @@ interface OCRScannerProps {
   onClose: () => void;
 }
 
-export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [hasPermission, setHasPermission] = React.useState<boolean>(true);
+  const [isProcessing, setIsProcessing] = React.useState(false);
   const { toast } = useToast();
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' }
       });
+      
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        streamRef.current = stream;
       }
+      setHasPermission(true);
     } catch (error) {
-      toast({
-        title: "Camera Error",
-        description: "Could not access camera. Please check permissions.",
-        variant: "destructive",
-        duration: 3000,
-      });
+      console.error('Error accessing camera:', error);
+      setHasPermission(false);
     }
   };
 
-  const stopCamera = () => {
-    if (videoRef.current?.srcObject) {
-      const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-      tracks.forEach(track => track.stop());
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
       videoRef.current.srcObject = null;
     }
-  };
+  }, []);
 
-  const captureImage = () => {
-    if (videoRef.current) {
-      const canvas = document.createElement('canvas');
-      canvas.width = videoRef.current.videoWidth;
-      canvas.height = videoRef.current.videoHeight;
-      canvas.getContext('2d')?.drawImage(videoRef.current, 0, 0);
-      const imageUrl = canvas.toDataURL('image/png');
-      setPreviewUrl(imageUrl);
-      stopCamera();
-      processImage(imageUrl);
-      
-      toast({
-        title: "Image Captured",
-        description: "Processing image for text...",
-        duration: 3000,
-      });
-    }
-  };
+  const captureImage = async () => {
+    if (!videoRef.current) return;
 
-  const processImage = async (imageUrl: string) => {
-    setIsProcessing(true);
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext('2d');
+    
+    if (!ctx) return;
+
+    ctx.drawImage(videoRef.current, 0, 0);
+    
+    toast({
+      title: "Image captured",
+      description: "Processing image...",
+      duration: 3000,
+    });
+
     try {
+      setIsProcessing(true);
       const worker = await createWorker();
-      const { data: { text } } = await worker.recognize(imageUrl);
+      await worker.loadLanguage('eng');
+      await worker.initialize('eng');
+      
+      const { data: { text } } = await worker.recognize(canvas);
       await worker.terminate();
 
-      console.log('Extracted text:', text);
-
-      const detectedBarcode = findBarcodeInText(text);
-      const fields: Record<string, string> = {};
-
-      if (detectedBarcode) {
-        fields.barcode = detectedBarcode;
+      const extractedFields = extractFieldsFromText(text);
+      
+      if (Object.keys(extractedFields).length === 0) {
         toast({
-          title: "Barcode Detected",
-          description: `Found barcode: ${detectedBarcode}`,
+          title: "No data found",
+          description: "Could not extract any information from the image",
+          variant: "destructive",
           duration: 3000,
         });
       } else {
         toast({
-          title: "No Barcode Found",
-          description: "Could not detect a barcode in the image.",
-          variant: "destructive",
+          title: "Success",
+          description: "Data extracted successfully",
           duration: 3000,
         });
+        onScan(extractedFields);
+        stopCamera();
+        onClose();
       }
-
-      // Extract other fields
-      const lines = text.split('\n');
-      lines.forEach(line => {
-        const cleanLine = line.toLowerCase().trim();
-        if (cleanLine.includes('sap') || /^\d{8}$/.test(cleanLine)) {
-          fields.sapNumber = cleanLine.replace(/[^0-9]/g, '');
-        }
-        if (cleanLine.includes('bol') || /^b\d{6}$/i.test(cleanLine)) {
-          fields.bolNumber = cleanLine.replace(/[^0-9]/g, '');
-        }
-        if (cleanLine.includes('store') || cleanLine.includes('location')) {
-          fields.storeLocation = line.trim();
-        }
-      });
-
-      onScan(fields);
     } catch (error) {
+      console.error('OCR Error:', error);
       toast({
-        title: "OCR Error",
-        description: "Failed to process the image. Please try again.",
+        title: "Error",
+        description: "Failed to process the image",
         variant: "destructive",
         duration: 3000,
       });
@@ -133,7 +120,11 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
     return () => {
       stopCamera();
     };
-  }, []);
+  }, [stopCamera]);
+
+  if (!hasPermission) {
+    return <CameraPermissionError onClose={handleClose} />;
+  }
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -148,7 +139,6 @@ export const OCRScanner: React.FC<OCRScannerProps> = ({ onScan, onClose }) => {
         <CameraPreview
           videoRef={videoRef}
           isProcessing={isProcessing}
-          previewUrl={previewUrl}
           onCapture={captureImage}
         />
       </div>

@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { useToast } from './ui/use-toast';
 import { CameraPermissionError } from './scanner/CameraPermissionError';
 import { CameraPreview } from './scanner/CameraPreview';
-import { createWorker } from 'tesseract.js';
+import { createWorker, Worker } from 'tesseract.js';
 import { extractFieldsFromText } from '@/utils/ocrUtils';
 
 interface OCRScannerProps {
@@ -75,8 +75,8 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     try {
       setIsProcessing(true);
       const worker = await createWorker();
-      await worker.loadLanguage('eng');
-      await worker.initialize('eng');
+      await (worker as any).loadLanguage('eng');
+      await (worker as any).initialize('eng');
       
       const { data: { text } } = await worker.recognize(canvas);
       await worker.terminate();

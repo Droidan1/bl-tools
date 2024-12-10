@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useState } from 'react';
 import { Button } from './ui/button';
 import { X } from 'lucide-react';
 import { useToast } from './ui/use-toast';
@@ -22,6 +22,7 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
   const streamRef = useRef<MediaStream | null>(null);
   const [hasPermission, setHasPermission] = React.useState<boolean>(true);
   const [isProcessing, setIsProcessing] = React.useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { toast } = useToast();
 
   const startCamera = async () => {
@@ -62,6 +63,8 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     if (!ctx) return;
 
     ctx.drawImage(videoRef.current, 0, 0);
+    const dataUrl = canvas.toDataURL('image/jpeg');
+    setPreviewUrl(dataUrl);
     
     toast({
       title: "Image captured",
@@ -139,6 +142,7 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
         <CameraPreview
           videoRef={videoRef}
           isProcessing={isProcessing}
+          previewUrl={previewUrl}
           onCapture={captureImage}
         />
       </div>

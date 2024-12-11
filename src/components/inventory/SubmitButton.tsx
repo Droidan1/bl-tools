@@ -9,7 +9,7 @@ interface SubmitButtonProps {
 export const SubmitButton = ({ isEditing }: SubmitButtonProps) => (
   <div className={formStyles.buttonContainer}>
     <Button type="submit" className="w-full bg-black hover:bg-black/90">
-      {isEditing ? 'Update Item' : 'Add Item'}
+      {isEditing ? 'Update Item' : 'Add Tag'}
     </Button>
   </div>
 );

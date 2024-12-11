@@ -8,7 +8,10 @@ const PhotoPage = () => {
 
   useEffect(() => {
     const fetchPhotoUrl = async () => {
-      if (!id) return;
+      if (!id) {
+        navigate('/');
+        return;
+      }
 
       const { data, error } = await supabase
         .from('photo_mappings')
@@ -22,16 +25,17 @@ const PhotoPage = () => {
         return;
       }
 
-      // Open the image URL in the same window
       if (data.original_url) {
-        window.location.replace(data.original_url);
+        // Force the browser to treat this as a direct navigation to the image
+        document.location.href = data.original_url;
+      } else {
+        navigate('/');
       }
     };
 
     fetchPhotoUrl();
   }, [id, navigate]);
 
-  // Return null while redirecting
   return null;
 };
 

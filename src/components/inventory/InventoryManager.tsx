@@ -17,10 +17,7 @@ export const InventoryManager = ({ bolNumber }: InventoryManagerProps) => {
 
   const handleAddItem = async (newItem: Omit<InventoryItem, 'id' | 'timestamp' | 'bolNumber'>) => {
     if (!bolNumber) {
-      toast("Error", {
-        description: "Please enter a BOL number first",
-        variant: "destructive",
-      });
+      toast.error("Please enter a BOL number first");
       return;
     }
 
@@ -38,10 +35,7 @@ export const InventoryManager = ({ bolNumber }: InventoryManagerProps) => {
 
       if (error) {
         console.error('Error storing photo mapping:', error);
-        toast("Error", {
-          description: "Failed to create shortened URL",
-          variant: "destructive",
-        });
+        toast.error("Failed to create shortened URL");
         return;
       }
     }
@@ -59,9 +53,7 @@ export const InventoryManager = ({ bolNumber }: InventoryManagerProps) => {
       );
       setItems(updatedItems);
       setEditingItem(null);
-      toast("Item Updated", {
-        description: `Updated ${newItem.quantity} units of ${newItem.sapNumber}`,
-      });
+      toast.success(`Updated ${newItem.quantity} units of ${newItem.sapNumber}`);
     } else {
       const item: InventoryItem = {
         ...newItem,
@@ -71,9 +63,7 @@ export const InventoryManager = ({ bolNumber }: InventoryManagerProps) => {
         timestamp: new Date(),
       };
       setItems(prev => [item, ...prev]);
-      toast("Item Added", {
-        description: `Added ${newItem.quantity} units of ${newItem.sapNumber}`,
-      });
+      toast.success(`Added ${newItem.quantity} units of ${newItem.sapNumber}`);
     }
   };
 

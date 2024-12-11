@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
 import { FormField } from '@/components/inventory/FormField';
+import type { InventoryItem } from '@/types/inventory';
 
 const Index = () => {
   const [items, setItems] = useState<InventoryItem[]>([]);

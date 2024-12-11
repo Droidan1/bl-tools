@@ -70,11 +70,12 @@ const Index = () => {
         escapeCsvField(item.sapNumber),
         item.quantity.toString(),
         escapeCsvField(item.barcode || ''),
-        escapeCsvField(item.timestamp.toLocaleDateString())
+        escapeCsvField(item.timestamp.toLocaleDateString()),
+        escapeCsvField(item.photoUrl || '')
       ].join(',');
     });
 
-    const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp';
+    const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp,Photo URL';
     const csvContent = [header, ...csvRows].join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv' });

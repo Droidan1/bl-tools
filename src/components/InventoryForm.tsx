@@ -1,14 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useToast } from "@/components/ui/use-toast";
-import { FormField } from './inventory/FormField';
-import { QuantityInput } from './inventory/QuantityInput';
-import { FormHeader } from './inventory/FormHeader';
-import { BarcodeInputField } from './inventory/BarcodeInputField';
 import { FormContainer } from './inventory/FormContainer';
 import { SubmitButton } from './inventory/SubmitButton';
 import { ScannerModals } from './inventory/ScannerModals';
-import { Button } from './ui/button';
-import { Camera } from 'lucide-react';
+import { PhotoSection } from './inventory/PhotoSection';
+import { FormFields } from './inventory/FormFields';
 import type { InventoryItem } from '@/types/inventory';
 
 interface InventoryFormProps {
@@ -66,8 +62,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   };
 
   const handleBarcodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setBarcode(newValue);
+    setBarcode(e.target.value);
   };
 
   const handleOCRScan = (fields: {
@@ -98,78 +93,25 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
 
   return (
     <FormContainer onSubmit={handleSubmit}>
-      <FormField
-        id="storeLocation"
-        label="Store Location"
-        value={storeLocation}
-        onChange={setStoreLocation}
-        placeholder="Enter store location"
-        required
-      />
-
-      <h2 className="text-lg font-semibold text-white pt-2">
-        {initialValues ? 'Edit Tag' : 'Add New Tag'}
-      </h2>
-
-      <BarcodeInputField
+      <FormFields
         barcode={barcode}
-        onChange={handleBarcodeChange}
-        inputRef={barcodeInputRef}
+        sapNumber={sapNumber}
+        quantity={quantity}
+        storeLocation={storeLocation}
+        onBarcodeChange={handleBarcodeChange}
+        onSAPNumberChange={setSapNumber}
+        onStoreLocationChange={setStoreLocation}
+        onQuantityChange={setQuantity}
+        onQuantityIncrement={() => setQuantity(prev => prev + 1)}
+        onQuantityDecrement={() => setQuantity(prev => Math.max(1, prev - 1))}
+        barcodeInputRef={barcodeInputRef}
         onOCRClick={() => setShowOCRScanner(true)}
       />
 
-      <FormField
-        id="sapNumber"
-        label="SAP Item #"
-        value={sapNumber}
-        onChange={setSapNumber}
-        placeholder="Enter SAP Item number"
-        required
+      <PhotoSection
+        photoUrl={photoUrl}
+        onShowCamera={() => setShowCamera(true)}
       />
-
-      <QuantityInput
-        quantity={quantity}
-        onIncrement={() => setQuantity(prev => prev + 1)}
-        onDecrement={() => setQuantity(prev => Math.max(1, prev - 1))}
-        onChange={setQuantity}
-      />
-
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-white">
-          Photo *
-        </label>
-        <div className="flex flex-col gap-2">
-          {photoUrl ? (
-            <div className="relative">
-              <img 
-                src={photoUrl} 
-                alt="Captured" 
-                className="w-full h-40 object-cover rounded-lg"
-              />
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={() => setShowCamera(true)}
-                className="absolute bottom-2 right-2"
-              >
-                <Camera className="h-4 w-4 mr-2" />
-                Retake
-              </Button>
-            </div>
-          ) : (
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setShowCamera(true)}
-              className="w-full"
-            >
-              <Camera className="h-4 w-4 mr-2" />
-              Take Photo
-            </Button>
-          )}
-        </div>
-      </div>
 
       <SubmitButton isEditing={!!initialValues} />
 

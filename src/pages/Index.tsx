@@ -6,21 +6,21 @@ const Index = () => {
   const [bolNumber, setBolNumber] = useState('');
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container px-4 py-8 mx-auto max-w-7xl">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 bg-card p-6 rounded-lg border shadow-sm">
-          <h1 className="text-2xl sm:text-4xl font-bold text-foreground mb-2 sm:mb-0 font-['Luckiest_Guy']">
+    <div className="min-h-screen bg-white">
+      <div className="container px-4 py-2 mx-auto max-w-7xl">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 bg-[#2a8636] p-1 rounded-lg">
+          <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-0 font-['Luckiest_Guy']">
             Inventory Receiver
           </h1>
           <img 
             src="/lovable-uploads/c590340d-6c9e-4341-8686-91ba96211494.png" 
             alt="Header Logo" 
-            className="h-20 sm:h-28 w-auto"
+            className="h-32 sm:h-48 w-auto"
           />
         </div>
 
-        <div className="w-full max-w-md mx-auto mb-8">
-          <div className="bg-card p-6 rounded-lg border shadow-sm">
+        <div className="w-full max-w-md mx-auto mb-6">
+          <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-6 rounded-xl shadow-custom backdrop-blur-sm border border-white/20">
             <FormField
               id="bolNumber"
               label="BOL #"
@@ -28,7 +28,7 @@ const Index = () => {
               onChange={setBolNumber}
               placeholder="Enter BOL number"
               required
-              className="bg-background"
+              className="bg-white"
             />
           </div>
         </div>

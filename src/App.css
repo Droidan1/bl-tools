@@ -6,41 +6,41 @@
 }
 
 body {
-  background: hsl(var(--background));
+  background: linear-gradient(135deg, #2a8636 0%, #3BB54A 100%);
   min-height: 100vh;
 }
 
 .card {
   padding: 2em;
   background: white;
-  border-radius: 0.75rem;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-  border: 1px solid hsl(var(--border));
+  border-radius: 1rem;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.05);
 }
 
 .form-container {
-  background: hsl(var(--card));
-  border-radius: 0.75rem;
-  border: 1px solid hsl(var(--border));
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
 }
 
 .button-primary {
-  background: hsl(var(--primary));
-  color: hsl(var(--primary-foreground));
-  transition: all 0.2s ease;
+  background: linear-gradient(45deg, #FF4D8D 0%, #FF6B9D 100%);
+  transition: all 0.3s ease;
 }
 
 .button-primary:hover {
   transform: translateY(-1px);
-  opacity: 0.9;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: black !important;
 }
 
 .input-field {
-  border: 1px solid hsl(var(--input));
+  border: 2px solid #E5E7EB;
   transition: all 0.2s ease;
 }
 
 .input-field:focus {
-  border-color: hsl(var(--ring));
-  box-shadow: 0 0 0 1px hsl(var(--ring));
+  border-color: #3BB54A;
+  box-shadow: 0 0 0 2px rgba(59, 181, 74, 0.1);
 }

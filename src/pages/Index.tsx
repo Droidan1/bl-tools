@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { InventoryForm } from '@/components/InventoryForm';
 import { InventoryTable } from '@/components/InventoryTable';
-import type { InventoryItem } from '@/types/inventory';
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
@@ -126,15 +125,17 @@ const Index = () => {
         </div>
 
         <div className="w-full max-w-md mx-auto mb-6">
-          <FormField
-            id="bolNumber"
-            label="BOL #"
-            value={bolNumber}
-            onChange={setBolNumber}
-            placeholder="Enter BOL number"
-            required
-            className="bg-white"
-          />
+          <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-6 rounded-xl shadow-custom backdrop-blur-sm border border-white/20">
+            <FormField
+              id="bolNumber"
+              label="BOL #"
+              value={bolNumber}
+              onChange={setBolNumber}
+              placeholder="Enter BOL number"
+              required
+              className="bg-white"
+            />
+          </div>
         </div>
         
         <div className="grid gap-6">

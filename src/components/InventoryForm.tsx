@@ -111,6 +111,29 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
         {initialValues ? 'Edit Tag' : 'Add New Tag'}
       </h2>
 
+      <BarcodeInputField
+        barcode={barcode}
+        onChange={handleBarcodeChange}
+        inputRef={barcodeInputRef}
+        onOCRClick={() => setShowOCRScanner(true)}
+      />
+
+      <FormField
+        id="sapNumber"
+        label="SAP Item #"
+        value={sapNumber}
+        onChange={setSapNumber}
+        placeholder="Enter SAP Item number"
+        required
+      />
+
+      <QuantityInput
+        quantity={quantity}
+        onIncrement={() => setQuantity(prev => prev + 1)}
+        onDecrement={() => setQuantity(prev => Math.max(1, prev - 1))}
+        onChange={setQuantity}
+      />
+
       <div className="space-y-2">
         <label className="text-sm font-medium text-white">
           Photo *
@@ -147,29 +170,6 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
           )}
         </div>
       </div>
-
-      <BarcodeInputField
-        barcode={barcode}
-        onChange={handleBarcodeChange}
-        inputRef={barcodeInputRef}
-        onOCRClick={() => setShowOCRScanner(true)}
-      />
-
-      <FormField
-        id="sapNumber"
-        label="SAP Item #"
-        value={sapNumber}
-        onChange={setSapNumber}
-        placeholder="Enter SAP Item number"
-        required
-      />
-
-      <QuantityInput
-        quantity={quantity}
-        onIncrement={() => setQuantity(prev => prev + 1)}
-        onDecrement={() => setQuantity(prev => Math.max(1, prev - 1))}
-        onChange={setQuantity}
-      />
 
       <SubmitButton isEditing={!!initialValues} />
 

@@ -22,6 +22,7 @@ export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="whitespace-nowrap">Photo</TableHead>
             <TableHead className="whitespace-nowrap">Store Location</TableHead>
             <TableHead className="whitespace-nowrap">BOL #</TableHead>
             <TableHead className="whitespace-nowrap">SAP Item #</TableHead>
@@ -34,6 +35,15 @@ export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
         <TableBody>
           {items.map((item) => (
             <TableRow key={item.id}>
+              <TableCell>
+                {item.photoUrl && (
+                  <img 
+                    src={item.photoUrl} 
+                    alt="Item" 
+                    className="w-16 h-16 object-cover rounded-lg"
+                  />
+                )}
+              </TableCell>
               <TableCell className="font-medium whitespace-nowrap">{item.storeLocation}</TableCell>
               <TableCell className="whitespace-nowrap">{item.bolNumber || '-'}</TableCell>
               <TableCell className="whitespace-nowrap">{item.sapNumber}</TableCell>
@@ -54,7 +64,7 @@ export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
           ))}
           {items.length === 0 && (
             <TableRow>
-              <TableCell colSpan={7} className="text-center">
+              <TableCell colSpan={8} className="text-center">
                 No items added yet
               </TableCell>
             </TableRow>

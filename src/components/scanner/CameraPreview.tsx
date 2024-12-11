@@ -22,7 +22,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
           ref={videoRef}
           autoPlay
           playsInline
-          className="w-full rounded-lg"
+          className="w-full h-[600px] object-cover rounded-lg"
         />
         {!isProcessing && !previewUrl && (
           <Button
@@ -40,7 +40,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
           <img
             src={previewUrl}
             alt="Preview"
-            className="w-full rounded-lg"
+            className="w-full h-[600px] object-cover rounded-lg"
           />
           {isProcessing && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded-lg">

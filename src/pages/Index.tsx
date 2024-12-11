@@ -12,6 +12,7 @@ const Index = () => {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [bolNumber, setBolNumber] = useState('');
+  const [urlMappings, setUrlMappings] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
   const handleAddItem = (newItem: Omit<InventoryItem, 'id' | 'timestamp' | 'bolNumber'>) => {
@@ -57,6 +58,8 @@ const Index = () => {
   };
 
   const handleSendReport = () => {
+    const newUrlMappings: Record<string, string> = {};
+    
     const csvRows = items.map(item => {
       const escapeCsvField = (field: string) => {
         if (field.includes(',') || field.includes('"') || field.includes('\n')) {
@@ -65,10 +68,13 @@ const Index = () => {
         return field;
       };
 
-      // Create a shortened version of the photo URL
-      const shortenedPhotoUrl = item.photoUrl ? 
-        `${window.location.origin}/p/${nanoid(8)}` : 
-        '';
+      // Create a shortened version of the photo URL and store the mapping
+      let shortenedPhotoUrl = '';
+      if (item.photoUrl) {
+        const shortId = nanoid(8);
+        shortenedPhotoUrl = `${window.location.origin}/photos/${shortId}`;
+        newUrlMappings[shortId] = item.photoUrl;
+      }
 
       return [
         escapeCsvField(item.storeLocation),
@@ -80,6 +86,9 @@ const Index = () => {
         escapeCsvField(shortenedPhotoUrl)
       ].join(',');
     });
+
+    // Update URL mappings state
+    setUrlMappings({ ...urlMappings, ...newUrlMappings });
 
     const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp,Photo URL';
     const csvContent = [header, ...csvRows].join('\n');

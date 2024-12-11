@@ -10,7 +10,7 @@ import { ScannerModals } from './inventory/ScannerModals';
 import type { InventoryItem } from '@/types/inventory';
 
 interface InventoryFormProps {
-  onSubmit: (item: Omit<InventoryItem, 'id' | 'timestamp'>) => void;
+  onSubmit: (item: Omit<InventoryItem, 'id' | 'timestamp' | 'bolNumber'>) => void;
   initialValues?: InventoryItem;
 }
 
@@ -19,7 +19,6 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const [quantity, setQuantity] = useState(initialValues?.quantity || 1);
   const [barcode, setBarcode] = useState(initialValues?.barcode || '');
   const [storeLocation, setStoreLocation] = useState(initialValues?.storeLocation || '');
-  const [bolNumber, setBolNumber] = useState(initialValues?.bolNumber || '');
   const [showOCRScanner, setShowOCRScanner] = useState(false);
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -30,14 +29,13 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       setQuantity(initialValues.quantity);
       setBarcode(initialValues.barcode || '');
       setStoreLocation(initialValues.storeLocation);
-      setBolNumber(initialValues.bolNumber || '');
     }
   }, [initialValues]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!bolNumber || !barcode || !storeLocation || !sapNumber) {
+    if (!barcode || !storeLocation || !sapNumber) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -51,14 +49,12 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       quantity,
       barcode,
       storeLocation,
-      bolNumber,
     });
 
     if (!initialValues) {
       setSapNumber('');
       setQuantity(1);
       setBarcode('');
-      setBolNumber('');
       barcodeInputRef.current?.focus();
     }
   };
@@ -72,12 +68,10 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
     sapNumber?: string;
     barcode?: string;
     storeLocation?: string;
-    bolNumber?: string;
   }) => {
     if (fields.sapNumber) setSapNumber(fields.sapNumber);
     if (fields.barcode) setBarcode(fields.barcode);
     if (fields.storeLocation) setStoreLocation(fields.storeLocation);
-    if (fields.bolNumber) setBolNumber(fields.bolNumber);
     setShowOCRScanner(false);
   };
 
@@ -97,8 +91,6 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
         placeholder="Enter store location"
         required
       />
-
-      <FormHeader bolNumber={bolNumber} setBolNumber={setBolNumber} />
 
       <h2 className="text-lg font-semibold text-white pt-2">
         {initialValues ? 'Edit Pallet' : 'Add New Pallet'}

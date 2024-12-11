@@ -5,17 +5,28 @@ import type { InventoryItem } from '@/types/inventory';
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
+import { FormField } from '@/components/inventory/FormField';
 
 const Index = () => {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
+  const [bolNumber, setBolNumber] = useState('');
   const { toast } = useToast();
 
-  const handleAddItem = (newItem: Omit<InventoryItem, 'id' | 'timestamp'>) => {
+  const handleAddItem = (newItem: Omit<InventoryItem, 'id' | 'timestamp' | 'bolNumber'>) => {
+    if (!bolNumber) {
+      toast({
+        title: "Error",
+        description: "Please enter a BOL number first",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (editingItem) {
       const updatedItems = items.map(item => 
         item.id === editingItem.id 
-          ? { ...item, ...newItem }
+          ? { ...item, ...newItem, bolNumber }
           : item
       );
       setItems(updatedItems);
@@ -27,6 +38,7 @@ const Index = () => {
     } else {
       const item: InventoryItem = {
         ...newItem,
+        bolNumber,
         id: crypto.randomUUID(),
         timestamp: new Date(),
       };
@@ -110,6 +122,18 @@ const Index = () => {
             src="/lovable-uploads/c590340d-6c9e-4341-8686-91ba96211494.png" 
             alt="Header Logo" 
             className="h-32 sm:h-48 w-auto"
+          />
+        </div>
+
+        <div className="w-full max-w-md mx-auto mb-6">
+          <FormField
+            id="bolNumber"
+            label="BOL #"
+            value={bolNumber}
+            onChange={setBolNumber}
+            placeholder="Enter BOL number"
+            required
+            className="bg-white"
           />
         </div>
         

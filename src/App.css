@@ -27,7 +27,7 @@ body {
 }
 
 .button-primary {
-  background: linear-gradient(45deg, #FF4D8D 0%, #FF6B9D 100%);
+  background: black;
   transition: all 0.2s ease;
   border-radius: 0.5rem;
   font-weight: 500;
@@ -36,7 +36,7 @@ body {
 .button-primary:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  background: black !important;
+  background: rgba(0, 0, 0, 0.8) !important;
 }
 
 .input-field {

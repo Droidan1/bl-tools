@@ -72,6 +72,11 @@ export const InventoryManager = ({ bolNumber }: InventoryManagerProps) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleClearEntries = () => {
+    setItems([]);
+    toast.success("All entries have been cleared");
+  };
+
   return (
     <div className="grid gap-6">
       <div className="w-full flex justify-center">
@@ -88,7 +93,11 @@ export const InventoryManager = ({ bolNumber }: InventoryManagerProps) => {
           <h2 className="text-lg font-semibold text-gray-900 order-1 sm:order-none">
             Recent Entries
           </h2>
-          <ReportGenerator items={items} disabled={items.length === 0} />
+          <ReportGenerator 
+            items={items} 
+            disabled={items.length === 0} 
+            onClear={handleClearEntries}
+          />
         </div>
         <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
           <div className="overflow-x-auto -mx-4 sm:mx-0">

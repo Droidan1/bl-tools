@@ -6,9 +6,10 @@ import type { InventoryItem } from '@/types/inventory';
 interface ReportGeneratorProps {
   items: InventoryItem[];
   disabled: boolean;
+  onClear: () => void;
 }
 
-export const ReportGenerator = ({ items, disabled }: ReportGeneratorProps) => {
+export const ReportGenerator = ({ items, disabled, onClear }: ReportGeneratorProps) => {
   const handleSendReport = async () => {
     const csvRows = items.map(item => {
       const escapeCsvField = (field: string) => {
@@ -51,6 +52,9 @@ export const ReportGenerator = ({ items, disabled }: ReportGeneratorProps) => {
         description: "Gmail compose window opened. Please attach the downloaded report.",
         duration: 3000,
       });
+
+      // Clear entries after sending report
+      onClear();
     };
 
     const url = URL.createObjectURL(blob);

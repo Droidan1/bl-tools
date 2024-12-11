@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
 import { FormField } from '@/components/inventory/FormField';
 import { nanoid } from 'nanoid';
+import { supabase } from '@/lib/supabase';
 import type { InventoryItem } from '@/types/inventory';
 
 const Index = () => {
@@ -57,10 +58,10 @@ const Index = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSendReport = () => {
+  const handleSendReport = async () => {
     const newUrlMappings: Record<string, string> = {};
     
-    const csvRows = items.map(item => {
+    const csvRows = await Promise.all(items.map(async (item) => {
       const escapeCsvField = (field: string) => {
         if (field.includes(',') || field.includes('"') || field.includes('\n')) {
           return `"${field.replace(/"/g, '""')}"`;
@@ -73,6 +74,26 @@ const Index = () => {
       if (item.photoUrl) {
         const shortId = nanoid(8);
         shortenedPhotoUrl = `${window.location.origin}/photos/${shortId}`;
+        
+        // Store mapping in Supabase
+        const { error } = await supabase
+          .from('photo_mappings')
+          .insert({
+            short_id: shortId,
+            original_url: item.photoUrl,
+            created_at: new Date().toISOString()
+          });
+
+        if (error) {
+          console.error('Error storing photo mapping:', error);
+          toast({
+            title: "Error",
+            description: "Failed to create shortened URL",
+            variant: "destructive",
+          });
+          return null;
+        }
+
         newUrlMappings[shortId] = item.photoUrl;
       }
 
@@ -85,10 +106,11 @@ const Index = () => {
         escapeCsvField(item.timestamp.toLocaleDateString()),
         escapeCsvField(shortenedPhotoUrl)
       ].join(',');
-    });
+    }));
 
-    // Update URL mappings state
-    setUrlMappings({ ...urlMappings, ...newUrlMappings });
+    if (csvRows.includes(null)) {
+      return; // Exit if any row failed to process
+    }
 
     const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp,Photo URL';
     const csvContent = [header, ...csvRows].join('\n');

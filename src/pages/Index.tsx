@@ -69,19 +69,16 @@ const Index = () => {
         return field;
       };
 
-      // Create a shortened version of the photo URL and store the mapping
       let shortenedPhotoUrl = '';
       if (item.photoUrl) {
         const shortId = nanoid(8);
         shortenedPhotoUrl = `${window.location.origin}/photos/${shortId}`;
         
-        // Store mapping in Supabase
         const { error } = await supabase
           .from('photo_mappings')
           .insert({
             short_id: shortId,
-            original_url: item.photoUrl,
-            created_at: new Date().toISOString()
+            original_url: item.photoUrl
           });
 
         if (error) {
@@ -119,17 +116,14 @@ const Index = () => {
     const date = new Date().toLocaleDateString().replace(/\//g, '-');
     const fileName = `inventory-report-${date}.csv`;
 
-    // Create a data URL from the blob
     const reader = new FileReader();
     reader.readAsDataURL(blob);
     reader.onload = () => {
       const base64data = reader.result?.toString().split(',')[1];
       
-      // Construct Gmail URL with attachment
       const gmailSubject = encodeURIComponent(`Inventory Report ${date}`);
       const gmailBody = encodeURIComponent('Please find attached the inventory report.');
       
-      // Open Gmail compose window
       const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${gmailSubject}&body=${gmailBody}`;
       window.open(gmailUrl, '_blank');
       
@@ -140,7 +134,6 @@ const Index = () => {
       });
     };
 
-    // Trigger the download
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.download = fileName;

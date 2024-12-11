@@ -93,7 +93,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       />
 
       <h2 className="text-lg font-semibold text-white pt-2">
-        {initialValues ? 'Edit Pallet' : 'Add New Pallet'}
+        {initialValues ? 'Edit Pallet' : 'Add New Tag'}
       </h2>
 
       <BarcodeInputField

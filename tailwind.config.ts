@@ -29,7 +29,7 @@ export default {
           foreground: "#FFFFFF",
         },
         secondary: {
-          DEFAULT: "#FF4D8D",
+          DEFAULT: "black",
           foreground: "#FFFFFF",
         },
         destructive: {
@@ -41,7 +41,7 @@ export default {
           foreground: "hsl(var(--muted-foreground))",
         },
         accent: {
-          DEFAULT: "#FF4D8D",
+          DEFAULT: "black",
           foreground: "#FFFFFF",
         },
         popover: {

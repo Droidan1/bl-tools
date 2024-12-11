@@ -18,7 +18,7 @@ interface InventoryTableProps {
 
 export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
   return (
-    <div className="rounded-md border overflow-x-auto">
+    <div className="rounded-md border overflow-x-auto shadow-elevated bg-white">
       <Table>
         <TableHeader>
           <TableRow>
@@ -40,7 +40,7 @@ export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
                   <img 
                     src={item.photoUrl} 
                     alt="Item" 
-                    className="w-16 h-16 object-cover rounded-lg"
+                    className="w-16 h-16 object-cover rounded-lg shadow-custom"
                   />
                 )}
               </TableCell>
@@ -55,7 +55,7 @@ export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
                   variant="ghost"
                   size="icon"
                   onClick={() => onEdit(item)}
-                  className="h-8 w-8"
+                  className="h-8 w-8 hover:shadow-custom transition-shadow"
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>

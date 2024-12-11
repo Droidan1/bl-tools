@@ -60,6 +60,9 @@ export default {
       },
       boxShadow: {
         'custom': '0 4px 14px 0 rgba(0, 0, 0, 0.05)',
+        'elevated': '0 10px 30px -5px rgba(0, 0, 0, 0.1)',
+        'floating': '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+        'input': '0 2px 4px rgba(0, 0, 0, 0.05)',
       },
     },
   },

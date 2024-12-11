@@ -22,12 +22,16 @@ const PhotoPage = () => {
         return;
       }
 
-      window.location.href = data.original_url;
+      // Open the image URL in the same window
+      if (data.original_url) {
+        window.location.replace(data.original_url);
+      }
     };
 
     fetchPhotoUrl();
   }, [id, navigate]);
 
+  // Return null while redirecting
   return null;
 };
 

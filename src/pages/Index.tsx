@@ -5,6 +5,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Mail } from "lucide-react";
 import { FormField } from '@/components/inventory/FormField';
+import { nanoid } from 'nanoid';
 import type { InventoryItem } from '@/types/inventory';
 
 const Index = () => {
@@ -64,6 +65,11 @@ const Index = () => {
         return field;
       };
 
+      // Create a shortened version of the photo URL
+      const shortenedPhotoUrl = item.photoUrl ? 
+        `${window.location.origin}/p/${nanoid(8)}` : 
+        '';
+
       return [
         escapeCsvField(item.storeLocation),
         escapeCsvField(item.bolNumber || ''),
@@ -71,7 +77,7 @@ const Index = () => {
         item.quantity.toString(),
         escapeCsvField(item.barcode || ''),
         escapeCsvField(item.timestamp.toLocaleDateString()),
-        escapeCsvField(item.photoUrl || '')
+        escapeCsvField(shortenedPhotoUrl)
       ].join(',');
     });
 

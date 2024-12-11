@@ -39,7 +39,7 @@ export const PhotoSection = ({ photoUrl, onShowCamera }: PhotoSectionProps) => (
           className="w-full"
         >
           <Camera className="h-4 w-4 mr-2" />
-          Take Photo
+          Take Photo of Tag
         </Button>
       )}
     </div>

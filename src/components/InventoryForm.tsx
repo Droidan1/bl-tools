@@ -7,6 +7,8 @@ import { BarcodeInputField } from './inventory/BarcodeInputField';
 import { FormContainer } from './inventory/FormContainer';
 import { SubmitButton } from './inventory/SubmitButton';
 import { ScannerModals } from './inventory/ScannerModals';
+import { Button } from './ui/button';
+import { Camera } from 'lucide-react';
 import type { InventoryItem } from '@/types/inventory';
 
 interface InventoryFormProps {
@@ -20,6 +22,8 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const [barcode, setBarcode] = useState(initialValues?.barcode || '');
   const [storeLocation, setStoreLocation] = useState(initialValues?.storeLocation || '');
   const [showOCRScanner, setShowOCRScanner] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [showCamera, setShowCamera] = useState(false);
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -35,10 +39,10 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!barcode || !storeLocation || !sapNumber) {
+    if (!barcode || !storeLocation || !sapNumber || !photoUrl) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields",
+        description: "Please fill in all required fields and take a photo",
         variant: "destructive",
       });
       return;
@@ -49,12 +53,14 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       quantity,
       barcode,
       storeLocation,
+      photoUrl,
     });
 
     if (!initialValues) {
       setSapNumber('');
       setQuantity(1);
       setBarcode('');
+      setPhotoUrl(null);
       barcodeInputRef.current?.focus();
     }
   };
@@ -75,6 +81,15 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
     setShowOCRScanner(false);
   };
 
+  const handlePhotoCapture = (photoUrl: string) => {
+    setPhotoUrl(photoUrl);
+    setShowCamera(false);
+    toast({
+      title: "Success",
+      description: "Photo captured successfully",
+    });
+  };
+
   useEffect(() => {
     if (!initialValues) {
       barcodeInputRef.current?.focus();
@@ -93,8 +108,45 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       />
 
       <h2 className="text-lg font-semibold text-white pt-2">
-        {initialValues ? 'Edit Pallet' : 'Add New Tag'}
+        {initialValues ? 'Edit Tag' : 'Add New Tag'}
       </h2>
+
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-white">
+          Photo *
+        </label>
+        <div className="flex flex-col gap-2">
+          {photoUrl ? (
+            <div className="relative">
+              <img 
+                src={photoUrl} 
+                alt="Captured" 
+                className="w-full h-40 object-cover rounded-lg"
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => setShowCamera(true)}
+                className="absolute bottom-2 right-2"
+              >
+                <Camera className="h-4 w-4 mr-2" />
+                Retake
+              </Button>
+            </div>
+          ) : (
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setShowCamera(true)}
+              className="w-full"
+            >
+              <Camera className="h-4 w-4 mr-2" />
+              Take Photo
+            </Button>
+          )}
+        </div>
+      </div>
 
       <BarcodeInputField
         barcode={barcode}
@@ -124,9 +176,14 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       <ScannerModals
         showScanner={false}
         showOCRScanner={showOCRScanner}
+        showCamera={showCamera}
         onScan={() => {}}
         onOCRScan={handleOCRScan}
-        onClose={() => setShowOCRScanner(false)}
+        onPhotoCapture={handlePhotoCapture}
+        onClose={() => {
+          setShowOCRScanner(false);
+          setShowCamera(false);
+        }}
       />
     </FormContainer>
   );

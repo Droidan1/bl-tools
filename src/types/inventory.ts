@@ -6,4 +6,5 @@ export interface InventoryItem {
   storeLocation: string;
   bolNumber?: string;
   timestamp: Date;
+  photoUrl?: string;
 }

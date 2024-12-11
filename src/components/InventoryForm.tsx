@@ -23,6 +23,13 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
+  const isFormValid = Boolean(
+    barcode && 
+    storeLocation && 
+    sapNumber && 
+    photoUrl
+  );
+
   useEffect(() => {
     if (initialValues) {
       setSapNumber(initialValues.sapNumber);
@@ -113,7 +120,10 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
         onShowCamera={() => setShowCamera(true)}
       />
 
-      <SubmitButton isEditing={!!initialValues} />
+      <SubmitButton 
+        isEditing={!!initialValues} 
+        isValid={isFormValid}
+      />
 
       <ScannerModals
         showScanner={false}

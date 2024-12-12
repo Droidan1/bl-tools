@@ -15,9 +15,21 @@ export const InventoryManager = ({ bolNumber }: InventoryManagerProps) => {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
 
+  const isDuplicate = (newItem: Omit<InventoryItem, 'id' | 'timestamp' | 'bolNumber'>) => {
+    return items.some(item => 
+      item.sapNumber === newItem.sapNumber && 
+      item.barcode === newItem.barcode
+    );
+  };
+
   const handleAddItem = async (newItem: Omit<InventoryItem, 'id' | 'timestamp' | 'bolNumber'>) => {
     if (!bolNumber) {
       toast.error("Please enter a BOL number first");
+      return;
+    }
+
+    if (!editingItem && isDuplicate(newItem)) {
+      toast.warning("Warning: This item appears to be a duplicate based on SAP number and barcode");
       return;
     }
 

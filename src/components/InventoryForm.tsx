@@ -26,8 +26,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const isFormValid = Boolean(
     barcode && 
     storeLocation && 
-    sapNumber && 
-    photoUrl
+    sapNumber
   );
 
   useEffect(() => {
@@ -36,16 +35,17 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       setQuantity(initialValues.quantity);
       setBarcode(initialValues.barcode || '');
       setStoreLocation(initialValues.storeLocation);
+      setPhotoUrl(initialValues.photoUrl || null);
     }
   }, [initialValues]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!barcode || !storeLocation || !sapNumber || !photoUrl) {
+    if (!barcode || !storeLocation || !sapNumber) {
       toast({
         title: "Error",
-        description: "Please fill in all required fields and take a photo",
+        description: "Please fill in all required fields",
         variant: "destructive",
       });
       return;
@@ -56,7 +56,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       quantity,
       barcode,
       storeLocation,
-      photoUrl,
+      photoUrl: photoUrl || '',
     });
 
     if (!initialValues) {

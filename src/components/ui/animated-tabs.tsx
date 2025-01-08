@@ -34,9 +34,9 @@ export function AnimatedTabs({
           onClick={() => handleTabChange(tab.id)}
           className={`
             relative rounded-[--radius] px-3 py-1.5 text-sm font-medium
-            text-foreground outline-ring transition
+            text-white outline-ring transition
             focus-visible:outline-2
-            ${activeTab === tab.id ? "" : "hover:text-foreground/60"}
+            ${activeTab === tab.id ? "bg-white/20" : "hover:bg-white/10"}
           `}
           style={{
             WebkitTapHighlightColor: "transparent",
@@ -45,7 +45,7 @@ export function AnimatedTabs({
           {activeTab === tab.id && (
             <motion.span
               layoutId="bubble"
-              className="absolute inset-0 z-10 bg-primary mix-blend-difference"
+              className="absolute inset-0 z-10 bg-white/10 mix-blend-overlay"
               style={{ borderRadius: "var(--radius)" }}
               transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
             />

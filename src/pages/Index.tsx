@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { TabsContent } from "@/components/ui/tabs";
 import { FormField } from '@/components/inventory/FormField';
 import InventoryPage from './InventoryPage';
 import { AnimatedTabs } from '@/components/ui/animated-tabs';
@@ -27,7 +26,7 @@ const Index = () => {
           />
         </div>
 
-        <div className="w-full mb-8">
+        <div className="w-full mb-8 bg-[#2a8636] p-4 rounded-xl">
           <AnimatedTabs 
             tabs={tabs}
             defaultTab={activeTab}

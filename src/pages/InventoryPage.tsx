@@ -1,9 +1,14 @@
 import { InventoryManager } from '@/components/inventory/InventoryManager';
 
-const InventoryPage = ({ bolNumber }: { bolNumber: string }) => {
+interface InventoryPageProps {
+  bolNumber: string;
+  showRecentEntries: boolean;
+}
+
+const InventoryPage = ({ bolNumber, showRecentEntries }: InventoryPageProps) => {
   return (
     <div className="w-full">
-      <InventoryManager bolNumber={bolNumber} />
+      <InventoryManager bolNumber={bolNumber} showRecentEntries={showRecentEntries} />
     </div>
   );
 };

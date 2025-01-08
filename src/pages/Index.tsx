@@ -5,10 +5,10 @@ import { AnimatedTabs } from '@/components/ui/animated-tabs';
 
 const Index = () => {
   const [bolNumber, setBolNumber] = useState('');
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTab] = useState('add-pallets');
 
   const tabs = [
-    { id: 'home', label: 'Home' },
+    { id: 'add-pallets', label: 'Add Pallets' },
     { id: 'inventory', label: 'Inventory' },
   ];
 
@@ -48,15 +48,15 @@ const Index = () => {
           </div>
         </div>
         
-        {activeTab === 'home' && (
+        {activeTab === 'add-pallets' && (
           <div className="w-full">
-            <InventoryPage bolNumber={bolNumber} />
+            <InventoryPage bolNumber={bolNumber} showRecentEntries={false} />
           </div>
         )}
         
         {activeTab === 'inventory' && (
           <div className="w-full">
-            <InventoryPage bolNumber={bolNumber} />
+            <InventoryPage bolNumber={bolNumber} showRecentEntries={true} />
           </div>
         )}
       </div>

@@ -56,7 +56,7 @@ export const ReportGenerator = ({ items, disabled, onClear }: ReportGeneratorPro
       disabled={disabled}
     >
       <Download className="h-4 w-4" />
-      Send Report
+      Download Report
     </Button>
   );
 };

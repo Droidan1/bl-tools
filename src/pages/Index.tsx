@@ -7,8 +7,8 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="container px-4 py-2 mx-auto max-w-7xl">
-        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 bg-[#2a8636] p-4 rounded-xl shadow-sm">
+      <div className="container px-4 py-2 mx-auto max-w-7xl flex flex-col items-center">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 bg-[#2a8636] p-4 rounded-xl shadow-sm w-full">
           <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-0 font-['Luckiest_Guy']">
             Inventory Receiver
           </h1>

@@ -10,18 +10,11 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
   const fields: ExtractedFields = {};
 
   lines.forEach(line => {
-    // Look for SAP number patterns after "Item" or "Item #" or "Item Number"
-    // Also look for standalone numbers that match the pattern P-XXXXXX-XXXXXX
+    // Only look for "Item: XXXXX" format
     if (line.toLowerCase().includes('item:')) {
       const itemMatch = line.match(/Item:\s*(\d+)/i);
       if (itemMatch) {
         fields.sapNumber = itemMatch[1];
-      }
-    } else if (line.match(/P-\d{6}-\d{6}/)) {
-      // Extract the middle 6 digits from P-XXXXXX-XXXXXX pattern
-      const match = line.match(/P-(\d{6})-\d{6}/);
-      if (match) {
-        fields.sapNumber = match[1];
       }
     }
     

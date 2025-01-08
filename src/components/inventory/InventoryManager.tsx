@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { nanoid } from 'nanoid';
 import { toast } from "sonner";
 import { supabase } from '@/lib/supabase';
@@ -95,7 +95,7 @@ export const InventoryManager = ({
         id: crypto.randomUUID(),
         timestamp: new Date(),
       };
-      setItems(prev => [item, ...prev]);
+      setItems([item, ...items]);
       toast.success(`Added ${newItem.quantity} units of ${newItem.sapNumber}`);
     }
   };

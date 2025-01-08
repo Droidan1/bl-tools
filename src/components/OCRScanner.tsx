@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { useToast } from './ui/use-toast';
 import { CameraPermissionError } from './scanner/CameraPermissionError';
 import { CameraPreview } from './scanner/CameraPreview';
-import { createWorker } from 'tesseract.js';
+import { createWorker, PSM } from 'tesseract.js';
 import { extractFieldsFromText } from '@/utils/ocrUtils';
 
 interface OCRScannerProps {
@@ -65,21 +65,19 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     const canvas = document.createElement('canvas');
     const video = videoRef.current;
     
-    // Use the actual video dimensions
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Flip the image horizontally if using front camera
     if (video.style.transform.includes('scaleX(-1)')) {
       ctx.scale(-1, 1);
       ctx.translate(-canvas.width, 0);
     }
 
     ctx.drawImage(video, 0, 0);
-    const dataUrl = canvas.toDataURL('image/jpeg', 1.0); // Use maximum quality
+    const dataUrl = canvas.toDataURL('image/jpeg', 1.0);
     setPreviewUrl(dataUrl);
     
     toast({
@@ -92,16 +90,15 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       setIsProcessing(true);
       const worker = await createWorker();
       
-      // Configure Tesseract for better text recognition
       await worker.setParameters({
         tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-:#',
-        tessedit_pageseg_mode: '1',
+        tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
       });
       
       const { data: { text } } = await worker.recognize(canvas);
       await worker.terminate();
 
-      console.log('Raw OCR text:', text); // Debug log
+      console.log('Raw OCR text:', text);
       const extractedFields = extractFieldsFromText(text);
       
       if (Object.keys(extractedFields).length === 0) {

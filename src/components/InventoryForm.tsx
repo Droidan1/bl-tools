@@ -114,7 +114,6 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
         onQuantityIncrement={() => setQuantity(prev => prev + 1)}
         onQuantityDecrement={() => setQuantity(prev => Math.max(1, prev - 1))}
         barcodeInputRef={barcodeInputRef}
-        onOCRClick={() => setShowOCRScanner(true)}
       />
 
       <PhotoSection

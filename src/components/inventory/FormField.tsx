@@ -21,8 +21,8 @@ export const FormField = ({
   type = "text",
   className = "w-full"
 }: FormFieldProps) => (
-  <div className="space-y-2 w-full">
-    <label htmlFor={id} className="text-sm font-medium text-white text-center block">
+  <div className="space-y-2">
+    <label htmlFor={id} className="text-sm font-medium text-white">
       {label} {required && '*'}
     </label>
     <Input

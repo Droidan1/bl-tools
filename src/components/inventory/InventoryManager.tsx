@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { toast } from "sonner";
 import { InventoryForm } from '@/components/InventoryForm';
 import { FilteredItemsList } from './FilteredItemsList';
 import { FormSubmissionHandler } from './FormSubmissionHandler';

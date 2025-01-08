@@ -10,9 +10,10 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
   const fields: ExtractedFields = {};
 
   lines.forEach(line => {
-    // Look for SAP number (typically 6-8 digits)
-    if (/\b\d{6,8}\b/.test(line)) {
-      fields.sapNumber = line.match(/\b\d{6,8}\b/)?.[0];
+    // Look for SAP number patterns after "Item" or "Item #" or "Item Number"
+    const itemMatch = line.match(/(?:Item\s*#?\s*(?:Number)?:?\s*)(\d{6,8})/i);
+    if (itemMatch) {
+      fields.sapNumber = itemMatch[1];
     }
     
     // Look for barcode (any sequence of digits and letters)
@@ -30,6 +31,10 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       fields.bolNumber = line.match(/\b[A-Z0-9-]{4,}\b/i)?.[0];
     }
   });
+
+  // Log the extracted fields for debugging
+  console.log('Extracted fields:', fields);
+  console.log('Original text:', text);
 
   return fields;
 };

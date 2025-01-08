@@ -14,9 +14,27 @@ import type { InventoryItem } from '@/types/inventory';
 interface InventoryTableProps {
   items: InventoryItem[];
   onEdit: (item: InventoryItem) => void;
+  highlightText?: string;
 }
 
-export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
+const HighlightedText = ({ text, highlight }: { text: string, highlight: string }) => {
+  if (!highlight) return <>{text}</>;
+  
+  const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+  return (
+    <>
+      {parts.map((part, i) => 
+        part.toLowerCase() === highlight.toLowerCase() ? (
+          <span key={i} className="bg-yellow-200">{part}</span>
+        ) : (
+          part
+        )
+      )}
+    </>
+  );
+};
+
+export const InventoryTable = ({ items, onEdit, highlightText = '' }: InventoryTableProps) => {
   return (
     <div className="rounded-md border overflow-x-auto shadow-elevated bg-white">
       <Table>
@@ -44,11 +62,19 @@ export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
                   />
                 )}
               </TableCell>
-              <TableCell className="font-medium whitespace-nowrap">{item.storeLocation}</TableCell>
-              <TableCell className="whitespace-nowrap">{item.bolNumber || '-'}</TableCell>
-              <TableCell className="whitespace-nowrap">{item.sapNumber}</TableCell>
+              <TableCell className="font-medium whitespace-nowrap">
+                <HighlightedText text={item.storeLocation} highlight={highlightText} />
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                <HighlightedText text={item.bolNumber || '-'} highlight={highlightText} />
+              </TableCell>
+              <TableCell className="whitespace-nowrap">
+                <HighlightedText text={item.sapNumber} highlight={highlightText} />
+              </TableCell>
               <TableCell className="whitespace-nowrap">{item.quantity}</TableCell>
-              <TableCell className="whitespace-nowrap">{item.barcode || '-'}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                <HighlightedText text={item.barcode || '-'} highlight={highlightText} />
+              </TableCell>
               <TableCell className="whitespace-nowrap">{item.timestamp.toLocaleDateString()}</TableCell>
               <TableCell>
                 <Button
@@ -65,7 +91,7 @@ export const InventoryTable = ({ items, onEdit }: InventoryTableProps) => {
           {items.length === 0 && (
             <TableRow>
               <TableCell colSpan={8} className="text-center">
-                No items added yet
+                No items found
               </TableCell>
             </TableRow>
           )}

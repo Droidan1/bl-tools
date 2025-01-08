@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { nanoid } from 'nanoid';
 import { toast } from "sonner";
 import { supabase } from '@/lib/supabase';
@@ -10,11 +10,24 @@ import type { InventoryItem } from '@/types/inventory';
 interface InventoryManagerProps {
   bolNumber: string;
   showRecentEntries: boolean;
+  searchQuery: string;
 }
 
-export const InventoryManager = ({ bolNumber, showRecentEntries }: InventoryManagerProps) => {
+export const InventoryManager = ({ bolNumber, showRecentEntries, searchQuery }: InventoryManagerProps) => {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
+
+  const filteredItems = useMemo(() => {
+    if (!searchQuery) return items;
+    
+    const query = searchQuery.toLowerCase();
+    return items.filter(item => 
+      item.sapNumber.toLowerCase().includes(query) ||
+      item.storeLocation.toLowerCase().includes(query) ||
+      item.bolNumber?.toLowerCase().includes(query) ||
+      item.barcode?.toLowerCase().includes(query)
+    );
+  }, [items, searchQuery]);
 
   const isDuplicate = (newItem: Omit<InventoryItem, 'id' | 'timestamp' | 'bolNumber'>) => {
     return items.some(item => 
@@ -107,11 +120,11 @@ export const InventoryManager = ({ bolNumber, showRecentEntries }: InventoryMana
         <div className="w-full">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
             <h2 className="text-lg font-semibold text-gray-900 order-1 sm:order-none">
-              Recent Entries
+              Recent Entries {searchQuery && `(${filteredItems.length} results)`}
             </h2>
             <ReportGenerator 
-              items={items} 
-              disabled={items.length === 0} 
+              items={filteredItems} 
+              disabled={filteredItems.length === 0} 
               onClear={handleClearEntries}
             />
           </div>
@@ -119,8 +132,9 @@ export const InventoryManager = ({ bolNumber, showRecentEntries }: InventoryMana
             <div className="overflow-x-auto -mx-4 sm:mx-0">
               <div className="min-w-full inline-block align-middle">
                 <InventoryTable 
-                  items={items} 
+                  items={filteredItems} 
                   onEdit={handleEdit}
+                  highlightText={searchQuery}
                 />
               </div>
             </div>

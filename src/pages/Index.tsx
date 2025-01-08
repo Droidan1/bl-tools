@@ -2,10 +2,12 @@ import { useState } from 'react';
 import { FormField } from '@/components/inventory/FormField';
 import InventoryPage from './InventoryPage';
 import { AnimatedTabs } from '@/components/ui/animated-tabs';
+import { Input } from "@/components/ui/input";
 
 const Index = () => {
   const [bolNumber, setBolNumber] = useState('');
   const [activeTab, setActiveTab] = useState('add-pallets');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const tabs = [
     { id: 'add-pallets', label: 'Add Pallets' },
@@ -35,28 +37,49 @@ const Index = () => {
         </div>
 
         <div className="w-full max-w-md mx-auto mb-8">
-          <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
-            <FormField
-              id="bolNumber"
-              label="BOL #"
-              value={bolNumber}
-              onChange={setBolNumber}
-              placeholder="Enter BOL number"
-              required
-              className="bg-white/95 rounded-lg border-0 shadow-sm"
-            />
-          </div>
+          {activeTab === 'add-pallets' ? (
+            <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
+              <FormField
+                id="bolNumber"
+                label="BOL #"
+                value={bolNumber}
+                onChange={setBolNumber}
+                placeholder="Enter BOL number"
+                required
+                className="bg-white/95 rounded-lg border-0 shadow-sm"
+              />
+            </div>
+          ) : (
+            <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
+              <div className="group relative w-full">
+                <label
+                  htmlFor="search-input"
+                  className="origin-start absolute top-1/2 block -translate-y-1/2 cursor-text px-1 text-white/70 text-sm transition-all group-focus-within:pointer-events-none group-focus-within:top-0 group-focus-within:cursor-default group-focus-within:text-xs group-focus-within:font-medium group-focus-within:text-white has-[+input:not(:placeholder-shown)]:pointer-events-none has-[+input:not(:placeholder-shown)]:top-0 has-[+input:not(:placeholder-shown)]:cursor-default has-[+input:not(:placeholder-shown)]:text-xs has-[+input:not(:placeholder-shown)]:font-medium has-[+input:not(:placeholder-shown)]:text-white"
+                >
+                  <span className="inline-flex bg-gradient-to-br from-[#2a8636] to-[#3BB54A] px-2">Search inventory</span>
+                </label>
+                <Input 
+                  id="search-input"
+                  type="text"
+                  placeholder=""
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="bg-white/95 rounded-lg border-0 shadow-sm"
+                />
+              </div>
+            </div>
+          )}
         </div>
         
         {activeTab === 'add-pallets' && (
           <div className="w-full">
-            <InventoryPage bolNumber={bolNumber} showRecentEntries={false} />
+            <InventoryPage bolNumber={bolNumber} showRecentEntries={false} searchQuery="" />
           </div>
         )}
         
         {activeTab === 'inventory' && (
           <div className="w-full">
-            <InventoryPage bolNumber={bolNumber} showRecentEntries={true} />
+            <InventoryPage bolNumber={bolNumber} showRecentEntries={true} searchQuery={searchQuery} />
           </div>
         )}
       </div>

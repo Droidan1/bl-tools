@@ -11,9 +11,18 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
 
   lines.forEach(line => {
     // Look for SAP number patterns after "Item" or "Item #" or "Item Number"
-    const itemMatch = line.match(/(?:Item\s*#?\s*(?:Number)?:?\s*)(\d{6,8})/i);
-    if (itemMatch) {
-      fields.sapNumber = itemMatch[1];
+    // Also look for standalone numbers that match the pattern P-XXXXXX-XXXXXX
+    if (line.toLowerCase().includes('item:')) {
+      const itemMatch = line.match(/Item:\s*(\d+)/i);
+      if (itemMatch) {
+        fields.sapNumber = itemMatch[1];
+      }
+    } else if (line.match(/P-\d{6}-\d{6}/)) {
+      // Extract the middle 6 digits from P-XXXXXX-XXXXXX pattern
+      const match = line.match(/P-(\d{6})-\d{6}/);
+      if (match) {
+        fields.sapNumber = match[1];
+      }
     }
     
     // Look for barcode (any sequence of digits and letters)

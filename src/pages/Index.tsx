@@ -3,11 +3,13 @@ import { FormField } from '@/components/inventory/FormField';
 import InventoryPage from './InventoryPage';
 import { AnimatedTabs } from '@/components/ui/animated-tabs';
 import { Input } from "@/components/ui/input";
+import type { InventoryItem } from '@/types/inventory';
 
 const Index = () => {
   const [bolNumber, setBolNumber] = useState('');
   const [activeTab, setActiveTab] = useState('add-pallets');
   const [searchQuery, setSearchQuery] = useState('');
+  const [items, setItems] = useState<InventoryItem[]>([]);
 
   const tabs = [
     { id: 'add-pallets', label: 'Add Pallets' },
@@ -73,13 +75,25 @@ const Index = () => {
         
         {activeTab === 'add-pallets' && (
           <div className="w-full">
-            <InventoryPage bolNumber={bolNumber} showRecentEntries={false} searchQuery="" />
+            <InventoryPage 
+              bolNumber={bolNumber} 
+              showRecentEntries={false} 
+              searchQuery="" 
+              items={items}
+              setItems={setItems}
+            />
           </div>
         )}
         
         {activeTab === 'inventory' && (
           <div className="w-full">
-            <InventoryPage bolNumber={bolNumber} showRecentEntries={true} searchQuery={searchQuery} />
+            <InventoryPage 
+              bolNumber={bolNumber} 
+              showRecentEntries={true} 
+              searchQuery={searchQuery}
+              items={items}
+              setItems={setItems}
+            />
           </div>
         )}
       </div>

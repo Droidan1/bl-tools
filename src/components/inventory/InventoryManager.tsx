@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { nanoid } from 'nanoid';
 import { toast } from "sonner";
 import { supabase } from '@/lib/supabase';
@@ -11,10 +11,17 @@ interface InventoryManagerProps {
   bolNumber: string;
   showRecentEntries: boolean;
   searchQuery: string;
+  items: InventoryItem[];
+  setItems: (items: InventoryItem[]) => void;
 }
 
-export const InventoryManager = ({ bolNumber, showRecentEntries, searchQuery }: InventoryManagerProps) => {
-  const [items, setItems] = useState<InventoryItem[]>([]);
+export const InventoryManager = ({ 
+  bolNumber, 
+  showRecentEntries, 
+  searchQuery,
+  items,
+  setItems
+}: InventoryManagerProps) => {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
 
   const filteredItems = useMemo(() => {

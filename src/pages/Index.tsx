@@ -21,6 +21,13 @@ const Index = () => {
           />
         </div>
 
+        <Tabs defaultValue="home" className="w-full mb-8" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="home">Home</TabsTrigger>
+            <TabsTrigger value="inventory">Inventory</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
         <div className="w-full max-w-md mx-auto mb-8">
           <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
             <FormField
@@ -34,21 +41,14 @@ const Index = () => {
             />
           </div>
         </div>
-
-        <Tabs defaultValue="home" className="w-full" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="home">Home</TabsTrigger>
-            <TabsTrigger value="inventory">Inventory</TabsTrigger>
-          </TabsList>
           
-          <TabsContent value="home" className="w-full">
-            <InventoryPage bolNumber={bolNumber} />
-          </TabsContent>
-          
-          <TabsContent value="inventory" className="w-full">
-            <InventoryPage bolNumber={bolNumber} />
-          </TabsContent>
-        </Tabs>
+        <TabsContent value="home" className="w-full">
+          <InventoryPage bolNumber={bolNumber} />
+        </TabsContent>
+        
+        <TabsContent value="inventory" className="w-full">
+          <InventoryPage bolNumber={bolNumber} />
+        </TabsContent>
       </div>
     </div>
   );

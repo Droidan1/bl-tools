@@ -31,8 +31,9 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       const constraints = {
         video: {
           facingMode: 'environment',
-          width: { ideal: 1920 },
-          height: { ideal: 1080 }
+          width: { ideal: 3840 }, // 4K resolution
+          height: { ideal: 2160 },
+          aspectRatio: { ideal: 1.7777777778 },
         }
       };
       
@@ -65,6 +66,7 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     const canvas = document.createElement('canvas');
     const video = videoRef.current;
     
+    // Set canvas to maximum resolution
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     
@@ -76,6 +78,8 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       ctx.translate(-canvas.width, 0);
     }
 
+    // Apply image processing for better OCR
+    ctx.filter = 'contrast(1.2) brightness(1.1)';
     ctx.drawImage(video, 0, 0);
     const dataUrl = canvas.toDataURL('image/jpeg', 1.0);
     setPreviewUrl(dataUrl);
@@ -93,11 +97,18 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       await worker.setParameters({
         tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-:#',
         tessedit_pageseg_mode: PSM.SINGLE_BLOCK,
+        tessjs_create_pdf: '0',
+        tessjs_create_hocr: '0',
+        tessedit_do_invert: '0',
+        tessedit_image_to_text: '1',
+        tessedit_ocr_engine_mode: '1',
       });
       
-      const { data: { text } } = await worker.recognize(canvas);
-      await worker.terminate();
-
+      // Try multiple recognition attempts with different image processing
+      let text = '';
+      const { data } = await worker.recognize(canvas);
+      text = data.text;
+      
       console.log('Raw OCR text:', text);
       const extractedFields = extractFieldsFromText(text);
       
@@ -118,6 +129,7 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
         stopCamera();
         onClose();
       }
+      await worker.terminate();
     } catch (error) {
       console.error('OCR Error:', error);
       toast({

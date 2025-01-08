@@ -13,39 +13,50 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
   console.log('Processing text:', text);
   console.log('Split into lines:', lines);
 
-  lines.forEach(line => {
-    // Look for "Item: XXXXX" format for SAP number with more flexible matching
-    const itemRegex = /item:?\s*(\d+)/i;
-    if (itemRegex.test(line)) {
-      const itemMatch = line.match(itemRegex);
-      if (itemMatch) {
-        console.log('Found SAP number match:', itemMatch[1], 'in line:', line);
-        fields.sapNumber = itemMatch[1];
-      }
-    }
-    
-    // Look for P-XXXXXX-XXXXXX format for barcode with more flexible matching
-    const barcodeRegex = /P-\d{6}-\d{6}/i;
-    const barcodeMatch = line.match(barcodeRegex);
-    if (barcodeMatch) {
-      console.log('Found barcode match:', barcodeMatch[0], 'in line:', line);
-      fields.barcode = barcodeMatch[0];
-    }
+  // Process the entire text first for more flexible matching
+  const fullText = text.replace(/\s+/g, ' ').toLowerCase();
 
-    // Look for "# of Units:" format for quantity
-    const quantityRegex = /#\s*of\s*units:?\s*(\d+)/i;
-    if (quantityRegex.test(line)) {
-      const quantityMatch = line.match(quantityRegex);
-      if (quantityMatch) {
-        console.log('Found quantity match:', quantityMatch[1], 'in line:', line);
-        fields.quantity = parseInt(quantityMatch[1], 10);
+  // More flexible SAP number matching
+  const itemMatches = fullText.match(/item:?\s*#?\s*(\d+)/i) || 
+                     fullText.match(/item\s+number:?\s*#?\s*(\d+)/i) ||
+                     fullText.match(/sap:?\s*#?\s*(\d+)/i);
+  if (itemMatches) {
+    console.log('Found SAP number match:', itemMatches[1]);
+    fields.sapNumber = itemMatches[1];
+  }
+
+  // More flexible barcode matching
+  const barcodeMatches = text.match(/P-\d{6}-\d{6}/i) ||
+                        text.match(/P\s*-\s*\d{6}\s*-\s*\d{6}/i);
+  if (barcodeMatches) {
+    console.log('Found barcode match:', barcodeMatches[0]);
+    fields.barcode = barcodeMatches[0].replace(/\s+/g, '');
+  }
+
+  // More flexible quantity matching
+  const quantityMatches = fullText.match(/#\s*of\s*units:?\s*(\d+)/i) ||
+                         fullText.match(/units:?\s*(\d+)/i) ||
+                         fullText.match(/quantity:?\s*(\d+)/i) ||
+                         fullText.match(/qty:?\s*(\d+)/i);
+  if (quantityMatches) {
+    console.log('Found quantity match:', quantityMatches[1]);
+    fields.quantity = parseInt(quantityMatches[1], 10);
+  }
+
+  // Process line by line for specific formats
+  lines.forEach(line => {
+    const cleanLine = line.trim().toLowerCase();
+    
+    // Additional SAP number patterns
+    if (!fields.sapNumber) {
+      const sapMatch = cleanLine.match(/^(\d{5,6})$/);
+      if (sapMatch) {
+        console.log('Found potential SAP number from standalone digits:', sapMatch[1]);
+        fields.sapNumber = sapMatch[1];
       }
     }
   });
 
-  // Log the extracted fields for debugging
-  console.log('Original text:', text);
   console.log('Extracted fields:', fields);
-
   return fields;
 };

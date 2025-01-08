@@ -15,7 +15,8 @@ interface FormFieldsProps {
   onQuantityIncrement: () => void;
   onQuantityDecrement: () => void;
   barcodeInputRef: React.RefObject<HTMLInputElement>;
-  onOCRClick: () => void;
+  onScanClick?: () => void;
+  onOCRClick?: () => void;
 }
 
 export const FormFields = ({
@@ -30,22 +31,15 @@ export const FormFields = ({
   onQuantityIncrement,
   onQuantityDecrement,
   barcodeInputRef,
+  onScanClick,
   onOCRClick,
 }: FormFieldsProps) => (
   <>
-    <FormField
-      id="storeLocation"
-      label="Store Location"
-      value={storeLocation}
-      onChange={onStoreLocationChange}
-      placeholder="Enter store location"
-      required
-    />
-
     <BarcodeInputField
       barcode={barcode}
       onChange={onBarcodeChange}
       inputRef={barcodeInputRef}
+      onScanClick={onScanClick}
       onOCRClick={onOCRClick}
     />
 

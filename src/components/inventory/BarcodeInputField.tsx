@@ -18,9 +18,6 @@ export const BarcodeInputField = ({
   onOCRClick,
 }: BarcodeInputFieldProps) => (
   <div className="space-y-4">
-    <label htmlFor="barcode" className="block text-sm font-medium text-white text-center">
-      Barcode *
-    </label>
     <div className="flex justify-center gap-2 mb-2">
       <InteractiveHoverButton
         type="button"

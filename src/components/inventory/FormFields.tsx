@@ -15,7 +15,6 @@ interface FormFieldsProps {
   onQuantityIncrement: () => void;
   onQuantityDecrement: () => void;
   barcodeInputRef: React.RefObject<HTMLInputElement>;
-  onOCRClick: () => void;
 }
 
 export const FormFields = ({
@@ -30,7 +29,6 @@ export const FormFields = ({
   onQuantityIncrement,
   onQuantityDecrement,
   barcodeInputRef,
-  onOCRClick,
 }: FormFieldsProps) => (
   <>
     <FormField
@@ -46,7 +44,6 @@ export const FormFields = ({
       barcode={barcode}
       onChange={onBarcodeChange}
       inputRef={barcodeInputRef}
-      onOCRClick={onOCRClick}
     />
 
     <FormField

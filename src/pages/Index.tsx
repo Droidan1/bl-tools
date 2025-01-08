@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { FormField } from '@/components/inventory/FormField';
-import { InventoryManager } from '@/components/inventory/InventoryManager';
+import InventoryPage from './InventoryPage';
 
 const Index = () => {
   const [bolNumber, setBolNumber] = useState('');
+  const [activeTab, setActiveTab] = useState('home');
 
   return (
     <div className="min-h-screen bg-white">
@@ -32,8 +34,21 @@ const Index = () => {
             />
           </div>
         </div>
-        
-        <InventoryManager bolNumber={bolNumber} />
+
+        <Tabs defaultValue="home" className="w-full" value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="grid w-full grid-cols-2 mb-8">
+            <TabsTrigger value="home">Home</TabsTrigger>
+            <TabsTrigger value="inventory">Inventory</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="home" className="w-full">
+            <InventoryPage bolNumber={bolNumber} />
+          </TabsContent>
+          
+          <TabsContent value="inventory" className="w-full">
+            <InventoryPage bolNumber={bolNumber} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

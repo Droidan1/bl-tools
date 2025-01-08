@@ -26,29 +26,29 @@ const Index = () => {
             <TabsTrigger value="home">Home</TabsTrigger>
             <TabsTrigger value="inventory">Inventory</TabsTrigger>
           </TabsList>
-        </Tabs>
 
-        <div className="w-full max-w-md mx-auto mb-8">
-          <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
-            <FormField
-              id="bolNumber"
-              label="BOL #"
-              value={bolNumber}
-              onChange={setBolNumber}
-              placeholder="Enter BOL number"
-              required
-              className="bg-white/95 rounded-lg border-0 shadow-sm"
-            />
+          <div className="w-full max-w-md mx-auto mb-8">
+            <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
+              <FormField
+                id="bolNumber"
+                label="BOL #"
+                value={bolNumber}
+                onChange={setBolNumber}
+                placeholder="Enter BOL number"
+                required
+                className="bg-white/95 rounded-lg border-0 shadow-sm"
+              />
+            </div>
           </div>
-        </div>
           
-        <TabsContent value="home" className="w-full">
-          <InventoryPage bolNumber={bolNumber} />
-        </TabsContent>
-        
-        <TabsContent value="inventory" className="w-full">
-          <InventoryPage bolNumber={bolNumber} />
-        </TabsContent>
+          <TabsContent value="home" className="w-full">
+            <InventoryPage bolNumber={bolNumber} />
+          </TabsContent>
+          
+          <TabsContent value="inventory" className="w-full">
+            <InventoryPage bolNumber={bolNumber} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

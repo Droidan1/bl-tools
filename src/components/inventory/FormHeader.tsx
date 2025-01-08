@@ -14,21 +14,21 @@ export const FormHeader = ({
   storeLocation,
   setStoreLocation 
 }: FormHeaderProps) => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <FormField
-      id="bolNumber"
-      label="BOL #"
-      value={bolNumber}
-      onChange={setBolNumber}
-      placeholder="Enter BOL number"
-      required
-    />
+  <div className="flex flex-col gap-4">
     <FormField
       id="storeLocation"
       label="Store Location"
       value={storeLocation}
       onChange={setStoreLocation}
       placeholder="Enter store location"
+      required
+    />
+    <FormField
+      id="bolNumber"
+      label="BOL #"
+      value={bolNumber}
+      onChange={setBolNumber}
+      placeholder="Enter BOL number"
       required
     />
   </div>

@@ -58,7 +58,7 @@ export const InventoryManager = ({ bolNumber }: InventoryManagerProps) => {
           ? { 
               ...item, 
               ...newItem,
-              photoUrl: shortenedPhotoUrl || newItem.photoUrl,
+              photoUrl: shortenedPhotoUrl || newItem.photoUrl || null,
               bolNumber 
             }
           : item
@@ -69,7 +69,7 @@ export const InventoryManager = ({ bolNumber }: InventoryManagerProps) => {
     } else {
       const item: InventoryItem = {
         ...newItem,
-        photoUrl: shortenedPhotoUrl || newItem.photoUrl,
+        photoUrl: shortenedPhotoUrl || newItem.photoUrl || null,
         bolNumber,
         id: crypto.randomUUID(),
         timestamp: new Date(),

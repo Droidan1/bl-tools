@@ -10,7 +10,7 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
   const fields: ExtractedFields = {};
 
   lines.forEach(line => {
-    // Only look for "Item: XXXXX" format
+    // Look for "Item: XXXXX" format for SAP number
     if (line.toLowerCase().includes('item:')) {
       const itemMatch = line.match(/Item:\s*(\d+)/i);
       if (itemMatch) {
@@ -18,25 +18,16 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       }
     }
     
-    // Look for barcode (any sequence of digits and letters)
-    if (/\b[A-Z0-9]{8,}\b/i.test(line)) {
-      fields.barcode = line.match(/\b[A-Z0-9]{8,}\b/i)?.[0];
-    }
-    
-    // Look for store location (typically starts with "Store" or contains "Location")
-    if (line.toLowerCase().includes('store') || line.toLowerCase().includes('location')) {
-      fields.storeLocation = line.trim();
-    }
-    
-    // Look for BOL number (typically starts with "BOL" or contains "Bill of Lading")
-    if (line.toLowerCase().includes('bol') || line.toLowerCase().includes('bill of lading')) {
-      fields.bolNumber = line.match(/\b[A-Z0-9-]{4,}\b/i)?.[0];
+    // Look for P-XXXXXX-XXXXXX format for barcode
+    const barcodeMatch = line.match(/P-\d{6}-\d{6}/);
+    if (barcodeMatch) {
+      fields.barcode = barcodeMatch[0];
     }
   });
 
   // Log the extracted fields for debugging
-  console.log('Extracted fields:', fields);
   console.log('Original text:', text);
+  console.log('Extracted fields:', fields);
 
   return fields;
 };

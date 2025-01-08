@@ -1,7 +1,6 @@
 import React, { RefObject } from 'react';
-import { Camera, ScanText } from 'lucide-react';
-import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { InteractiveHoverButton } from '../ui/interactive-hover-button';
 
 interface BarcodeInputFieldProps {
   barcode: string;
@@ -31,24 +30,18 @@ export const BarcodeInputField = ({
         ref={inputRef}
         required
       />
-      <Button
+      <InteractiveHoverButton
         type="button"
-        variant="secondary"
-        size="icon"
         onClick={onScanClick}
+        text="Barcode"
         className="shrink-0"
-      >
-        <Camera className="h-4 w-4" />
-      </Button>
-      <Button
+      />
+      <InteractiveHoverButton
         type="button"
-        variant="secondary"
-        size="icon"
         onClick={onOCRClick}
+        text="Scan"
         className="shrink-0"
-      >
-        <ScanText className="h-4 w-4" />
-      </Button>
+      />
     </div>
   </div>
 );

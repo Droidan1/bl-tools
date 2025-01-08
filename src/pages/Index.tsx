@@ -1,11 +1,17 @@
 import { useState } from 'react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { TabsContent } from "@/components/ui/tabs";
 import { FormField } from '@/components/inventory/FormField';
 import InventoryPage from './InventoryPage';
+import { AnimatedTabs } from '@/components/ui/animated-tabs';
 
 const Index = () => {
   const [bolNumber, setBolNumber] = useState('');
   const [activeTab, setActiveTab] = useState('home');
+
+  const tabs = [
+    { id: 'home', label: 'Home' },
+    { id: 'inventory', label: 'Inventory' },
+  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -21,34 +27,39 @@ const Index = () => {
           />
         </div>
 
-        <Tabs defaultValue="home" className="w-full mb-8" value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 mb-8">
-            <TabsTrigger value="home">Home</TabsTrigger>
-            <TabsTrigger value="inventory">Inventory</TabsTrigger>
-          </TabsList>
+        <div className="w-full mb-8">
+          <AnimatedTabs 
+            tabs={tabs}
+            defaultTab={activeTab}
+            onChange={setActiveTab}
+          />
+        </div>
 
-          <div className="w-full max-w-md mx-auto mb-8">
-            <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
-              <FormField
-                id="bolNumber"
-                label="BOL #"
-                value={bolNumber}
-                onChange={setBolNumber}
-                placeholder="Enter BOL number"
-                required
-                className="bg-white/95 rounded-lg border-0 shadow-sm"
-              />
-            </div>
+        <div className="w-full max-w-md mx-auto mb-8">
+          <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
+            <FormField
+              id="bolNumber"
+              label="BOL #"
+              value={bolNumber}
+              onChange={setBolNumber}
+              placeholder="Enter BOL number"
+              required
+              className="bg-white/95 rounded-lg border-0 shadow-sm"
+            />
           </div>
-          
-          <TabsContent value="home" className="w-full">
+        </div>
+        
+        {activeTab === 'home' && (
+          <div className="w-full">
             <InventoryPage bolNumber={bolNumber} />
-          </TabsContent>
-          
-          <TabsContent value="inventory" className="w-full">
+          </div>
+        )}
+        
+        {activeTab === 'inventory' && (
+          <div className="w-full">
             <InventoryPage bolNumber={bolNumber} />
-          </TabsContent>
-        </Tabs>
+          </div>
+        )}
       </div>
     </div>
   );

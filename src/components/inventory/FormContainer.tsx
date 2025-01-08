@@ -7,7 +7,9 @@ interface FormContainerProps {
 }
 
 export const FormContainer = ({ children, onSubmit }: FormContainerProps) => (
-  <form onSubmit={onSubmit} className={formStyles.container}>
-    {children}
-  </form>
+  <div className="w-full flex justify-center px-4 sm:px-0">
+    <form onSubmit={onSubmit} className={formStyles.container}>
+      {children}
+    </form>
+  </div>
 );

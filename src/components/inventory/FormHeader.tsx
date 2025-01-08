@@ -14,7 +14,7 @@ export const FormHeader = ({
   storeLocation,
   setStoreLocation 
 }: FormHeaderProps) => (
-  <div className="flex flex-col gap-4">
+  <div className="flex flex-col gap-4 w-full">
     <FormField
       id="storeLocation"
       label="Store Location"

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FormField } from '@/components/inventory/FormField';
+import { FormHeader } from '@/components/inventory/FormHeader';
 import InventoryPage from './InventoryPage';
 import { AnimatedTabs } from '@/components/ui/animated-tabs';
 import { Input } from "@/components/ui/input";
@@ -7,6 +8,7 @@ import type { InventoryItem } from '@/types/inventory';
 
 const Index = () => {
   const [bolNumber, setBolNumber] = useState('');
+  const [storeLocation, setStoreLocation] = useState('');
   const [activeTab, setActiveTab] = useState('add-pallets');
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<InventoryItem[]>([]);
@@ -41,14 +43,11 @@ const Index = () => {
         <div className="w-full max-w-md mx-auto mb-8">
           {activeTab === 'add-pallets' ? (
             <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
-              <FormField
-                id="bolNumber"
-                label="BOL #"
-                value={bolNumber}
-                onChange={setBolNumber}
-                placeholder="Enter BOL number"
-                required
-                className="bg-white/95 rounded-lg border-0 shadow-sm"
+              <FormHeader
+                bolNumber={bolNumber}
+                setBolNumber={setBolNumber}
+                storeLocation={storeLocation}
+                setStoreLocation={setStoreLocation}
               />
             </div>
           ) : (

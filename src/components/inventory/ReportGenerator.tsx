@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Mail } from "lucide-react";
+import { Download } from "lucide-react";
 import type { InventoryItem } from '@/types/inventory';
 
 interface ReportGeneratorProps {
@@ -10,7 +10,7 @@ interface ReportGeneratorProps {
 }
 
 export const ReportGenerator = ({ items, disabled, onClear }: ReportGeneratorProps) => {
-  const handleSendReport = async () => {
+  const handleDownloadReport = () => {
     const csvRows = items.map(item => {
       const escapeCsvField = (field: string) => {
         if (field.includes(',') || field.includes('"') || field.includes('\n')) {
@@ -37,42 +37,25 @@ export const ReportGenerator = ({ items, disabled, onClear }: ReportGeneratorPro
     const date = new Date().toLocaleDateString().replace(/\//g, '-');
     const fileName = `inventory-report-${date}.csv`;
 
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onload = () => {
-      const base64data = reader.result?.toString().split(',')[1];
-      
-      const gmailSubject = encodeURIComponent(`Inventory Report ${date}`);
-      const gmailBody = encodeURIComponent('Please find attached the inventory report.');
-      
-      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=kbowers@retjg.com&su=${gmailSubject}&body=${gmailBody}`;
-      window.open(gmailUrl, '_blank');
-      
-      toast("Email Prepared", {
-        description: "Gmail compose window opened. Please attach the downloaded report.",
-        duration: 3000,
-      });
-
-      // Clear entries after sending report
-      onClear();
-    };
-
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.download = fileName;
     link.href = url;
     link.click();
     URL.revokeObjectURL(url);
+
+    toast.success("Report downloaded successfully");
+    onClear();
   };
 
   return (
     <Button 
-      onClick={handleSendReport}
+      onClick={handleDownloadReport}
       variant="outline"
       className="flex items-center gap-2 w-full sm:w-auto order-2 sm:order-none bg-white text-gray-900 hover:bg-black hover:text-white border border-gray-200"
       disabled={disabled}
     >
-      <Mail className="h-4 w-4" />
+      <Download className="h-4 w-4" />
       Send Report
     </Button>
   );

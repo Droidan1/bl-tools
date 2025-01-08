@@ -28,9 +28,15 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'environment' }
-      });
+      const constraints = {
+        video: {
+          facingMode: 'environment',
+          width: { ideal: 1920 },
+          height: { ideal: 1080 }
+        }
+      };
+      
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
@@ -57,14 +63,23 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     if (!videoRef.current) return;
 
     const canvas = document.createElement('canvas');
-    canvas.width = videoRef.current.videoWidth;
-    canvas.height = videoRef.current.videoHeight;
-    const ctx = canvas.getContext('2d');
+    const video = videoRef.current;
     
+    // Use the actual video dimensions
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    ctx.drawImage(videoRef.current, 0, 0);
-    const dataUrl = canvas.toDataURL('image/jpeg');
+    // Flip the image horizontally if using front camera
+    if (video.style.transform.includes('scaleX(-1)')) {
+      ctx.scale(-1, 1);
+      ctx.translate(-canvas.width, 0);
+    }
+
+    ctx.drawImage(video, 0, 0);
+    const dataUrl = canvas.toDataURL('image/jpeg', 1.0); // Use maximum quality
     setPreviewUrl(dataUrl);
     
     toast({
@@ -76,18 +91,23 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     try {
       setIsProcessing(true);
       const worker = await createWorker();
-      await (worker as any).loadLanguage('eng');
-      await (worker as any).initialize('eng');
+      
+      // Configure Tesseract for better text recognition
+      await worker.setParameters({
+        tessedit_char_whitelist: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-:#',
+        tessedit_pageseg_mode: '1',
+      });
       
       const { data: { text } } = await worker.recognize(canvas);
       await worker.terminate();
 
+      console.log('Raw OCR text:', text); // Debug log
       const extractedFields = extractFieldsFromText(text);
       
       if (Object.keys(extractedFields).length === 0) {
         toast({
           title: "No data found",
-          description: "Could not extract any information from the image",
+          description: "Could not extract any information from the image. Please try again with better lighting and focus.",
           variant: "destructive",
           duration: 3000,
         });
@@ -105,7 +125,7 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       console.error('OCR Error:', error);
       toast({
         title: "Error",
-        description: "Failed to process the image",
+        description: "Failed to process the image. Please try again.",
         variant: "destructive",
         duration: 3000,
       });

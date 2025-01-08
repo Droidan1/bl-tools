@@ -18,15 +18,17 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
     const cleanLine = line.trim();
     console.log('Processing line:', cleanLine);
 
-    // Extract "# of Units:" pattern first
-    const unitsMatch = cleanLine.match(/#\s*of\s*units\s*:\s*(\d+)/i);
+    // Extract "#U:" pattern for units
+    const unitsMatch = cleanLine.match(/^#U:\s*(\d+)$/i) || 
+                      cleanLine.match(/#\s*of\s*units\s*:\s*(\d+)/i);
     if (unitsMatch) {
-      console.log('Found # of Units match:', unitsMatch[1]);
+      console.log('Found Units match:', unitsMatch[1]);
       fields.quantity = parseInt(unitsMatch[1], 10);
     }
 
-    // Extract "Item:" pattern
-    const itemMatch = cleanLine.match(/item\s*:\s*(\d+)/i);
+    // Extract "I:" pattern for item number
+    const itemMatch = cleanLine.match(/^I:\s*(\d+)$/i) || 
+                     cleanLine.match(/item\s*:\s*(\d+)/i);
     if (itemMatch) {
       console.log('Found Item match:', itemMatch[1]);
       fields.sapNumber = itemMatch[1];
@@ -45,18 +47,20 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
   if (!fields.quantity || !fields.sapNumber) {
     const fullText = text.replace(/\n/g, ' ').replace(/\s+/g, ' ');
     
-    // Fallback for # of Units
+    // Fallback for units
     if (!fields.quantity) {
-      const unitsMatch = fullText.match(/#\s*of\s*units\s*:\s*(\d+)/i);
+      const unitsMatch = fullText.match(/#U:\s*(\d+)/i) ||
+                        fullText.match(/#\s*of\s*units\s*:\s*(\d+)/i);
       if (unitsMatch) {
-        console.log('Found # of Units from fulltext:', unitsMatch[1]);
+        console.log('Found Units from fulltext:', unitsMatch[1]);
         fields.quantity = parseInt(unitsMatch[1], 10);
       }
     }
 
-    // Fallback for Item
+    // Fallback for item
     if (!fields.sapNumber) {
-      const itemMatch = fullText.match(/item\s*:\s*(\d+)/i);
+      const itemMatch = fullText.match(/I:\s*(\d+)/i) ||
+                       fullText.match(/item\s*:\s*(\d+)/i);
       if (itemMatch) {
         console.log('Found Item from fulltext:', itemMatch[1]);
         fields.sapNumber = itemMatch[1];

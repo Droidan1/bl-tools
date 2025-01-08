@@ -76,10 +76,12 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
     sapNumber?: string;
     barcode?: string;
     storeLocation?: string;
+    quantity?: number;
   }) => {
     if (fields.sapNumber) setSapNumber(fields.sapNumber);
     if (fields.barcode) setBarcode(fields.barcode);
     if (fields.storeLocation) setStoreLocation(fields.storeLocation);
+    if (fields.quantity) setQuantity(fields.quantity);
     setShowOCRScanner(false);
   };
 

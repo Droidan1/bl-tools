@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { useToast } from './ui/use-toast';
 import { CameraPermissionError } from './scanner/CameraPermissionError';
 import { CameraPreview } from './scanner/CameraPreview';
-import { createWorker, Worker } from 'tesseract.js';
+import { createWorker } from 'tesseract.js';
 import { extractFieldsFromText } from '@/utils/ocrUtils';
 
 interface OCRScannerProps {
@@ -13,6 +13,7 @@ interface OCRScannerProps {
     barcode?: string;
     storeLocation?: string;
     bolNumber?: string;
+    quantity?: number;
   }) => void;
   onClose: () => void;
 }

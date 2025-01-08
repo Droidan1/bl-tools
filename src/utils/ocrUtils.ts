@@ -3,6 +3,7 @@ interface ExtractedFields {
   barcode?: string;
   storeLocation?: string;
   bolNumber?: string;
+  quantity?: number;
 }
 
 export const extractFieldsFromText = (text: string): ExtractedFields => {
@@ -29,6 +30,16 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
     if (barcodeMatch) {
       console.log('Found barcode match:', barcodeMatch[0], 'in line:', line);
       fields.barcode = barcodeMatch[0];
+    }
+
+    // Look for "# of Units:" format for quantity
+    const quantityRegex = /#\s*of\s*units:?\s*(\d+)/i;
+    if (quantityRegex.test(line)) {
+      const quantityMatch = line.match(quantityRegex);
+      if (quantityMatch) {
+        console.log('Found quantity match:', quantityMatch[1], 'in line:', line);
+        fields.quantity = parseInt(quantityMatch[1], 10);
+      }
     }
   });
 

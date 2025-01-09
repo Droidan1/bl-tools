@@ -32,7 +32,9 @@ export const InventoryManager = ({
   });
 
   const handleEdit = (item: InventoryItem) => {
+    console.log('handleEdit called with item:', item);
     setEditingItem(item);
+    console.log('editingItem state after update:', item);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -40,6 +42,8 @@ export const InventoryManager = ({
     setItems([]);
     toast.success("All entries have been cleared");
   };
+
+  console.log('Current editingItem state:', editingItem);
 
   return (
     <div className="grid gap-6">

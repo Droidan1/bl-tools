@@ -16,6 +16,8 @@ interface InventoryFormProps {
 }
 
 export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) => {
+  console.log('InventoryForm received initialValues:', initialValues);
+  
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const formState = useFormState(initialValues);
   
@@ -67,6 +69,10 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
 
   return (
     <FormContainer onSubmit={handleSubmit}>
+      <FormHeader 
+        storeLocation={formState.storeLocation}
+        setStoreLocation={formState.setStoreLocation}
+      />
       <FormFields
         barcode={formState.barcode}
         sapNumber={formState.sapNumber}

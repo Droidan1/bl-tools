@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import type { InventoryItem } from '@/types/inventory';
 
 export const useFormState = (initialValues?: InventoryItem) => {
+  console.log('useFormState called with initialValues:', initialValues);
+  
   const [sapNumber, setSapNumber] = useState(initialValues?.sapNumber || '');
   const [quantity, setQuantity] = useState(initialValues?.quantity || 1);
   const [barcode, setBarcode] = useState(initialValues?.barcode || '');
@@ -11,6 +13,7 @@ export const useFormState = (initialValues?: InventoryItem) => {
   const [showCamera, setShowCamera] = useState(false);
 
   useEffect(() => {
+    console.log('useFormState useEffect triggered with initialValues:', initialValues);
     if (initialValues) {
       setSapNumber(initialValues.sapNumber);
       setQuantity(initialValues.quantity);

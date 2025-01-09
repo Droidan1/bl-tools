@@ -7,6 +7,7 @@ interface InventoryPageProps {
   searchQuery: string;
   items: InventoryItem[];
   setItems: (items: InventoryItem[]) => void;
+  setActiveTab?: (tab: string) => void;
 }
 
 const InventoryPage = ({ 
@@ -14,18 +15,18 @@ const InventoryPage = ({
   showRecentEntries, 
   searchQuery,
   items,
-  setItems
+  setItems,
+  setActiveTab
 }: InventoryPageProps) => {
   return (
-    <div className="w-full">
-      <InventoryManager 
-        bolNumber={bolNumber} 
-        showRecentEntries={showRecentEntries} 
-        searchQuery={searchQuery}
-        items={items}
-        setItems={setItems}
-      />
-    </div>
+    <InventoryManager 
+      bolNumber={bolNumber}
+      showRecentEntries={showRecentEntries}
+      searchQuery={searchQuery}
+      items={items}
+      setItems={setItems}
+      setActiveTab={setActiveTab}
+    />
   );
 };
 

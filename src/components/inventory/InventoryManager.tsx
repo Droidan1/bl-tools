@@ -12,6 +12,7 @@ interface InventoryManagerProps {
   searchQuery: string;
   items: InventoryItem[];
   setItems: (items: InventoryItem[]) => void;
+  setActiveTab?: (tab: string) => void;  // Add this prop
 }
 
 export const InventoryManager = ({ 
@@ -19,7 +20,8 @@ export const InventoryManager = ({
   showRecentEntries, 
   searchQuery,
   items,
-  setItems
+  setItems,
+  setActiveTab  // Add this prop
 }: InventoryManagerProps) => {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
 
@@ -35,6 +37,10 @@ export const InventoryManager = ({
     console.log('handleEdit called with item:', item);
     setEditingItem(item);
     console.log('editingItem state after update:', item);
+    // Switch to add-pallets tab when editing
+    if (setActiveTab) {
+      setActiveTab('add-pallets');
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -47,7 +53,7 @@ export const InventoryManager = ({
 
   return (
     <div className="grid gap-6">
-      {!showRecentEntries && (
+      {(!showRecentEntries || editingItem) && (
         <div className="w-full flex justify-center px-4 sm:px-0">
           <div className="w-full max-w-md mx-auto">
             <InventoryForm 

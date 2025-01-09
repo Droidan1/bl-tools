@@ -78,29 +78,16 @@ const Index = () => {
           )}
         </div>
         
-        {activeTab === 'add-pallets' && (
-          <div className="w-full">
-            <InventoryPage 
-              bolNumber={bolNumber} 
-              showRecentEntries={false} 
-              searchQuery="" 
-              items={items}
-              setItems={setItems}
-            />
-          </div>
-        )}
-        
-        {activeTab === 'inventory' && (
-          <div className="w-full">
-            <InventoryPage 
-              bolNumber={bolNumber} 
-              showRecentEntries={true} 
-              searchQuery={searchQuery}
-              items={items}
-              setItems={setItems}
-            />
-          </div>
-        )}
+        <div className="w-full">
+          <InventoryPage 
+            bolNumber={bolNumber} 
+            showRecentEntries={activeTab === 'inventory'} 
+            searchQuery={searchQuery}
+            items={items}
+            setItems={setItems}
+            setActiveTab={setActiveTab}
+          />
+        </div>
       </div>
     </div>
   );

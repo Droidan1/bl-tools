@@ -1,4 +1,4 @@
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import type { InventoryItem } from '@/types/inventory';
 
 interface UseFormSubmitProps {
@@ -20,22 +20,16 @@ export const useFormSubmit = ({
   onSubmit,
   resetForm
 }: UseFormSubmitProps) => {
-  const { toast } = useToast();
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!sapNumber.trim() || !barcode.trim() || !storeLocation.trim()) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
+    if (!sapNumber?.trim() || !barcode?.trim() || !storeLocation?.trim()) {
+      toast.error("Please fill in all required fields");
       return;
     }
-    
+
     try {
-      await onSubmit({
+      onSubmit({
         sapNumber: sapNumber.trim(),
         quantity,
         barcode: barcode.trim(),
@@ -43,20 +37,13 @@ export const useFormSubmit = ({
         photoUrl: photoUrl || '',
       });
 
-      toast({
-        title: "Success",
-        description: "Item added successfully",
-      });
+      toast.success(`Added ${quantity} units of ${sapNumber}`);
 
       if (resetForm) {
         resetForm();
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add item. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to add item. Please try again.");
     }
   };
 

@@ -76,10 +76,8 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
         barcode={formState.barcode}
         sapNumber={formState.sapNumber}
         quantity={formState.quantity}
-        storeLocation={formState.storeLocation}
         onBarcodeChange={handleBarcodeChange}
         onSAPNumberChange={formState.setSapNumber}
-        onStoreLocationChange={formState.setStoreLocation}
         onQuantityChange={formState.setQuantity}
         onQuantityIncrement={() => formState.setQuantity(prev => prev + 1)}
         onQuantityDecrement={() => formState.setQuantity(prev => Math.max(1, prev - 1))}

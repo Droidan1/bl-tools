@@ -56,13 +56,11 @@ export const InventoryManager = ({
       
       {showRecentEntries && (
         <div className="w-full px-4 sm:px-0">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6">
-            <div className="w-full sm:w-auto">
-              <h2 className="text-xl font-semibold text-gray-900 text-center sm:text-left">
-                Recent Entries {searchQuery && `(${items.length} results)`}
-              </h2>
-            </div>
-            <div className="w-full sm:w-auto flex justify-center sm:justify-end">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 text-center w-full sm:w-auto sm:text-left">
+              Recent Entries {searchQuery && `(${items.length} results)`}
+            </h2>
+            <div className="w-full sm:w-auto flex justify-center">
               <ReportGenerator 
                 items={items} 
                 disabled={items.length === 0} 
@@ -70,7 +68,7 @@ export const InventoryManager = ({
               />
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-elevated overflow-hidden border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
             <div className="overflow-x-auto">
               <div className="min-w-full inline-block align-middle">
                 <FilteredItemsList 

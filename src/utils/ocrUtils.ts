@@ -27,9 +27,8 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       fields.quantity = parseInt(unitsMatch[1], 10);
     }
 
-    // Extract SAP number with more flexible pattern matching
-    const sapMatch = cleanLine.match(/(?:I:|Item:|CL|:)\s*(\d{5,6})/i) ||
-                    cleanLine.match(/^(\d{5,6})$/);
+    // Extract SAP number specifically after "I:" or "Item:"
+    const sapMatch = cleanLine.match(/(?:I:|Item:)\s*(\d{5,6})/i);
     if (sapMatch) {
       console.log('Found SAP match:', sapMatch[1]);
       fields.sapNumber = sapMatch[1];
@@ -68,10 +67,9 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       }
     }
 
-    // Fallback for SAP number
+    // Fallback for SAP number specifically after "I:" or "Item:"
     if (!fields.sapNumber) {
-      const sapMatch = fullText.match(/(?:I:|Item:|CL|:)\s*(\d{5,6})/i) ||
-                      fullText.match(/\b(\d{5,6})\b/);
+      const sapMatch = fullText.match(/(?:I:|Item:)\s*(\d{5,6})/i);
       if (sapMatch) {
         console.log('Found SAP from fulltext:', sapMatch[1]);
         fields.sapNumber = sapMatch[1];

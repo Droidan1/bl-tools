@@ -13,6 +13,14 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
   console.log('Processing text:', text);
   console.log('Split into lines:', lines);
 
+  // Define patterns at the top level of the function
+  const barcodePatterns = [
+    /(?:PRM-)\d{6}-\d{6}/i,
+    /(?:P-)\d{6}-\d{6}/i,
+    /PRM\d{6}\d{6}/i,
+    /P\d{6}\d{6}/i
+  ];
+
   // First pass: Process each line for exact matches
   lines.forEach(line => {
     const cleanLine = line.trim();
@@ -36,13 +44,6 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
     }
 
     // Extract both P- and PRM- Barcode formats with enhanced pattern matching
-    const barcodePatterns = [
-      /(?:PRM-)\d{6}-\d{6}/i,
-      /(?:P-)\d{6}-\d{6}/i,
-      /PRM\d{6}\d{6}/i,
-      /P\d{6}\d{6}/i
-    ];
-
     for (const pattern of barcodePatterns) {
       const barcodeMatch = cleanLine.match(pattern);
       if (barcodeMatch) {

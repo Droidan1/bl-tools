@@ -14,8 +14,7 @@ export const SubmitButton = ({ isEditing, isValid }: SubmitButtonProps) => {
     <div className={formStyles.buttonContainer}>
       <Button 
         type="submit" 
-        variant="default"
-        className={`w-full ${isValid ? 'bg-black hover:bg-black/90' : 'bg-gray-500 cursor-not-allowed'}`}
+        className={`w-full ${isValid ? 'bg-black hover:bg-black/90' : 'bg-gray-500'}`}
         disabled={!isValid}
       >
         {isEditing ? 'Update Item' : 'Add Tag'}

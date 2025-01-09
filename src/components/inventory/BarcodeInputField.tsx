@@ -21,14 +21,8 @@ export const BarcodeInputField = ({
     <div className="flex justify-center gap-2 mb-2">
       <InteractiveHoverButton
         type="button"
-        onClick={onScanClick}
-        text="Barcode"
-        className="shrink-0"
-      />
-      <InteractiveHoverButton
-        type="button"
         onClick={onOCRClick}
-        text="Scan"
+        text="OCR Scan"
         className="shrink-0"
       />
     </div>

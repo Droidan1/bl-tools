@@ -64,19 +64,9 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   }, [initialValues]);
 
   const isFormValidState = isFormValid(formState.sapNumber, formState.barcode, formState.storeLocation);
-  console.log('Form validation state:', {
-    sapNumber: formState.sapNumber,
-    barcode: formState.barcode,
-    storeLocation: formState.storeLocation,
-    isValid: isFormValidState
-  });
 
   return (
     <FormContainer onSubmit={handleSubmit}>
-      <FormHeader
-        storeLocation={formState.storeLocation}
-        setStoreLocation={formState.setStoreLocation}
-      />
       <FormFields
         barcode={formState.barcode}
         sapNumber={formState.sapNumber}

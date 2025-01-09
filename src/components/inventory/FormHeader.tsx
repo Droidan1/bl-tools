@@ -2,15 +2,11 @@ import React from 'react';
 import { FormField } from './FormField';
 
 interface FormHeaderProps {
-  bolNumber: string;
-  setBolNumber: (value: string) => void;
   storeLocation: string;
   setStoreLocation: (value: string) => void;
 }
 
 export const FormHeader = ({ 
-  bolNumber, 
-  setBolNumber,
   storeLocation,
   setStoreLocation 
 }: FormHeaderProps) => (
@@ -21,14 +17,6 @@ export const FormHeader = ({
       value={storeLocation}
       onChange={setStoreLocation}
       placeholder="Enter store location"
-      required
-    />
-    <FormField
-      id="bolNumber"
-      label="BOL #"
-      value={bolNumber}
-      onChange={setBolNumber}
-      placeholder="Enter BOL number"
       required
     />
   </div>

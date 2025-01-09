@@ -44,10 +44,16 @@ const Index = () => {
           {activeTab === 'add-pallets' ? (
             <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
               <FormHeader
-                bolNumber={bolNumber}
-                setBolNumber={setBolNumber}
                 storeLocation={storeLocation}
                 setStoreLocation={setStoreLocation}
+              />
+              <FormField
+                id="bolNumber"
+                label="BOL #"
+                value={bolNumber}
+                onChange={setBolNumber}
+                placeholder="Enter BOL number"
+                required
               />
             </div>
           ) : (

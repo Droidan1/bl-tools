@@ -24,6 +24,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       formState.setQuantity(1);
       formState.setBarcode('');
       formState.setPhotoUrl(null);
+      formState.setStoreLocation('');
       barcodeInputRef.current?.focus();
     }
   };
@@ -61,6 +62,8 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
     }
   }, [initialValues]);
 
+  const isValid = isFormValid(formState.sapNumber, formState.barcode, formState.storeLocation);
+
   return (
     <FormContainer onSubmit={handleSubmit}>
       <FormFields
@@ -85,7 +88,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
 
       <SubmitButton 
         isEditing={!!initialValues}
-        isValid={isFormValid(formState.sapNumber, formState.barcode, formState.storeLocation)}
+        isValid={isValid}
       />
 
       <ScannerModals

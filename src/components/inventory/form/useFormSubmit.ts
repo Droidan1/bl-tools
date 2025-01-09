@@ -22,13 +22,16 @@ export const useFormSubmit = ({
 }: UseFormSubmitProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted with values:', { sapNumber, barcode, storeLocation });
 
     if (!sapNumber?.trim() || !barcode?.trim() || !storeLocation?.trim()) {
+      console.log('Validation failed');
       toast.error("Please fill in all required fields");
       return;
     }
 
     try {
+      console.log('Submitting form...');
       onSubmit({
         sapNumber: sapNumber.trim(),
         quantity,
@@ -37,12 +40,14 @@ export const useFormSubmit = ({
         photoUrl: photoUrl || '',
       });
 
+      console.log('Form submitted successfully');
       toast.success(`Added ${quantity} units of ${sapNumber}`);
 
       if (resetForm) {
         resetForm();
       }
     } catch (error) {
+      console.error('Form submission error:', error);
       toast.error("Failed to add item. Please try again.");
     }
   };

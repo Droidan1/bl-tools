@@ -13,56 +13,39 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
   console.log('Processing text:', text);
   console.log('Split into lines:', lines);
 
-  // Define patterns at the top level of the function
-  const barcodePatterns = [
-    /(?:PRM-)\d{6}-\d{6}/i,
-    /(?:P-)\d{6}-\d{6}/i,
-    /PRM\d{6}\d{6}/i,
-    /P\d{6}\d{6}/i
-  ];
-
-  // First pass: Process each line for exact matches
+  // Process each line for exact matches
   lines.forEach(line => {
     const cleanLine = line.trim();
     console.log('Processing line:', cleanLine);
 
-    // Extract "#U:" pattern for units
-    const unitsMatch = cleanLine.match(/^#U:\s*(\d+)$/i) || 
-                      cleanLine.match(/#\s*of\s*units\s*:\s*(\d+)/i);
+    // Extract quantity with more flexible pattern matching
+    const unitsMatch = cleanLine.match(/^#\s*[0O]?\s*U\s*:\s*(\d+)$/i) || 
+                      cleanLine.match(/#\s*[0O]?\s*of\s*units\s*:\s*(\d+)/i) ||
+                      cleanLine.match(/units\s*:\s*(\d+)/i);
     if (unitsMatch) {
       console.log('Found Units match:', unitsMatch[1]);
       fields.quantity = parseInt(unitsMatch[1], 10);
     }
 
-    // Extract "I:" or "Item:" pattern for item number
-    const itemMatch = cleanLine.match(/^I:\s*(\d+)$/i) || 
-                     cleanLine.match(/^Item\s*:\s*(\d+)$/i) ||
-                     cleanLine.match(/item\s*:\s*(\d+)/i);
-    if (itemMatch) {
-      console.log('Found Item match:', itemMatch[1]);
-      fields.sapNumber = itemMatch[1];
+    // Extract SAP number with more flexible pattern matching
+    // Look for 5-6 digit numbers that could be SAP numbers
+    const sapMatch = cleanLine.match(/(?:I:|Item:|CL|:)\s*(\d{5,6})/i) ||
+                    cleanLine.match(/^(\d{5,6})$/);
+    if (sapMatch) {
+      console.log('Found SAP match:', sapMatch[1]);
+      fields.sapNumber = sapMatch[1];
     }
 
-    // Extract both P- and PRM- Barcode formats with enhanced pattern matching
-    for (const pattern of barcodePatterns) {
-      const barcodeMatch = cleanLine.match(pattern);
-      if (barcodeMatch) {
-        console.log('Found barcode match:', barcodeMatch[0]);
-        // Clean up the barcode and ensure proper format
-        let barcode = barcodeMatch[0].replace(/\s+/g, '');
-        
-        // Add hyphens if missing
-        if (!barcode.includes('-')) {
-          if (barcode.startsWith('PRM')) {
-            barcode = `PRM-${barcode.slice(3, 9)}-${barcode.slice(9)}`;
-          } else if (barcode.startsWith('P')) {
-            barcode = `P-${barcode.slice(1, 7)}-${barcode.slice(7)}`;
-          }
-        }
-        
-        fields.barcode = barcode;
-        break;
-      }
+    // Enhanced PRM barcode pattern matching
+    const prmPattern = /PRM[-\s]*(\d{1,6})[-\s]*(\d{1,6})/i;
+    const barcodeMatch = cleanLine.match(prmPattern);
+    if (barcodeMatch) {
+      // Clean up and format the barcode
+      const firstPart = barcodeMatch[1].padEnd(6, '0');
+      const secondPart = barcodeMatch[2].padEnd(6, '0');
+      const formattedBarcode = `PRM-${firstPart}-${secondPart}`;
+      console.log('Found barcode match:', formattedBarcode);
+      fields.barcode = formattedBarcode;
     }
   });
 
@@ -70,43 +53,37 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
   if (!fields.quantity || !fields.sapNumber || !fields.barcode) {
     const fullText = text.replace(/\n/g, ' ').replace(/\s+/g, ' ');
     
-    // Fallback for units
+    // Fallback for units with more flexible pattern
     if (!fields.quantity) {
-      const unitsMatch = fullText.match(/#U:\s*(\d+)/i) ||
-                        fullText.match(/#\s*of\s*units\s*:\s*(\d+)/i);
+      const unitsMatch = fullText.match(/#\s*[0O]?\s*U\s*:\s*(\d+)/i) ||
+                        fullText.match(/#\s*[0O]?\s*of\s*units\s*:\s*(\d+)/i) ||
+                        fullText.match(/units\s*:\s*(\d+)/i);
       if (unitsMatch) {
         console.log('Found Units from fulltext:', unitsMatch[1]);
         fields.quantity = parseInt(unitsMatch[1], 10);
       }
     }
 
-    // Fallback for item with both formats
+    // Fallback for SAP number
     if (!fields.sapNumber) {
-      const itemMatch = fullText.match(/I:\s*(\d+)/i) ||
-                       fullText.match(/Item\s*:\s*(\d+)/i) ||
-                       fullText.match(/item\s*:\s*(\d+)/i);
-      if (itemMatch) {
-        console.log('Found Item from fulltext:', itemMatch[1]);
-        fields.sapNumber = itemMatch[1];
+      const sapMatch = fullText.match(/(?:I:|Item:|CL|:)\s*(\d{5,6})/i) ||
+                      fullText.match(/\b(\d{5,6})\b/);
+      if (sapMatch) {
+        console.log('Found SAP from fulltext:', sapMatch[1]);
+        fields.sapNumber = sapMatch[1];
       }
     }
 
-    // Fallback for barcode
+    // Fallback for PRM barcode
     if (!fields.barcode) {
-      for (const pattern of barcodePatterns) {
-        const barcodeMatch = fullText.match(pattern);
-        if (barcodeMatch) {
-          let barcode = barcodeMatch[0].replace(/\s+/g, '');
-          if (!barcode.includes('-')) {
-            if (barcode.startsWith('PRM')) {
-              barcode = `PRM-${barcode.slice(3, 9)}-${barcode.slice(9)}`;
-            } else if (barcode.startsWith('P')) {
-              barcode = `P-${barcode.slice(1, 7)}-${barcode.slice(7)}`;
-            }
-          }
-          fields.barcode = barcode;
-          break;
-        }
+      const prmPattern = /PRM[-\s]*(\d{1,6})[-\s]*(\d{1,6})/i;
+      const barcodeMatch = fullText.match(prmPattern);
+      if (barcodeMatch) {
+        const firstPart = barcodeMatch[1].padEnd(6, '0');
+        const secondPart = barcodeMatch[2].padEnd(6, '0');
+        const formattedBarcode = `PRM-${firstPart}-${secondPart}`;
+        console.log('Found barcode from fulltext:', formattedBarcode);
+        fields.barcode = formattedBarcode;
       }
     }
   }

@@ -22,7 +22,7 @@ export const useFormSubmit = ({
 }: UseFormSubmitProps) => {
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!sapNumber.trim() || !barcode.trim() || !storeLocation.trim()) {
@@ -34,16 +34,29 @@ export const useFormSubmit = ({
       return;
     }
     
-    onSubmit({
-      sapNumber: sapNumber.trim(),
-      quantity,
-      barcode: barcode.trim(),
-      storeLocation: storeLocation.trim(),
-      photoUrl: photoUrl || '',
-    });
+    try {
+      await onSubmit({
+        sapNumber: sapNumber.trim(),
+        quantity,
+        barcode: barcode.trim(),
+        storeLocation: storeLocation.trim(),
+        photoUrl: photoUrl || '',
+      });
 
-    if (resetForm) {
-      resetForm();
+      toast({
+        title: "Success",
+        description: "Item added successfully",
+      });
+
+      if (resetForm) {
+        resetForm();
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to add item. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 

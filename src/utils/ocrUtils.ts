@@ -35,12 +35,16 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       fields.sapNumber = itemMatch[1];
     }
 
-    // Extract both P- and PRM- Barcode formats
-    const barcodeMatch = cleanLine.match(/(P|PRM)-\d{6}-\d{6}/i) ||
-                        cleanLine.match(/(P|PRM)\s*-\s*\d{6}\s*-\s*\d{6}/i);
+    // Extract both P- and PRM- Barcode formats with more flexible pattern
+    const barcodeMatch = cleanLine.match(/(?:P|PRM)-\d{6}-\d{6}/i) ||
+                        cleanLine.match(/(?:P|PRM)\s*-\s*\d{6}\s*-\s*\d{6}/i) ||
+                        cleanLine.match(/PRM\s*\d{6}\s*\d{6}/i); // Also match without hyphen
     if (barcodeMatch) {
       console.log('Found barcode match:', barcodeMatch[0]);
-      fields.barcode = barcodeMatch[0].replace(/\s+/g, '');
+      // Clean up the barcode by removing spaces and ensuring proper format
+      fields.barcode = barcodeMatch[0]
+        .replace(/\s+/g, '')
+        .replace(/^(P|PRM)(\d{6})(\d{6})$/, '$1-$2-$3'); // Add hyphens if missing
     }
   });
 

@@ -81,7 +81,9 @@ export const InventoryTable = ({ items, onEdit, highlightText = '' }: InventoryT
                   variant="ghost"
                   size="icon"
                   onClick={() => onEdit(item)}
-                  className="h-8 w-8 hover:shadow-custom transition-shadow"
+                  className="h-8 w-8 hover:shadow-custom transition-shadow hover:bg-gray-100"
+                  title="Edit entry"
+                  aria-label={`Edit ${item.sapNumber}`}
                 >
                   <Pencil className="h-4 w-4" />
                 </Button>

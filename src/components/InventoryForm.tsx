@@ -4,7 +4,6 @@ import { SubmitButton } from './inventory/SubmitButton';
 import { ScannerModals } from './inventory/ScannerModals';
 import { PhotoSection } from './inventory/PhotoSection';
 import { FormFields } from './inventory/FormFields';
-import { FormHeader } from './inventory/FormHeader';
 import { useFormState } from './inventory/form/useFormState';
 import { useFormSubmit } from './inventory/form/useFormSubmit';
 import { isFormValid } from './inventory/form/FormValidation';
@@ -69,10 +68,6 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
 
   return (
     <FormContainer onSubmit={handleSubmit}>
-      <FormHeader 
-        storeLocation={formState.storeLocation}
-        setStoreLocation={formState.setStoreLocation}
-      />
       <FormFields
         barcode={formState.barcode}
         sapNumber={formState.sapNumber}

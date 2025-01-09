@@ -26,17 +26,18 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       fields.quantity = parseInt(unitsMatch[1], 10);
     }
 
-    // Extract "I:" pattern for item number
+    // Extract "I:" or "Item:" pattern for item number
     const itemMatch = cleanLine.match(/^I:\s*(\d+)$/i) || 
+                     cleanLine.match(/^Item\s*:\s*(\d+)$/i) ||
                      cleanLine.match(/item\s*:\s*(\d+)/i);
     if (itemMatch) {
       console.log('Found Item match:', itemMatch[1]);
       fields.sapNumber = itemMatch[1];
     }
 
-    // Extract Barcode
-    const barcodeMatch = cleanLine.match(/P-\d{6}-\d{6}/i) ||
-                        cleanLine.match(/P\s*-\s*\d{6}\s*-\s*\d{6}/i);
+    // Extract both P- and PRM- Barcode formats
+    const barcodeMatch = cleanLine.match(/(P|PRM)-\d{6}-\d{6}/i) ||
+                        cleanLine.match(/(P|PRM)\s*-\s*\d{6}\s*-\s*\d{6}/i);
     if (barcodeMatch) {
       console.log('Found barcode match:', barcodeMatch[0]);
       fields.barcode = barcodeMatch[0].replace(/\s+/g, '');
@@ -57,9 +58,10 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       }
     }
 
-    // Fallback for item
+    // Fallback for item with both formats
     if (!fields.sapNumber) {
       const itemMatch = fullText.match(/I:\s*(\d+)/i) ||
+                       fullText.match(/Item\s*:\s*(\d+)/i) ||
                        fullText.match(/item\s*:\s*(\d+)/i);
       if (itemMatch) {
         console.log('Found Item from fulltext:', itemMatch[1]);

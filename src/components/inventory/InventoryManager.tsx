@@ -44,8 +44,8 @@ export const InventoryManager = ({
   return (
     <div className="grid gap-6">
       {!showRecentEntries && (
-        <div className="w-full flex justify-center px-4 sm:px-0">
-          <div className="w-full max-w-md mx-auto">
+        <div className="w-full flex justify-center">
+          <div className="w-full max-w-md">
             <InventoryForm 
               onSubmit={handleAddItem} 
               initialValues={editingItem || undefined}
@@ -55,23 +55,19 @@ export const InventoryManager = ({
       )}
       
       {showRecentEntries && (
-        <div className="w-full px-4 sm:px-0">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6">
-            <div className="w-full sm:w-auto">
-              <h2 className="text-xl font-semibold text-gray-900 text-center sm:text-left">
-                Recent Entries {searchQuery && `(${items.length} results)`}
-              </h2>
-            </div>
-            <div className="w-full sm:w-auto flex justify-center sm:justify-end">
-              <ReportGenerator 
-                items={items} 
-                disabled={items.length === 0} 
-                onClear={handleClearEntries}
-              />
-            </div>
+        <div className="w-full">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 order-1 sm:order-none">
+              Recent Entries {searchQuery && `(${items.length} results)`}
+            </h2>
+            <ReportGenerator 
+              items={items} 
+              disabled={items.length === 0} 
+              onClear={handleClearEntries}
+            />
           </div>
-          <div className="bg-white rounded-xl shadow-elevated overflow-hidden border border-gray-200">
-            <div className="overflow-x-auto">
+          <div className="bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
+            <div className="overflow-x-auto -mx-4 sm:mx-0">
               <div className="min-w-full inline-block align-middle">
                 <FilteredItemsList 
                   items={items}

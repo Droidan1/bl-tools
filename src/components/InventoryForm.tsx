@@ -23,12 +23,10 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  // Updated validation logic to include storeLocation
-  const isFormValid = Boolean(
-    sapNumber.trim() && 
-    barcode.trim() &&
-    storeLocation.trim()
-  );
+  // Simplified validation logic
+  const isFormValid = sapNumber.trim() !== '' && 
+                     barcode.trim() !== '' && 
+                     storeLocation.trim() !== '';
 
   useEffect(() => {
     if (initialValues) {
@@ -42,6 +40,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted with values:', { sapNumber, barcode, storeLocation });
 
     if (!sapNumber.trim() || !barcode.trim() || !storeLocation.trim()) {
       toast({

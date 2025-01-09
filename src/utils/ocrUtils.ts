@@ -35,13 +35,20 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       fields.sapNumber = sapMatch[1];
     }
 
-    // Enhanced PRM barcode pattern matching without zero padding
+    // Enhanced PRM and P- barcode pattern matching
     const prmPattern = /PRM[-\s]*(\d+)[-\s]*(\d+)/i;
-    const barcodeMatch = cleanLine.match(prmPattern);
-    if (barcodeMatch) {
-      // Keep exact digits without padding
-      const formattedBarcode = `PRM-${barcodeMatch[1]}-${barcodeMatch[2]}`;
-      console.log('Found barcode match:', formattedBarcode);
+    const pPattern = /P[-\s]*(\d+)[-\s]*(\d+)/i;
+    
+    const prmMatch = cleanLine.match(prmPattern);
+    const pMatch = cleanLine.match(pPattern);
+    
+    if (prmMatch) {
+      const formattedBarcode = `PRM-${prmMatch[1]}-${prmMatch[2]}`;
+      console.log('Found PRM barcode match:', formattedBarcode);
+      fields.barcode = formattedBarcode;
+    } else if (pMatch) {
+      const formattedBarcode = `P-${pMatch[1]}-${pMatch[2]}`;
+      console.log('Found P- barcode match:', formattedBarcode);
       fields.barcode = formattedBarcode;
     }
   });
@@ -71,13 +78,18 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       }
     }
 
-    // Fallback for PRM barcode without padding
+    // Fallback for barcodes
     if (!fields.barcode) {
-      const prmPattern = /PRM[-\s]*(\d+)[-\s]*(\d+)/i;
-      const barcodeMatch = fullText.match(prmPattern);
-      if (barcodeMatch) {
-        const formattedBarcode = `PRM-${barcodeMatch[1]}-${barcodeMatch[2]}`;
-        console.log('Found barcode from fulltext:', formattedBarcode);
+      const prmMatch = fullText.match(/PRM[-\s]*(\d+)[-\s]*(\d+)/i);
+      const pMatch = fullText.match(/P[-\s]*(\d+)[-\s]*(\d+)/i);
+      
+      if (prmMatch) {
+        const formattedBarcode = `PRM-${prmMatch[1]}-${prmMatch[2]}`;
+        console.log('Found PRM barcode from fulltext:', formattedBarcode);
+        fields.barcode = formattedBarcode;
+      } else if (pMatch) {
+        const formattedBarcode = `P-${pMatch[1]}-${pMatch[2]}`;
+        console.log('Found P- barcode from fulltext:', formattedBarcode);
         fields.barcode = formattedBarcode;
       }
     }

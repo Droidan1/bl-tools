@@ -23,10 +23,10 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
+  // Updated validation logic to properly check required fields
   const isFormValid = Boolean(
-    barcode && 
-    storeLocation && 
-    sapNumber
+    sapNumber.trim() && 
+    barcode.trim()
   );
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!barcode || !storeLocation || !sapNumber) {
+    if (!sapNumber.trim() || !barcode.trim()) {
       toast({
         title: "Error",
         description: "Please fill in all required fields",
@@ -52,9 +52,9 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
     }
     
     onSubmit({
-      sapNumber,
+      sapNumber: sapNumber.trim(),
       quantity,
-      barcode,
+      barcode: barcode.trim(),
       storeLocation,
       photoUrl: photoUrl || '',
     });

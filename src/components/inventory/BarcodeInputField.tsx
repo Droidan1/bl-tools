@@ -22,7 +22,7 @@ export const BarcodeInputField = ({
       <InteractiveHoverButton
         type="button"
         onClick={onOCRClick}
-        text="OCR Scan"
+        text="Scan"
         className="shrink-0"
       />
     </div>

@@ -28,7 +28,6 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
     }
 
     // Extract SAP number with more flexible pattern matching
-    // Look for 5-6 digit numbers that could be SAP numbers
     const sapMatch = cleanLine.match(/(?:I:|Item:|CL|:)\s*(\d{5,6})/i) ||
                     cleanLine.match(/^(\d{5,6})$/);
     if (sapMatch) {
@@ -36,14 +35,12 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       fields.sapNumber = sapMatch[1];
     }
 
-    // Enhanced PRM barcode pattern matching
-    const prmPattern = /PRM[-\s]*(\d{1,6})[-\s]*(\d{1,6})/i;
+    // Enhanced PRM barcode pattern matching without zero padding
+    const prmPattern = /PRM[-\s]*(\d+)[-\s]*(\d+)/i;
     const barcodeMatch = cleanLine.match(prmPattern);
     if (barcodeMatch) {
-      // Clean up and format the barcode
-      const firstPart = barcodeMatch[1].padEnd(6, '0');
-      const secondPart = barcodeMatch[2].padEnd(6, '0');
-      const formattedBarcode = `PRM-${firstPart}-${secondPart}`;
+      // Keep exact digits without padding
+      const formattedBarcode = `PRM-${barcodeMatch[1]}-${barcodeMatch[2]}`;
       console.log('Found barcode match:', formattedBarcode);
       fields.barcode = formattedBarcode;
     }
@@ -74,14 +71,12 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       }
     }
 
-    // Fallback for PRM barcode
+    // Fallback for PRM barcode without padding
     if (!fields.barcode) {
-      const prmPattern = /PRM[-\s]*(\d{1,6})[-\s]*(\d{1,6})/i;
+      const prmPattern = /PRM[-\s]*(\d+)[-\s]*(\d+)/i;
       const barcodeMatch = fullText.match(prmPattern);
       if (barcodeMatch) {
-        const firstPart = barcodeMatch[1].padEnd(6, '0');
-        const secondPart = barcodeMatch[2].padEnd(6, '0');
-        const formattedBarcode = `PRM-${firstPart}-${secondPart}`;
+        const formattedBarcode = `PRM-${barcodeMatch[1]}-${barcodeMatch[2]}`;
         console.log('Found barcode from fulltext:', formattedBarcode);
         fields.barcode = formattedBarcode;
       }

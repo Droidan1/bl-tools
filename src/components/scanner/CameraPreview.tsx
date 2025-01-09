@@ -26,7 +26,7 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
         />
         {!isProcessing && !previewUrl && (
           <Button
-            className="absolute bottom-4 left-1/2 transform -translate-x-1/2"
+            className="absolute top-4 left-1/2 transform -translate-x-1/2"
             onClick={onCapture}
           >
             <Camera className="mr-2 h-4 w-4" />

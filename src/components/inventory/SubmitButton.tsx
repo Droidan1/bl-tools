@@ -7,18 +7,14 @@ interface SubmitButtonProps {
   isValid: boolean;
 }
 
-export const SubmitButton = ({ isEditing, isValid }: SubmitButtonProps) => {
-  console.log('SubmitButton props:', { isEditing, isValid });
-  
-  return (
-    <div className={formStyles.buttonContainer}>
-      <Button 
-        type="submit" 
-        className={`w-full ${isValid ? 'bg-black hover:bg-black/90' : 'bg-gray-500'}`}
-        disabled={!isValid}
-      >
-        {isEditing ? 'Update Item' : 'Add Tag'}
-      </Button>
-    </div>
-  );
-};
+export const SubmitButton = ({ isEditing, isValid }: SubmitButtonProps) => (
+  <div className={formStyles.buttonContainer}>
+    <Button 
+      type="submit" 
+      className="w-full bg-black hover:bg-black/90 disabled:opacity-50"
+      disabled={!isValid}
+    >
+      {isEditing ? 'Update Item' : 'Add Tag'}
+    </Button>
+  </div>
+);

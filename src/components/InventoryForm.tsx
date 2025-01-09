@@ -23,10 +23,11 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  // Simplified validation logic
-  const isFormValid = sapNumber.trim() !== '' && 
-                     barcode.trim() !== '' && 
-                     storeLocation.trim() !== '';
+  const isFormValid = () => {
+    return sapNumber.trim().length > 0 && 
+           barcode.trim().length > 0 && 
+           storeLocation.trim().length > 0;
+  };
 
   useEffect(() => {
     if (initialValues) {
@@ -125,7 +126,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
 
       <SubmitButton 
         isEditing={!!initialValues} 
-        isValid={isFormValid}
+        isValid={isFormValid()}
       />
 
       <ScannerModals

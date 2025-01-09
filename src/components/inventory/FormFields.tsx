@@ -7,8 +7,10 @@ interface FormFieldsProps {
   barcode: string;
   sapNumber: string;
   quantity: number;
+  storeLocation: string;
   onBarcodeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSAPNumberChange: (value: string) => void;
+  onStoreLocationChange: (value: string) => void;
   onQuantityChange: (value: number) => void;
   onQuantityIncrement: () => void;
   onQuantityDecrement: () => void;
@@ -21,8 +23,10 @@ export const FormFields = ({
   barcode,
   sapNumber,
   quantity,
+  storeLocation,
   onBarcodeChange,
   onSAPNumberChange,
+  onStoreLocationChange,
   onQuantityChange,
   onQuantityIncrement,
   onQuantityDecrement,

@@ -62,7 +62,13 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
     }
   }, [initialValues]);
 
-  const isValid = isFormValid(formState.sapNumber, formState.barcode, formState.storeLocation);
+  const isFormValidState = isFormValid(formState.sapNumber, formState.barcode, formState.storeLocation);
+  console.log('Form validation state:', {
+    sapNumber: formState.sapNumber,
+    barcode: formState.barcode,
+    storeLocation: formState.storeLocation,
+    isValid: isFormValidState
+  });
 
   return (
     <FormContainer onSubmit={handleSubmit}>
@@ -88,7 +94,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
 
       <SubmitButton 
         isEditing={!!initialValues}
-        isValid={isValid}
+        isValid={isFormValidState}
       />
 
       <ScannerModals

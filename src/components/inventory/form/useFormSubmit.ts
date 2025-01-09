@@ -22,27 +22,27 @@ export const useFormSubmit = ({
 }: UseFormSubmitProps) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted with values:', { sapNumber, barcode, storeLocation });
+    console.log('Form submission attempt:', { sapNumber, barcode, storeLocation });
 
     if (!sapNumber?.trim() || !barcode?.trim() || !storeLocation?.trim()) {
-      console.log('Validation failed');
+      console.log('Form validation failed');
       toast.error("Please fill in all required fields");
       return;
     }
 
     try {
-      console.log('Submitting form...');
-      onSubmit({
+      console.log('Submitting form data...');
+      const formData = {
         sapNumber: sapNumber.trim(),
         quantity,
         barcode: barcode.trim(),
         storeLocation: storeLocation.trim(),
         photoUrl: photoUrl || '',
-      });
-
-      console.log('Form submitted successfully');
-      toast.success(`Added ${quantity} units of ${sapNumber}`);
-
+      };
+      
+      onSubmit(formData);
+      console.log('Form submitted successfully:', formData);
+      
       if (resetForm) {
         resetForm();
       }

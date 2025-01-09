@@ -160,9 +160,9 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 z-50 pt-8">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
-        <div className="flex justify-between items-center mb-4">
+    <div className="fixed inset-0 bg-black/50 flex items-start justify-center p-4 z-50 pt-2">
+      <div className="bg-white rounded-lg p-4 w-full max-w-2xl mt-2">
+        <div className="flex justify-between items-center mb-2">
           <h2 className="text-xl font-semibold">Camera Scanner</h2>
           <Button variant="ghost" size="icon" onClick={onClose}>
             <X className="h-4 w-4" />

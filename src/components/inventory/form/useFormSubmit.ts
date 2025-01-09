@@ -24,7 +24,7 @@ export const useFormSubmit = ({
     e.preventDefault();
     console.log('Form submission attempt:', { sapNumber, barcode, storeLocation });
 
-    if (!sapNumber?.trim() || !barcode?.trim() || !storeLocation?.trim()) {
+    if (!sapNumber?.trim() || !barcode?.trim()) {
       console.log('Form validation failed');
       toast.error("Please fill in all required fields");
       return;

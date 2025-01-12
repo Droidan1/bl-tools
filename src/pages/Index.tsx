@@ -14,12 +14,12 @@ import type { InventoryItem } from '@/types/inventory';
 const tabs = [
   { id: 'add-pallets', label: 'Add Pallets' },
   { id: 'inventory', label: 'Inventory' }
-];
+] as const;
 
 const Index = () => {
   const [bolNumber, setBolNumber] = useState('');
   const [storeLocation, setStoreLocation] = useState('');
-  const [activeTab, setActiveTab] = useState('add-pallets');
+  const [activeTab, setActiveTab] = useState<(typeof tabs)[number]['id']>('add-pallets');
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [showCamera, setShowCamera] = useState(false);

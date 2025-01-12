@@ -16,10 +16,12 @@ const tabs = [
   { id: 'inventory', label: 'Inventory' }
 ] as const;
 
+type TabId = (typeof tabs)[number]['id'];
+
 const Index = () => {
   const [bolNumber, setBolNumber] = useState('');
   const [storeLocation, setStoreLocation] = useState('');
-  const [activeTab, setActiveTab] = useState<(typeof tabs)[number]['id']>('add-pallets');
+  const [activeTab, setActiveTab] = useState<TabId>('add-pallets');
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [showCamera, setShowCamera] = useState(false);
@@ -46,6 +48,10 @@ const Index = () => {
     }
   };
 
+  const handleTabChange = (tab: TabId) => {
+    setActiveTab(tab);
+  };
+
   return (
     <div className="min-h-screen bg-white">
       <div className="container px-4 py-2 mx-auto max-w-7xl flex flex-col items-center">
@@ -64,7 +70,7 @@ const Index = () => {
           <AnimatedTabs 
             tabs={tabs}
             defaultTab={activeTab}
-            onChange={setActiveTab}
+            onChange={handleTabChange}
           />
         </div>
 
@@ -136,7 +142,7 @@ const Index = () => {
             searchQuery={searchQuery}
             items={items}
             setItems={setItems}
-            setActiveTab={setActiveTab}
+            setActiveTab={handleTabChange}
             bolPhotoUrl={bolPhotoUrl}
           />
         </div>

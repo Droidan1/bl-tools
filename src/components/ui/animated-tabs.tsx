@@ -8,20 +8,20 @@ interface Tab {
   label: string;
 }
 
-interface AnimatedTabsProps {
-  tabs: Tab[];
-  defaultTab?: string;
-  onChange?: (tabId: string) => void;
+interface AnimatedTabsProps<T extends string> {
+  tabs: readonly { id: T; label: string; }[];
+  defaultTab?: T;
+  onChange?: (tabId: T) => void;
 }
 
-export function AnimatedTabs({ 
+export function AnimatedTabs<T extends string>({ 
   tabs, 
   defaultTab,
   onChange 
-}: AnimatedTabsProps) {
-  const [activeTab, setActiveTab] = useState(defaultTab || tabs[0].id);
+}: AnimatedTabsProps<T>) {
+  const [activeTab, setActiveTab] = useState<T>(defaultTab || tabs[0].id);
 
-  const handleTabChange = (tabId: string) => {
+  const handleTabChange = (tabId: T) => {
     setActiveTab(tabId);
     onChange?.(tabId);
   };

@@ -8,6 +8,7 @@ interface InventoryPageProps {
   items: InventoryItem[];
   setItems: (items: InventoryItem[]) => void;
   setActiveTab?: (tab: string) => void;
+  bolPhotoUrl?: string | null;
 }
 
 const InventoryPage = ({ 
@@ -16,7 +17,8 @@ const InventoryPage = ({
   searchQuery,
   items,
   setItems,
-  setActiveTab
+  setActiveTab,
+  bolPhotoUrl
 }: InventoryPageProps) => {
   return (
     <InventoryManager 
@@ -26,6 +28,7 @@ const InventoryPage = ({
       items={items}
       setItems={setItems}
       setActiveTab={setActiveTab}
+      bolPhotoUrl={bolPhotoUrl}
     />
   );
 };

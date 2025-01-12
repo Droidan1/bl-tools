@@ -4,6 +4,11 @@ import { FormHeader } from '@/components/inventory/FormHeader';
 import InventoryPage from './InventoryPage';
 import { AnimatedTabs } from '@/components/ui/animated-tabs';
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Camera } from "lucide-react";
+import { PhotoCapture } from '@/components/PhotoCapture';
+import { toast } from "sonner";
+import { uploadBOLPhoto } from '@/lib/storage';
 import type { InventoryItem } from '@/types/inventory';
 
 const Index = () => {
@@ -12,11 +17,29 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState('add-pallets');
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<InventoryItem[]>([]);
+  const [showCamera, setShowCamera] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [bolPhotoUrl, setBolPhotoUrl] = useState<string | null>(null);
 
-  const tabs = [
-    { id: 'add-pallets', label: 'Add Pallets' },
-    { id: 'inventory', label: 'Inventory' },
-  ];
+  const handlePhotoCapture = async (photoUrl: string) => {
+    if (!bolNumber) {
+      toast.error("Please enter a BOL number first");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const publicUrl = await uploadBOLPhoto(photoUrl, bolNumber);
+      setBolPhotoUrl(publicUrl);
+      toast.success("BOL photo uploaded successfully");
+    } catch (error) {
+      toast.error("Failed to upload BOL photo");
+      console.error(error);
+    } finally {
+      setIsUploading(false);
+      setShowCamera(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white">
@@ -47,14 +70,37 @@ const Index = () => {
                 storeLocation={storeLocation}
                 setStoreLocation={setStoreLocation}
               />
-              <FormField
-                id="bolNumber"
-                label="BOL #"
-                value={bolNumber}
-                onChange={setBolNumber}
-                placeholder="Enter BOL number"
-                required
-              />
+              <div className="space-y-4">
+                <FormField
+                  id="bolNumber"
+                  label="BOL #"
+                  value={bolNumber}
+                  onChange={setBolNumber}
+                  placeholder="Enter BOL number"
+                  required
+                />
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => setShowCamera(true)}
+                    disabled={isUploading || !bolNumber}
+                    className="w-full"
+                  >
+                    <Camera className="h-4 w-4 mr-2" />
+                    {isUploading ? 'Uploading...' : 'Take Photo of BOL'}
+                  </Button>
+                  {bolPhotoUrl && (
+                    <div className="relative mt-2">
+                      <img 
+                        src={bolPhotoUrl} 
+                        alt="BOL" 
+                        className="w-full h-40 object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
           ) : (
             <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
@@ -86,9 +132,17 @@ const Index = () => {
             items={items}
             setItems={setItems}
             setActiveTab={setActiveTab}
+            bolPhotoUrl={bolPhotoUrl}
           />
         </div>
       </div>
+
+      {showCamera && (
+        <PhotoCapture
+          onCapture={handlePhotoCapture}
+          onClose={() => setShowCamera(false)}
+        />
+      )}
     </div>
   );
 };

@@ -12,7 +12,8 @@ interface InventoryManagerProps {
   searchQuery: string;
   items: InventoryItem[];
   setItems: (items: InventoryItem[]) => void;
-  setActiveTab?: (tab: string) => void;  // Add this prop
+  setActiveTab?: (tab: string) => void;
+  bolPhotoUrl?: string | null;  // Added this prop
 }
 
 export const InventoryManager = ({ 
@@ -21,7 +22,8 @@ export const InventoryManager = ({
   searchQuery,
   items,
   setItems,
-  setActiveTab  // Add this prop
+  setActiveTab,
+  bolPhotoUrl  // Added this prop
 }: InventoryManagerProps) => {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
 

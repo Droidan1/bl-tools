@@ -11,6 +11,11 @@ import { toast } from "sonner";
 import { uploadBOLPhoto } from '@/lib/storage';
 import type { InventoryItem } from '@/types/inventory';
 
+const tabs = [
+  { id: 'add-pallets', label: 'Add Pallets' },
+  { id: 'inventory', label: 'Inventory' }
+];
+
 const Index = () => {
   const [bolNumber, setBolNumber] = useState('');
   const [storeLocation, setStoreLocation] = useState('');

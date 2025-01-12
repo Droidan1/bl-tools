@@ -28,7 +28,6 @@ export const PhotoSection = ({ photoUrl, onShowCamera, onPhotoDelete }: PhotoSec
     try {
       setIsDeleting(true);
       
-      // Extract the file path from the URL
       const url = new URL(photoUrl!);
       const pathSegments = url.pathname.split('/');
       const filePath = pathSegments[pathSegments.length - 1];
@@ -58,28 +57,28 @@ export const PhotoSection = ({ photoUrl, onShowCamera, onPhotoDelete }: PhotoSec
               alt="Captured" 
               className="w-full h-40 object-cover rounded-lg"
             />
-            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg">
               <Button
                 type="button"
                 variant="destructive"
                 size="icon"
                 onClick={() => setShowDeleteDialog(true)}
                 disabled={isDeleting}
-                className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-2 right-2 z-10 h-8 w-8"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={onShowCamera}
+                className="absolute bottom-2 right-2 z-10"
+              >
+                <Camera className="h-4 w-4 mr-2" />
+                Retake
+              </Button>
             </div>
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={onShowCamera}
-              className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-            >
-              <Camera className="h-4 w-4 mr-2" />
-              Retake
-            </Button>
           </div>
         ) : (
           <Button

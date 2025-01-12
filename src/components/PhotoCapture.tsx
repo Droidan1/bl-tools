@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Button } from './ui/button';
-import { X, Camera } from 'lucide-react';
+import { X, Camera, RotateCcw } from 'lucide-react';
 import { useToast } from './ui/use-toast';
 
 interface PhotoCaptureProps {
@@ -69,6 +69,11 @@ export const PhotoCapture = ({ onCapture, onClose }: PhotoCaptureProps) => {
     }
   };
 
+  const handleRetake = () => {
+    setPreviewUrl(null);
+    startCamera();
+  };
+
   const handleClose = () => {
     stopCamera();
     onClose();
@@ -129,7 +134,8 @@ export const PhotoCapture = ({ onCapture, onClose }: PhotoCaptureProps) => {
                   className="w-full h-[600px] object-cover rounded-lg"
                 />
                 <div className="flex justify-center gap-2 mt-4">
-                  <Button variant="outline" onClick={() => setPreviewUrl(null)}>
+                  <Button variant="outline" onClick={handleRetake}>
+                    <RotateCcw className="mr-2 h-4 w-4" />
                     Retake
                   </Button>
                   <Button onClick={handleConfirm}>

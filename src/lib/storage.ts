@@ -1,6 +1,7 @@
 import { supabase } from './supabase';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const BUCKET_NAME = 'inventory-photos';
 
 export async function uploadBOLPhoto(photoDataUrl: string, bolNumber: string): Promise<string | null> {
   try {
@@ -15,12 +16,12 @@ export async function uploadBOLPhoto(photoDataUrl: string, bolNumber: string): P
 
     // Generate unique filename
     const timestamp = new Date().getTime();
-    const filename = `${timestamp}-${bolNumber}.jpg`;
+    const filename = `bol/${timestamp}-${bolNumber}.jpg`;
 
     // Upload to Supabase
     const { data, error } = await supabase.storage
-      .from('inventory-photos')
-      .upload(`bol/${filename}`, blob, {
+      .from(BUCKET_NAME)
+      .upload(filename, blob, {
         contentType: 'image/jpeg',
         cacheControl: '3600',
         upsert: false
@@ -33,8 +34,8 @@ export async function uploadBOLPhoto(photoDataUrl: string, bolNumber: string): P
 
     // Get public URL
     const { data: { publicUrl } } = supabase.storage
-      .from('inventory-photos')
-      .getPublicUrl(`bol/${filename}`);
+      .from(BUCKET_NAME)
+      .getPublicUrl(filename);
 
     return publicUrl;
   } catch (error) {

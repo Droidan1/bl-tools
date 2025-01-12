@@ -60,6 +60,7 @@ export const PhotoCapture = ({ onCapture, onClose }: PhotoCaptureProps) => {
     ctx.drawImage(videoRef.current, 0, 0);
     const dataUrl = canvas.toDataURL('image/jpeg');
     setPreviewUrl(dataUrl);
+    stopCamera(); // Stop camera after capturing
   };
 
   const handleConfirm = () => {
@@ -127,14 +128,18 @@ export const PhotoCapture = ({ onCapture, onClose }: PhotoCaptureProps) => {
                 </Button>
               </>
             ) : (
-              <>
+              <div className="space-y-4">
                 <img
                   src={previewUrl}
                   alt="Preview"
                   className="w-full h-[600px] object-cover rounded-lg"
                 />
-                <div className="flex justify-center gap-2 mt-4">
-                  <Button variant="outline" onClick={handleRetake}>
+                <div className="flex justify-center gap-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleRetake}
+                    className="flex items-center"
+                  >
                     <RotateCcw className="mr-2 h-4 w-4" />
                     Retake
                   </Button>
@@ -142,7 +147,7 @@ export const PhotoCapture = ({ onCapture, onClose }: PhotoCaptureProps) => {
                     Confirm
                   </Button>
                 </div>
-              </>
+              </div>
             )}
           </div>
         </div>

@@ -38,6 +38,7 @@ export const PhotoCapture = ({ onCapture, onClose }: PhotoCaptureProps) => {
   };
 
   const stopCamera = () => {
+    console.log('Stopping camera');
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
@@ -48,6 +49,7 @@ export const PhotoCapture = ({ onCapture, onClose }: PhotoCaptureProps) => {
   };
 
   const capturePhoto = () => {
+    console.log('Capturing photo');
     if (!videoRef.current) return;
 
     const canvas = document.createElement('canvas');
@@ -59,18 +61,21 @@ export const PhotoCapture = ({ onCapture, onClose }: PhotoCaptureProps) => {
 
     ctx.drawImage(videoRef.current, 0, 0);
     const dataUrl = canvas.toDataURL('image/jpeg');
+    console.log('Photo captured, setting preview URL');
     setPreviewUrl(dataUrl);
-    stopCamera(); // Stop camera after capturing
+    stopCamera();
   };
 
   const handleConfirm = () => {
+    console.log('Confirming photo');
     if (previewUrl) {
       onCapture(previewUrl);
-      stopCamera();
+      onClose();
     }
   };
 
   const handleRetake = () => {
+    console.log('Retaking photo');
     setPreviewUrl(null);
     startCamera();
   };
@@ -81,6 +86,7 @@ export const PhotoCapture = ({ onCapture, onClose }: PhotoCaptureProps) => {
   };
 
   React.useEffect(() => {
+    console.log('Component mounted, starting camera');
     startCamera();
     return () => {
       stopCamera();

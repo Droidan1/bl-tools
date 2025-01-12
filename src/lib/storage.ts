@@ -43,3 +43,18 @@ export async function uploadBOLPhoto(photoDataUrl: string, bolNumber: string): P
     throw error;
   }
 }
+
+export async function deletePhoto(photoPath: string): Promise<void> {
+  try {
+    const { error } = await supabase.storage
+      .from(BUCKET_NAME)
+      .remove([photoPath]);
+
+    if (error) {
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error deleting photo:', error);
+    throw error;
+  }
+}

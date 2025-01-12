@@ -19,7 +19,11 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const formState = useFormState(initialValues);
-  
+
+  const handlePhotoDelete = () => {
+    formState.setPhotoUrl(null);
+  };
+
   const resetForm = () => {
     if (!initialValues) {
       formState.setSapNumber('');
@@ -84,6 +88,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       <PhotoSection
         photoUrl={formState.photoUrl}
         onShowCamera={() => formState.setShowCamera(true)}
+        onPhotoDelete={handlePhotoDelete}
       />
 
       <SubmitButton 

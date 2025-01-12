@@ -26,7 +26,10 @@ export async function uploadBOLPhoto(photoDataUrl: string, bolNumber: string): P
         upsert: false
       });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Storage error:', error);
+      throw error;
+    }
 
     // Get public URL
     const { data: { publicUrl } } = supabase.storage

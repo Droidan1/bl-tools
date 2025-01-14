@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Package, Calculator, FileText, LogOut } from "lucide-react";
+import { Package, Calculator, FileText, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const Sidebar = ({ open, setOpen, children }: { open: boolean; setOpen: (open: boolean) => void; children: React.ReactNode }) => {
@@ -38,7 +38,7 @@ const SidebarLink = ({ link }: { link: { label: string; href: string; icon: Reac
 };
 
 export function SidebarNav() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   
   const links = [
     {
@@ -63,7 +63,19 @@ export function SidebarNav() {
       <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            {open ? <Logo /> : <LogoIcon />}
+            <div className="flex items-center justify-between">
+              {open ? <Logo /> : <LogoIcon />}
+              <button
+                onClick={() => setOpen(!open)}
+                className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-md transition-colors"
+              >
+                {open ? (
+                  <ChevronLeft className="h-5 w-5 text-neutral-700 dark:text-neutral-200" />
+                ) : (
+                  <ChevronRight className="h-5 w-5 text-neutral-700 dark:text-neutral-200" />
+                )}
+              </button>
+            </div>
             <div className="mt-8 flex flex-col gap-2">
               {links.map((link, idx) => (
                 <SidebarLink key={idx} link={link} />

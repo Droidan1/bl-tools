@@ -32,10 +32,10 @@ export async function uploadBOLPhoto(photoDataUrl: string, bolNumber: string): P
       throw error;
     }
 
-    // Get public URL
+    // Get public URL - using getPublicUrl instead of constructing URL manually
     const { data: { publicUrl } } = supabase.storage
       .from(BUCKET_NAME)
-      .getPublicUrl(filename);
+      .getPublicUrl(data.path);
 
     return publicUrl;
   } catch (error) {

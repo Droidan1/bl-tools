@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarNav } from "@/components/ui/sidebar-nav";
 import Index from "./pages/Index";
 import PhotoPage from "./pages/photos/[id]";
+import Labor from "./pages/Labor";
+import WinSheet from "./pages/WinSheet";
 
 const queryClient = new QueryClient();
 
@@ -21,6 +23,8 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/photos/:id" element={<PhotoPage />} />
+              <Route path="/labor" element={<Labor />} />
+              <Route path="/winsheet" element={<WinSheet />} />
             </Routes>
           </div>
         </div>

@@ -1,43 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Package, Calculator, FileText, ChevronLeft, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-const Sidebar = ({ open, setOpen, children }: { open: boolean; setOpen: (open: boolean) => void; children: React.ReactNode }) => {
-  return (
-    <aside
-      className={cn(
-        "h-full bg-gray-100 dark:bg-neutral-800 w-20 md:w-[300px] relative transition-all duration-300",
-        !open && "md:w-20"
-      )}
-    >
-      {children}
-    </aside>
-  );
-};
-
-const SidebarBody = ({ className, children }: { className?: string; children: React.ReactNode }) => {
-  return (
-    <div className={cn("h-full flex flex-col p-3", className)}>
-      {children}
-    </div>
-  );
-};
-
-const SidebarLink = ({ link }: { link: { label: string; href: string; icon: React.ReactNode } }) => {
-  return (
-    <Link
-      to={link.href}
-      className="flex items-center gap-4 px-3 py-2 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-md transition-colors"
-    >
-      {link.icon}
-      <span className="text-sm font-medium transition-opacity duration-200 md:opacity-100 md:group-[[data-collapsed=true]]:opacity-0">
-        {link.label}
-      </span>
-    </Link>
-  );
-};
+import { Package, Calculator, FileText } from "lucide-react";
+import { Sidebar, SidebarBody, SidebarLink } from "./sidebar";
 
 export function SidebarNav() {
   const [open, setOpen] = useState(false);
@@ -46,17 +11,17 @@ export function SidebarNav() {
     {
       label: "Inventory Receiver",
       href: "/",
-      icon: <Package className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      icon: <Package className="text-white h-5 w-5 flex-shrink-0" />
     },
     {
       label: "Labor Calculator",
       href: "/labor",
-      icon: <Calculator className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      icon: <Calculator className="text-white h-5 w-5 flex-shrink-0" />
     },
     {
       label: "Win Sheet",
       href: "/winsheet",
-      icon: <FileText className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      icon: <FileText className="text-white h-5 w-5 flex-shrink-0" />
     }
   ];
 
@@ -65,20 +30,8 @@ export function SidebarNav() {
       <Sidebar open={open} setOpen={setOpen}>
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            <div className="flex items-center justify-between">
-              {open ? <Logo /> : <LogoIcon />}
-              <button
-                onClick={() => setOpen(!open)}
-                className="p-2 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-md transition-colors"
-              >
-                {open ? (
-                  <ChevronLeft className="h-5 w-5 text-neutral-700 dark:text-neutral-200" />
-                ) : (
-                  <ChevronRight className="h-5 w-5 text-neutral-700 dark:text-neutral-200" />
-                )}
-              </button>
-            </div>
-            <div className="mt-8 flex flex-col gap-2" data-collapsed={!open}>
+            {open ? <Logo /> : <LogoIcon />}
+            <div className="mt-8 flex flex-col gap-2">
               {links.map((link, idx) => (
                 <SidebarLink key={idx} link={link} />
               ))}
@@ -99,13 +52,13 @@ const Logo = () => {
   return (
     <Link
       to="/"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
+      className="font-normal flex space-x-2 items-center text-sm text-white py-1 relative z-20"
     >
-      <div className="h-5 w-6 bg-[#3BB54A] rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
+      <div className="h-5 w-6 bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
       <motion.span
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="font-medium text-black dark:text-white whitespace-pre"
+        className="font-medium text-white whitespace-pre"
       >
         Inventory System
       </motion.span>
@@ -117,9 +70,9 @@ const LogoIcon = () => {
   return (
     <Link
       to="/"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
+      className="font-normal flex space-x-2 items-center text-sm text-white py-1 relative z-20"
     >
-      <div className="h-5 w-6 bg-[#3BB54A] rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
+      <div className="h-5 w-6 bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
     </Link>
   );
 };

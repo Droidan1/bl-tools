@@ -32,7 +32,9 @@ const SidebarLink = ({ link }: { link: { label: string; href: string; icon: Reac
       className="flex items-center gap-4 px-3 py-2 text-neutral-700 dark:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-md transition-colors"
     >
       {link.icon}
-      <span className="text-sm font-medium">{link.label}</span>
+      <span className="text-sm font-medium transition-opacity duration-200 md:opacity-100 md:group-[[data-collapsed=true]]:opacity-0">
+        {link.label}
+      </span>
     </Link>
   );
 };
@@ -76,7 +78,7 @@ export function SidebarNav() {
                 )}
               </button>
             </div>
-            <div className="mt-8 flex flex-col gap-2">
+            <div className="mt-8 flex flex-col gap-2" data-collapsed={!open}>
               {links.map((link, idx) => (
                 <SidebarLink key={idx} link={link} />
               ))}

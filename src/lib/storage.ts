@@ -5,6 +5,8 @@ const BUCKET_NAME = 'inventory-photos';
 
 export async function uploadBOLPhoto(photoDataUrl: string, bolNumber: string): Promise<string | null> {
   try {
+    console.log('Starting photo upload process');
+    
     // Convert base64 to blob
     const response = await fetch(photoDataUrl);
     const blob = await response.blob();
@@ -18,6 +20,8 @@ export async function uploadBOLPhoto(photoDataUrl: string, bolNumber: string): P
     const timestamp = new Date().getTime();
     const filename = `bol/${timestamp}-${bolNumber}.jpg`;
 
+    console.log('Uploading file:', filename);
+
     // Upload to Supabase
     const { data, error } = await supabase.storage
       .from(BUCKET_NAME)
@@ -28,16 +32,23 @@ export async function uploadBOLPhoto(photoDataUrl: string, bolNumber: string): P
       });
 
     if (error) {
-      console.error('Storage error:', error);
+      console.error('Storage upload error:', error);
       throw error;
     }
 
-    // Get public URL - using getPublicUrl instead of constructing URL manually
+    console.log('Upload successful, getting public URL');
+
+    // Get public URL using Supabase's getPublicUrl method
     const { data: { publicUrl } } = supabase.storage
       .from(BUCKET_NAME)
       .getPublicUrl(data.path);
 
-    return publicUrl;
+    console.log('Generated public URL:', publicUrl);
+    
+    // Ensure the URL is properly formatted
+    const cleanUrl = new URL(publicUrl).toString();
+    return cleanUrl;
+
   } catch (error) {
     console.error('Error uploading BOL photo:', error);
     throw error;
@@ -46,13 +57,18 @@ export async function uploadBOLPhoto(photoDataUrl: string, bolNumber: string): P
 
 export async function deletePhoto(photoPath: string): Promise<void> {
   try {
+    console.log('Attempting to delete photo:', photoPath);
+    
     const { error } = await supabase.storage
       .from(BUCKET_NAME)
       .remove([photoPath]);
 
     if (error) {
+      console.error('Storage deletion error:', error);
       throw error;
     }
+
+    console.log('Photo deleted successfully');
   } catch (error) {
     console.error('Error deleting photo:', error);
     throw error;

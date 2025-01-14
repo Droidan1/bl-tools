@@ -13,7 +13,7 @@ export const Logo = () => {
         animate={{ opacity: 1 }}
         className="font-medium text-white whitespace-pre"
       >
-        Inventory System
+        Bargain Lane Store Resources
       </motion.span>
     </Link>
   );

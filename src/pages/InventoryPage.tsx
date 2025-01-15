@@ -6,6 +6,7 @@ interface InventoryPageProps {
   searchQuery: string;
   setActiveTab?: (tab: string) => void;
   bolPhotoUrl?: string | null;
+  storeLocation: string;
 }
 
 const InventoryPage = ({ 
@@ -13,7 +14,8 @@ const InventoryPage = ({
   showRecentEntries, 
   searchQuery,
   setActiveTab,
-  bolPhotoUrl
+  bolPhotoUrl,
+  storeLocation
 }: InventoryPageProps) => {
   return (
     <InventoryManager 
@@ -22,6 +24,7 @@ const InventoryPage = ({
       searchQuery={searchQuery}
       setActiveTab={setActiveTab}
       bolPhotoUrl={bolPhotoUrl}
+      storeLocation={storeLocation}
     />
   );
 };

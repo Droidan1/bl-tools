@@ -13,6 +13,7 @@ interface InventoryManagerProps {
   searchQuery: string;
   setActiveTab?: (tab: string) => void;
   bolPhotoUrl?: string | null;
+  storeLocation: string;
 }
 
 export const InventoryManager = ({ 
@@ -20,7 +21,8 @@ export const InventoryManager = ({
   showRecentEntries, 
   searchQuery,
   setActiveTab,
-  bolPhotoUrl
+  bolPhotoUrl,
+  storeLocation
 }: InventoryManagerProps) => {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const { items, setItems } = useInventoryStore();
@@ -30,7 +32,8 @@ export const InventoryManager = ({
     items, 
     setItems, 
     setEditingItem, 
-    bolNumber 
+    bolNumber,
+    storeLocation 
   });
 
   const handleEdit = (item: InventoryItem) => {
@@ -58,6 +61,7 @@ export const InventoryManager = ({
             <InventoryForm 
               onSubmit={handleAddItem} 
               initialValues={editingItem || undefined}
+              storeLocation={storeLocation}
             />
           </div>
         </div>

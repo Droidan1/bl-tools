@@ -9,7 +9,6 @@ import { Camera } from "lucide-react";
 import { PhotoCapture } from '@/components/PhotoCapture';
 import { toast } from "sonner";
 import { uploadBOLPhoto } from '@/lib/storage';
-import type { InventoryItem } from '@/types/inventory';
 
 const tabs = [
   { id: 'add-pallets', label: 'Add Pallets' },
@@ -141,6 +140,7 @@ const Index = () => {
             searchQuery={searchQuery}
             setActiveTab={handleTabChange}
             bolPhotoUrl={bolPhotoUrl}
+            storeLocation={storeLocation}
           />
         </div>
       </div>

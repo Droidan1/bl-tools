@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import type { InventoryItem } from '@/types/inventory';
 
-export const useFormState = (initialValues?: InventoryItem) => {
+export const useFormState = (initialValues?: InventoryItem, defaultStoreLocation: string = '') => {
   console.log('useFormState initialized with:', initialValues);
+  console.log('useFormState defaultStoreLocation:', defaultStoreLocation);
   
   const [sapNumber, setSapNumber] = useState(initialValues?.sapNumber || '');
   const [quantity, setQuantity] = useState(initialValues?.quantity || 1);
   const [barcode, setBarcode] = useState(initialValues?.barcode || '');
-  const [storeLocation, setStoreLocation] = useState(initialValues?.storeLocation || '');
+  const [storeLocation, setStoreLocation] = useState(initialValues?.storeLocation || defaultStoreLocation);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [showOCRScanner, setShowOCRScanner] = useState(false);
   const [showCamera, setShowCamera] = useState(false);
@@ -22,6 +23,12 @@ export const useFormState = (initialValues?: InventoryItem) => {
       setPhotoUrl(initialValues.photoUrl || null);
     }
   }, [initialValues]);
+
+  useEffect(() => {
+    if (!initialValues) {
+      setStoreLocation(defaultStoreLocation);
+    }
+  }, [defaultStoreLocation, initialValues]);
 
   return {
     sapNumber,

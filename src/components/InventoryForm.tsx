@@ -12,13 +12,15 @@ import type { InventoryItem } from '@/types/inventory';
 interface InventoryFormProps {
   onSubmit: (item: Omit<InventoryItem, 'id' | 'timestamp' | 'bolNumber'>) => void;
   initialValues?: InventoryItem;
+  storeLocation: string;
 }
 
-export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) => {
+export const InventoryForm = ({ onSubmit, initialValues, storeLocation }: InventoryFormProps) => {
   console.log('InventoryForm received initialValues:', initialValues);
+  console.log('InventoryForm received storeLocation:', storeLocation);
   
   const barcodeInputRef = useRef<HTMLInputElement>(null);
-  const formState = useFormState(initialValues);
+  const formState = useFormState(initialValues, storeLocation);
 
   console.log('Current form state:', {
     sapNumber: formState.sapNumber,
@@ -38,7 +40,7 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       formState.setQuantity(1);
       formState.setBarcode('');
       formState.setPhotoUrl(null);
-      formState.setStoreLocation('');
+      formState.setStoreLocation(storeLocation);
       barcodeInputRef.current?.focus();
     }
   };
@@ -75,6 +77,10 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
       barcodeInputRef.current?.focus();
     }
   }, [initialValues]);
+
+  useEffect(() => {
+    formState.setStoreLocation(storeLocation);
+  }, [storeLocation]);
 
   const isFormValidState = isFormValid(formState.sapNumber, formState.barcode, formState.storeLocation);
 

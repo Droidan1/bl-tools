@@ -23,7 +23,6 @@ const Index = () => {
   const [storeLocation, setStoreLocation] = useState('');
   const [activeTab, setActiveTab] = useState<TabId>('add-pallets');
   const [searchQuery, setSearchQuery] = useState('');
-  const [items, setItems] = useState<InventoryItem[]>([]);
   const [showCamera, setShowCamera] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [bolPhotoUrl, setBolPhotoUrl] = useState<string | null>(null);
@@ -140,8 +139,6 @@ const Index = () => {
             bolNumber={bolNumber} 
             showRecentEntries={activeTab === 'inventory'} 
             searchQuery={searchQuery}
-            items={items}
-            setItems={setItems}
             setActiveTab={handleTabChange}
             bolPhotoUrl={bolPhotoUrl}
           />

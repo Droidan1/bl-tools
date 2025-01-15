@@ -27,13 +27,14 @@ export const ReportGenerator = ({ items, disabled, onClear, bolPhotoUrl }: Repor
         item.quantity.toString(),
         escapeCsvField(item.barcode || ''),
         escapeCsvField(item.timestamp.toLocaleDateString()),
-        escapeCsvField(item.photoUrl || ''),
-        escapeCsvField(bolPhotoUrl || '') // Add BOL photo URL
+        escapeCsvField(item.photoUrl || '')
       ].join(',');
     });
 
-    const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp,Item Photo URL,BOL Photo URL';
-    const csvContent = [header, ...csvRows].join('\n');
+    // Add BOL photo URL as a separate row at the beginning
+    const bolPhotoRow = bolPhotoUrl ? `BOL Photo URL,${escapeCsvField(bolPhotoUrl)}` : '';
+    const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp,Item Photo URL';
+    const csvContent = [header, bolPhotoRow, ...csvRows].filter(Boolean).join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv' });
     

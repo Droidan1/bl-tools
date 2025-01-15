@@ -20,6 +20,14 @@ export const InventoryForm = ({ onSubmit, initialValues }: InventoryFormProps) =
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const formState = useFormState(initialValues);
 
+  console.log('Current form state:', {
+    sapNumber: formState.sapNumber,
+    quantity: formState.quantity,
+    barcode: formState.barcode,
+    storeLocation: formState.storeLocation,
+    photoUrl: formState.photoUrl
+  });
+
   const handlePhotoDelete = () => {
     formState.setPhotoUrl(null);
   };

@@ -26,6 +26,8 @@ export const FormSubmissionHandler = ({
   };
 
   const handleAddItem = async (newItem: Omit<InventoryItem, 'id' | 'timestamp' | 'bolNumber'>) => {
+    console.log('FormSubmissionHandler received new item:', newItem);
+    
     if (!bolNumber) {
       toast.error("Please enter a BOL number first");
       return;
@@ -39,8 +41,7 @@ export const FormSubmissionHandler = ({
     let shortenedPhotoUrl = '';
     if (newItem.photoUrl) {
       const shortId = nanoid(8);
-      // Create a properly formatted URL without any trailing colons
-      const baseUrl = window.location.origin.split(':')[0]; // Remove any port number
+      const baseUrl = window.location.origin.split(':')[0];
       const protocol = window.location.protocol;
       const host = window.location.hostname;
       shortenedPhotoUrl = `${protocol}//${host}/photos/${shortId}`;
@@ -70,6 +71,7 @@ export const FormSubmissionHandler = ({
             }
           : item
       );
+      console.log('Updating existing item. Updated items:', updatedItems);
       setItems(updatedItems);
       setEditingItem(null);
       toast.success(`Updated ${newItem.quantity} units of ${newItem.sapNumber}`);
@@ -81,6 +83,7 @@ export const FormSubmissionHandler = ({
         id: crypto.randomUUID(),
         timestamp: new Date(),
       };
+      console.log('Creating new item:', item);
       setItems([item, ...items]);
       toast.success(`Added ${newItem.quantity} units of ${newItem.sapNumber}`);
     }

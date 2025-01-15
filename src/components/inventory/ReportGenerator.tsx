@@ -11,15 +11,15 @@ interface ReportGeneratorProps {
 }
 
 export const ReportGenerator = ({ items, disabled, onClear, bolPhotoUrl }: ReportGeneratorProps) => {
+  const escapeCsvField = (field: string) => {
+    if (field.includes(',') || field.includes('"') || field.includes('\n')) {
+      return `"${field.replace(/"/g, '""')}"`;
+    }
+    return field;
+  };
+
   const handleDownloadReport = () => {
     const csvRows = items.map(item => {
-      const escapeCsvField = (field: string) => {
-        if (field.includes(',') || field.includes('"') || field.includes('\n')) {
-          return `"${field.replace(/"/g, '""')}"`;
-        }
-        return field;
-      };
-
       return [
         escapeCsvField(item.storeLocation),
         escapeCsvField(item.bolNumber || ''),

@@ -39,8 +39,8 @@ export const FormSubmissionHandler = ({
     let shortenedPhotoUrl = '';
     if (newItem.photoUrl) {
       const shortId = nanoid(8);
-      // Get base URL without any trailing slashes or colons
-      const baseUrl = window.location.origin.replace(/[:/]+$/, '');
+      // Clean the base URL by removing trailing slashes and colons
+      const baseUrl = window.location.origin.replace(/[:\/]+$/, '');
       shortenedPhotoUrl = `${baseUrl}/photos/${shortId}`;
       
       const { error } = await supabase

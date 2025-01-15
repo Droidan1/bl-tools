@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, Trash2 } from "lucide-react";
 import type { InventoryItem } from '@/types/inventory';
 
 interface ReportGeneratorProps {
@@ -45,18 +45,28 @@ export const ReportGenerator = ({ items, disabled, onClear }: ReportGeneratorPro
     URL.revokeObjectURL(url);
 
     toast.success("Report downloaded successfully");
-    onClear();
   };
 
   return (
-    <Button 
-      onClick={handleDownloadReport}
-      variant="outline"
-      className="flex items-center gap-2 w-full sm:w-auto order-2 sm:order-none bg-white text-gray-900 hover:bg-black hover:text-white border border-gray-200"
-      disabled={disabled}
-    >
-      <Download className="h-4 w-4" />
-      Download Report
-    </Button>
+    <div className="flex gap-2 w-full sm:w-auto">
+      <Button 
+        onClick={handleDownloadReport}
+        variant="outline"
+        className="flex items-center gap-2 w-full sm:w-auto order-2 sm:order-none bg-white text-gray-900 hover:bg-black hover:text-white border border-gray-200"
+        disabled={disabled}
+      >
+        <Download className="h-4 w-4" />
+        Download Report
+      </Button>
+      <Button 
+        onClick={onClear}
+        variant="destructive"
+        className="flex items-center gap-2 w-full sm:w-auto"
+        disabled={disabled}
+      >
+        <Trash2 className="h-4 w-4" />
+        Clear All
+      </Button>
+    </div>
   );
 };

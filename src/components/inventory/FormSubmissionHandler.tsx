@@ -9,6 +9,7 @@ interface FormSubmissionHandlerProps {
   setItems: (items: InventoryItem[]) => void;
   setEditingItem: (item: InventoryItem | null) => void;
   bolNumber: string;
+  storeLocation: string;
 }
 
 export const FormSubmissionHandler = ({ 
@@ -16,7 +17,8 @@ export const FormSubmissionHandler = ({
   items, 
   setItems, 
   setEditingItem, 
-  bolNumber 
+  bolNumber,
+  storeLocation
 }: FormSubmissionHandlerProps) => {
   const isDuplicate = (newItem: Omit<InventoryItem, 'id' | 'timestamp' | 'bolNumber'>) => {
     return items.some(item => 
@@ -67,7 +69,8 @@ export const FormSubmissionHandler = ({
               ...item, 
               ...newItem,
               photoUrl: shortenedPhotoUrl || newItem.photoUrl || null,
-              bolNumber 
+              bolNumber,
+              storeLocation 
             }
           : item
       );
@@ -80,6 +83,7 @@ export const FormSubmissionHandler = ({
         ...newItem,
         photoUrl: shortenedPhotoUrl || newItem.photoUrl || null,
         bolNumber,
+        storeLocation,
         id: crypto.randomUUID(),
         timestamp: new Date(),
       };

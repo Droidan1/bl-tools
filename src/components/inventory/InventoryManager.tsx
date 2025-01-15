@@ -80,6 +80,7 @@ export const InventoryManager = ({
                 items={items} 
                 disabled={items.length === 0} 
                 onClear={handleClearEntries}
+                bolPhotoUrl={bolPhotoUrl}
               />
             </div>
           </div>

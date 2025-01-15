@@ -7,9 +7,10 @@ interface ReportGeneratorProps {
   items: InventoryItem[];
   disabled: boolean;
   onClear: () => void;
+  bolPhotoUrl?: string | null;
 }
 
-export const ReportGenerator = ({ items, disabled, onClear }: ReportGeneratorProps) => {
+export const ReportGenerator = ({ items, disabled, onClear, bolPhotoUrl }: ReportGeneratorProps) => {
   const handleDownloadReport = () => {
     const csvRows = items.map(item => {
       const escapeCsvField = (field: string) => {
@@ -26,11 +27,12 @@ export const ReportGenerator = ({ items, disabled, onClear }: ReportGeneratorPro
         item.quantity.toString(),
         escapeCsvField(item.barcode || ''),
         escapeCsvField(item.timestamp.toLocaleDateString()),
-        escapeCsvField(item.photoUrl || '')
+        escapeCsvField(item.photoUrl || ''),
+        escapeCsvField(bolPhotoUrl || '') // Add BOL photo URL
       ].join(',');
     });
 
-    const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp,Photo URL';
+    const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp,Item Photo URL,BOL Photo URL';
     const csvContent = [header, ...csvRows].join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv' });

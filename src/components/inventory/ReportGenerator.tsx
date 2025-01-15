@@ -34,8 +34,14 @@ export const ReportGenerator = ({ items, disabled, onClear }: ReportGeneratorPro
     const csvContent = [header, ...csvRows].join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv' });
+    
+    // Get the store location and BOL number from the first item
+    const firstItem = items[0];
+    const storeLocation = firstItem?.storeLocation?.replace(/[^a-zA-Z0-9]/g, '-') || 'unknown-location';
+    const bolNumber = firstItem?.bolNumber?.replace(/[^a-zA-Z0-9]/g, '-') || 'no-bol';
     const date = new Date().toLocaleDateString().replace(/\//g, '-');
-    const fileName = `inventory-report-${date}.csv`;
+    
+    const fileName = `${storeLocation}_${bolNumber}_${date}.csv`;
 
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');

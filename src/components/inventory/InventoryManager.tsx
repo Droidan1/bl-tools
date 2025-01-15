@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from "sonner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { InventoryForm } from '@/components/InventoryForm';
 import { FilteredItemsList } from './FilteredItemsList';
 import { FormSubmissionHandler } from './FormSubmissionHandler';
@@ -13,7 +14,7 @@ interface InventoryManagerProps {
   items: InventoryItem[];
   setItems: (items: InventoryItem[]) => void;
   setActiveTab?: (tab: string) => void;
-  bolPhotoUrl?: string | null;  // Added this prop
+  bolPhotoUrl?: string | null;
 }
 
 export const InventoryManager = ({ 
@@ -23,14 +24,26 @@ export const InventoryManager = ({
   items,
   setItems,
   setActiveTab,
-  bolPhotoUrl  // Added this prop
+  bolPhotoUrl
 }: InventoryManagerProps) => {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
+  const queryClient = useQueryClient();
+
+  // Use React Query to manage inventory items state
+  const { data: inventoryItems = [] } = useQuery({
+    queryKey: ['inventory'],
+    queryFn: () => items,
+    initialData: items,
+  });
 
   const { handleAddItem } = FormSubmissionHandler({ 
     editingItem, 
-    items, 
-    setItems, 
+    items: inventoryItems, 
+    setItems: (newItems) => {
+      setItems(newItems);
+      // Update React Query cache
+      queryClient.setQueryData(['inventory'], newItems);
+    }, 
     setEditingItem, 
     bolNumber 
   });
@@ -48,6 +61,8 @@ export const InventoryManager = ({
 
   const handleClearEntries = () => {
     setItems([]);
+    // Clear React Query cache
+    queryClient.setQueryData(['inventory'], []);
     toast.success("All entries have been cleared");
   };
 
@@ -71,13 +86,13 @@ export const InventoryManager = ({
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6">
             <div className="w-full sm:w-auto">
               <h2 className="text-xl font-semibold text-gray-900 text-center sm:text-left">
-                Recent Entries {searchQuery && `(${items.length} results)`}
+                Recent Entries {searchQuery && `(${inventoryItems.length} results)`}
               </h2>
             </div>
             <div className="w-full sm:w-auto flex justify-center sm:justify-end">
               <ReportGenerator 
-                items={items} 
-                disabled={items.length === 0} 
+                items={inventoryItems} 
+                disabled={inventoryItems.length === 0} 
                 onClear={handleClearEntries}
               />
             </div>
@@ -86,7 +101,7 @@ export const InventoryManager = ({
             <div className="overflow-x-auto">
               <div className="min-w-full inline-block align-middle">
                 <FilteredItemsList 
-                  items={items}
+                  items={inventoryItems}
                   searchQuery={searchQuery}
                   onEdit={handleEdit}
                 />

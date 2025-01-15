@@ -1,18 +1,16 @@
 import { useState } from 'react';
 import { toast } from "sonner";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { InventoryForm } from '@/components/InventoryForm';
 import { FilteredItemsList } from './FilteredItemsList';
 import { FormSubmissionHandler } from './FormSubmissionHandler';
 import { ReportGenerator } from './ReportGenerator';
+import { useInventoryStore } from '@/hooks/useInventoryStore';
 import type { InventoryItem } from '@/types/inventory';
 
 interface InventoryManagerProps {
   bolNumber: string;
   showRecentEntries: boolean;
   searchQuery: string;
-  items: InventoryItem[];
-  setItems: (items: InventoryItem[]) => void;
   setActiveTab?: (tab: string) => void;
   bolPhotoUrl?: string | null;
 }
@@ -21,29 +19,16 @@ export const InventoryManager = ({
   bolNumber, 
   showRecentEntries, 
   searchQuery,
-  items,
-  setItems,
   setActiveTab,
   bolPhotoUrl
 }: InventoryManagerProps) => {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
-  const queryClient = useQueryClient();
-
-  // Use React Query to manage inventory items state
-  const { data: inventoryItems = [] } = useQuery({
-    queryKey: ['inventory'],
-    queryFn: () => items,
-    initialData: items,
-  });
+  const { items, setItems } = useInventoryStore();
 
   const { handleAddItem } = FormSubmissionHandler({ 
     editingItem, 
-    items: inventoryItems, 
-    setItems: (newItems) => {
-      setItems(newItems);
-      // Update React Query cache
-      queryClient.setQueryData(['inventory'], newItems);
-    }, 
+    items, 
+    setItems, 
     setEditingItem, 
     bolNumber 
   });
@@ -52,7 +37,6 @@ export const InventoryManager = ({
     console.log('handleEdit called with item:', item);
     setEditingItem(item);
     console.log('editingItem state after update:', item);
-    // Switch to add-pallets tab when editing
     if (setActiveTab) {
       setActiveTab('add-pallets');
     }
@@ -61,8 +45,6 @@ export const InventoryManager = ({
 
   const handleClearEntries = () => {
     setItems([]);
-    // Clear React Query cache
-    queryClient.setQueryData(['inventory'], []);
     toast.success("All entries have been cleared");
   };
 
@@ -86,13 +68,13 @@ export const InventoryManager = ({
           <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6">
             <div className="w-full sm:w-auto">
               <h2 className="text-xl font-semibold text-gray-900 text-center sm:text-left">
-                Recent Entries {searchQuery && `(${inventoryItems.length} results)`}
+                Recent Entries {searchQuery && `(${items.length} results)`}
               </h2>
             </div>
             <div className="w-full sm:w-auto flex justify-center sm:justify-end">
               <ReportGenerator 
-                items={inventoryItems} 
-                disabled={inventoryItems.length === 0} 
+                items={items} 
+                disabled={items.length === 0} 
                 onClear={handleClearEntries}
               />
             </div>
@@ -101,7 +83,7 @@ export const InventoryManager = ({
             <div className="overflow-x-auto">
               <div className="min-w-full inline-block align-middle">
                 <FilteredItemsList 
-                  items={inventoryItems}
+                  items={items}
                   searchQuery={searchQuery}
                   onEdit={handleEdit}
                 />

@@ -9,7 +9,14 @@ import PhotoPage from "./pages/photos/[id]";
 import Labor from "./pages/Labor";
 import WinSheet from "./pages/WinSheet";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+      cacheTime: Infinity,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

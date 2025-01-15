@@ -20,6 +20,7 @@ export const ReportGenerator = ({ items, disabled, onClear, bolPhotoUrl }: Repor
   };
 
   const handleDownloadReport = () => {
+    // Create the CSV rows for inventory items
     const csvRows = items.map(item => {
       return [
         escapeCsvField(item.storeLocation),
@@ -32,10 +33,18 @@ export const ReportGenerator = ({ items, disabled, onClear, bolPhotoUrl }: Repor
       ].join(',');
     });
 
-    // Add BOL photo URL as a separate row at the beginning
-    const bolPhotoRow = bolPhotoUrl ? `BOL Photo URL,${escapeCsvField(bolPhotoUrl)}` : '';
+    // Create header and BOL photo row
     const header = 'Store Location,BOL #,SAP Item #,Quantity,Barcode,Timestamp,Item Photo URL';
-    const csvContent = [header, bolPhotoRow, ...csvRows].filter(Boolean).join('\n');
+    const bolPhotoHeader = 'BOL Photo URL';
+    const bolPhotoData = bolPhotoUrl ? escapeCsvField(bolPhotoUrl) : '';
+    
+    // Combine all parts of the CSV
+    const csvContent = [
+      header,
+      `${bolPhotoHeader},${bolPhotoData}`,
+      '',  // Empty line to separate BOL photo from items
+      ...csvRows
+    ].join('\n');
     
     const blob = new Blob([csvContent], { type: 'text/csv' });
     

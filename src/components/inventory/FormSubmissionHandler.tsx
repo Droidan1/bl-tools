@@ -39,10 +39,11 @@ export const FormSubmissionHandler = ({
     let shortenedPhotoUrl = '';
     if (newItem.photoUrl) {
       const shortId = nanoid(8);
-      // Get the base URL and ensure it's properly formatted
-      const url = new URL(window.location.origin);
-      const baseUrl = url.origin;
-      shortenedPhotoUrl = `${baseUrl}/photos/${shortId}`;
+      // Create a properly formatted URL without any trailing colons
+      const baseUrl = window.location.origin.split(':')[0]; // Remove any port number
+      const protocol = window.location.protocol;
+      const host = window.location.hostname;
+      shortenedPhotoUrl = `${protocol}//${host}/photos/${shortId}`;
       
       const { error } = await supabase
         .from('photo_mappings')

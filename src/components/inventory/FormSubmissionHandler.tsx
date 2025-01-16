@@ -43,10 +43,8 @@ export const FormSubmissionHandler = ({
     let shortenedPhotoUrl = '';
     if (newItem.photoUrl) {
       const shortId = nanoid(8);
-      const baseUrl = window.location.origin.split(':')[0];
-      const protocol = window.location.protocol;
-      const host = window.location.hostname;
-      shortenedPhotoUrl = `${protocol}//${host}/photos/${shortId}`;
+      // Simplified URL construction using window.location.origin
+      shortenedPhotoUrl = `${window.location.origin}/photos/${shortId}`;
       
       const { error } = await supabase
         .from('photo_mappings')

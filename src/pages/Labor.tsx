@@ -7,6 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 const Labor = () => {
   const [weeklyBudget, setWeeklyBudget] = useState('');
+  const [weeklyHoursBudget, setWeeklyHoursBudget] = useState('');
   const [currentSales, setCurrentSales] = useState('');
   const [weekToDateSales, setWeekToDateSales] = useState('');
   const [associates, setAssociates] = useState('');
@@ -16,7 +17,7 @@ const Labor = () => {
   const calculateLabor = (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!weeklyBudget || !currentSales || !associates || !weekToDateSales) {
+    if (!weeklyBudget || !currentSales || !associates || !weekToDateSales || !weeklyHoursBudget) {
       toast({
         title: "Missing Information",
         description: "Please fill in all fields to calculate labor percentage.",
@@ -49,6 +50,20 @@ const Labor = () => {
                   value={weeklyBudget}
                   onChange={(e) => setWeeklyBudget(e.target.value)}
                   placeholder="Enter weekly budget"
+                  className="w-full"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="weeklyHoursBudget" className="block text-sm font-medium text-gray-700 mb-1">
+                  Weekly Hours Budget
+                </label>
+                <Input
+                  id="weeklyHoursBudget"
+                  type="number"
+                  value={weeklyHoursBudget}
+                  onChange={(e) => setWeeklyHoursBudget(e.target.value)}
+                  placeholder="Enter weekly hours budget"
                   className="w-full"
                 />
               </div>

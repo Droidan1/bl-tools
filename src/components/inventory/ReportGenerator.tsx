@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Download, Trash2 } from "lucide-react";
+import { ReportImporter } from "./ReportImporter";
 import type { InventoryItem } from '@/types/inventory';
 
 interface ReportGeneratorProps {
@@ -8,9 +9,16 @@ interface ReportGeneratorProps {
   disabled: boolean;
   onClear: () => void;
   bolPhotoUrl?: string | null;
+  onImport: (items: InventoryItem[]) => void;
 }
 
-export const ReportGenerator = ({ items, disabled, onClear, bolPhotoUrl }: ReportGeneratorProps) => {
+export const ReportGenerator = ({ 
+  items, 
+  disabled, 
+  onClear, 
+  bolPhotoUrl,
+  onImport 
+}: ReportGeneratorProps) => {
   const escapeCsvField = (field: string | null | undefined) => {
     if (!field) return '';
     if (field.includes(',') || field.includes('"') || field.includes('\n')) {
@@ -77,6 +85,7 @@ export const ReportGenerator = ({ items, disabled, onClear, bolPhotoUrl }: Repor
         <Download className="h-4 w-4" />
         Download Report
       </Button>
+      <ReportImporter onImport={onImport} />
       <Button 
         onClick={onClear}
         variant="destructive"

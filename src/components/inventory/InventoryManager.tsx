@@ -37,9 +37,7 @@ export const InventoryManager = ({
   });
 
   const handleEdit = (item: InventoryItem) => {
-    console.log('handleEdit called with item:', item);
     setEditingItem(item);
-    console.log('editingItem state after update:', item);
     if (setActiveTab) {
       setActiveTab('add-pallets');
     }
@@ -51,7 +49,32 @@ export const InventoryManager = ({
     toast.success("All entries have been cleared");
   };
 
-  console.log('Current editingItem state:', editingItem);
+  const handleImport = (importedItems: InventoryItem[]) => {
+    // Merge imported items with existing items, avoiding duplicates
+    const newItems = [...items];
+    let addedCount = 0;
+    
+    importedItems.forEach(importedItem => {
+      const isDuplicate = items.some(
+        existingItem => 
+          existingItem.sapNumber === importedItem.sapNumber && 
+          existingItem.barcode === importedItem.barcode &&
+          existingItem.bolNumber === importedItem.bolNumber
+      );
+      
+      if (!isDuplicate) {
+        newItems.unshift(importedItem);
+        addedCount++;
+      }
+    });
+
+    setItems(newItems);
+    if (addedCount > 0) {
+      toast.success(`Added ${addedCount} new items from import`);
+    } else {
+      toast.info("No new items were added (all were duplicates)");
+    }
+  };
 
   return (
     <div className="grid gap-6">
@@ -81,6 +104,7 @@ export const InventoryManager = ({
                 disabled={items.length === 0} 
                 onClear={handleClearEntries}
                 bolPhotoUrl={bolPhotoUrl}
+                onImport={handleImport}
               />
             </div>
           </div>

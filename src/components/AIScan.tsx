@@ -62,7 +62,7 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
 
   const processWithAI = async (imageData: string) => {
     try {
-      // Initialize the AI pipeline
+      // Initialize the AI pipeline for image segmentation
       const segmenter = await pipeline('image-segmentation', 'Xenova/segformer-b0-finetuned-ade-512-512', {
         device: 'webgpu'
       });
@@ -70,15 +70,21 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
       // Process the image
       const segments = await segmenter(imageData);
       
-      // Initialize text recognition
-      const recognizer = await pipeline('text-recognition', 'microsoft/trocr-base-printed');
+      // Initialize text recognition pipeline
+      const recognizer = await pipeline('text-detection-recognition', 'microsoft/trocr-base-printed', {
+        device: 'webgpu'
+      });
       
       // Process text segments
       let fullText = '';
       for (const segment of segments) {
         if (segment.label === 'text') {
-          const textResult = await recognizer(segment.mask);
-          fullText += textResult.text + '\n';
+          const textResult = await recognizer(segment.mask, {
+            task: 'text-recognition'
+          });
+          if (typeof textResult === 'object' && 'text' in textResult) {
+            fullText += textResult.text + '\n';
+          }
         }
       }
       

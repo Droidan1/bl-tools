@@ -3,6 +3,7 @@ import { FormField } from './FormField';
 import { QuantityInput } from './QuantityInput';
 import { BarcodeInputField } from './BarcodeInputField';
 import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 import { Brain } from 'lucide-react';
 
 interface FormFieldsProps {

@@ -18,6 +18,10 @@ interface AIScanProps {
   onClose: () => void;
 }
 
+interface ImageToTextResult {
+  generated_text: string;
+}
+
 export const AIScan = ({ onScan, onClose }: AIScanProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -62,27 +66,22 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
 
   const processWithAI = async (imageData: string) => {
     try {
-      // Initialize the text recognition pipeline with a different model
       const recognizer = await pipeline(
         'image-to-text',
         'Xenova/vit-gpt2-image-captioning',
         { device: 'webgpu' }
       );
       
-      // Process the image directly
       const result = await recognizer(imageData);
-      
       let fullText = '';
       
-      // Handle the result based on its structure
       if (Array.isArray(result)) {
-        result.forEach(item => {
-          if (typeof item === 'object' && item !== null && 'generated_text' in item) {
-            fullText += item.generated_text + '\n';
-          }
+        (result as ImageToTextResult[]).forEach(item => {
+          fullText += item.generated_text + '\n';
         });
-      } else if (typeof result === 'object' && result !== null && 'generated_text' in result) {
-        fullText += result.generated_text + '\n';
+      } else {
+        const singleResult = result as ImageToTextResult;
+        fullText += singleResult.generated_text + '\n';
       }
       
       console.log('AI processed text:', fullText);

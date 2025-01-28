@@ -201,14 +201,6 @@ const WinSheet = () => {
 
           <TabsContent value="staff">
             <Card className="p-4 space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Project</label>
-                <Input
-                  placeholder="Enter project details"
-                  value={formData.project}
-                  onChange={(e) => handleInputChange('project', e.target.value)}
-                />
-              </div>
               <StaffZones
                 associates={formData.associates}
                 zones={formData.zones}
@@ -216,6 +208,17 @@ const WinSheet = () => {
                 onZoneChange={handleZoneChange}
                 onAdd={addAssociateZone}
               />
+              
+              <div className="mt-6 pt-6 border-t">
+                <h3 className="text-lg font-medium mb-4">Project Details</h3>
+                <div className="space-y-2">
+                  <Input
+                    placeholder="Enter project details"
+                    value={formData.project}
+                    onChange={(e) => handleInputChange('project', e.target.value)}
+                  />
+                </div>
+              </div>
             </Card>
           </TabsContent>
         </Tabs>

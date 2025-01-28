@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { WeatherSelector } from '@/components/win-sheet/WeatherSelector';
 import { StaffZones } from '@/components/win-sheet/StaffZones';
 import { TextSection } from '@/components/win-sheet/TextSection';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const WinSheet = () => {
   const [formData, setFormData] = useState({
@@ -126,82 +127,93 @@ const WinSheet = () => {
       <div className="container px-4 py-2 mx-auto max-w-7xl">
         <PageHeader title="Win Sheet" />
         
-        <form className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="salesGoal" className="text-sm font-medium">
-                Sales Goal
-              </label>
-              <Input 
-                id="salesGoal" 
-                placeholder="Enter sales goal"
-                value={formData.salesGoal}
-                onChange={(e) => handleInputChange('salesGoal', e.target.value)}
+        <Tabs defaultValue="general" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="general">General Information</TabsTrigger>
+            <TabsTrigger value="staff">Staff Working Zones</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="general">
+            <form className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="salesGoal" className="text-sm font-medium">
+                    Sales Goal
+                  </label>
+                  <Input 
+                    id="salesGoal" 
+                    placeholder="Enter sales goal"
+                    value={formData.salesGoal}
+                    onChange={(e) => handleInputChange('salesGoal', e.target.value)}
+                  />
+                </div>
+                <WeatherSelector 
+                  value={formData.weather}
+                  onChange={(value) => handleInputChange('weather', value)}
+                />
+              </div>
+
+              <div className="space-y-6">
+                <TextSection
+                  label="Operational Issues"
+                  value={formData.operationalIssues}
+                  onChange={(value) => handleInputChange('operationalIssues', value)}
+                  placeholder="Enter operational issues"
+                />
+
+                <TextSection
+                  label="Customer Feedback"
+                  value={formData.customerFeedback}
+                  onChange={(value) => handleInputChange('customerFeedback', value)}
+                  placeholder="Enter customer feedback"
+                />
+
+                <TextSection
+                  label="Staffing Details"
+                  value={formData.staffingDetails}
+                  onChange={(value) => handleInputChange('staffingDetails', value)}
+                  placeholder="Enter staffing details"
+                />
+
+                <TextSection
+                  label="Safety Observations"
+                  value={formData.safetyObservations}
+                  onChange={(value) => handleInputChange('safetyObservations', value)}
+                  placeholder="Enter safety observations"
+                />
+
+                <TextSection
+                  label="Other Remarks"
+                  value={formData.otherRemarks}
+                  onChange={(value) => handleInputChange('otherRemarks', value)}
+                  placeholder="Enter other remarks"
+                />
+              </div>
+            </form>
+          </TabsContent>
+
+          <TabsContent value="staff">
+            <Card className="p-4">
+              <StaffZones
+                associates={formData.associates}
+                zones={formData.zones}
+                onAssociateChange={handleAssociateChange}
+                onZoneChange={handleZoneChange}
+                onAdd={addAssociateZone}
               />
-            </div>
-            <WeatherSelector 
-              value={formData.weather}
-              onChange={(value) => handleInputChange('weather', value)}
-            />
-          </div>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
-          <div className="space-y-6">
-            <TextSection
-              label="Operational Issues"
-              value={formData.operationalIssues}
-              onChange={(value) => handleInputChange('operationalIssues', value)}
-              placeholder="Enter operational issues"
-            />
-
-            <TextSection
-              label="Customer Feedback"
-              value={formData.customerFeedback}
-              onChange={(value) => handleInputChange('customerFeedback', value)}
-              placeholder="Enter customer feedback"
-            />
-
-            <TextSection
-              label="Staffing Details"
-              value={formData.staffingDetails}
-              onChange={(value) => handleInputChange('staffingDetails', value)}
-              placeholder="Enter staffing details"
-            />
-
-            <TextSection
-              label="Safety Observations"
-              value={formData.safetyObservations}
-              onChange={(value) => handleInputChange('safetyObservations', value)}
-              placeholder="Enter safety observations"
-            />
-
-            <TextSection
-              label="Other Remarks"
-              value={formData.otherRemarks}
-              onChange={(value) => handleInputChange('otherRemarks', value)}
-              placeholder="Enter other remarks"
-            />
-          </div>
-
-          <Card className="p-4">
-            <StaffZones
-              associates={formData.associates}
-              zones={formData.zones}
-              onAssociateChange={handleAssociateChange}
-              onZoneChange={handleZoneChange}
-              onAdd={addAssociateZone}
-            />
-          </Card>
-
-          <div className="flex justify-end">
-            <Button 
-              type="button" 
-              onClick={exportToWord}
-              className="bg-primary hover:bg-primary/90"
-            >
-              Export
-            </Button>
-          </div>
-        </form>
+        <div className="flex justify-end mt-6">
+          <Button 
+            type="button" 
+            onClick={exportToWord}
+            className="bg-primary hover:bg-primary/90"
+          >
+            Export
+          </Button>
+        </div>
       </div>
     </div>
   );

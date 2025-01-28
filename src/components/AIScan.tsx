@@ -1,11 +1,11 @@
-import React, { useRef, useCallback, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button } from './ui/button';
 import { X } from 'lucide-react';
 import { useToast } from './ui/use-toast';
 import { CameraPermissionError } from './scanner/CameraPermissionError';
 import { CameraPreview } from './scanner/CameraPreview';
-import { pipeline } from '@huggingface/transformers';
-import { extractFieldsFromText } from '@/utils/ocrUtils';
+import { CameraHandler } from './scanner/CameraHandler';
+import { processAndExtractFields } from '@/utils/aiProcessing';
 
 interface AIScanProps {
   onScan: (fields: {
@@ -18,78 +18,23 @@ interface AIScanProps {
   onClose: () => void;
 }
 
-interface ImageToTextResult {
-  generated_text: string;
-}
-
 export const AIScan = ({ onScan, onClose }: AIScanProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const [hasPermission, setHasPermission] = React.useState<boolean>(true);
-  const [isProcessing, setIsProcessing] = React.useState(false);
+  const [hasPermission, setHasPermission] = useState<boolean>(true);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const startCamera = async () => {
-    try {
-      const constraints = {
-        video: {
-          facingMode: 'environment',
-          width: { ideal: 3840 },
-          height: { ideal: 2160 },
-          aspectRatio: { ideal: 1.7777777778 },
-        }
-      };
-      
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        streamRef.current = stream;
-      }
-      setHasPermission(true);
-    } catch (error) {
-      console.error('Error accessing camera:', error);
-      setHasPermission(false);
+  const handleStreamReady = (stream: MediaStream) => {
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream;
     }
+    setHasPermission(true);
   };
 
-  const stopCamera = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-  }, []);
-
-  const processWithAI = async (imageData: string) => {
-    try {
-      const recognizer = await pipeline(
-        'image-to-text',
-        'Xenova/vit-gpt2-image-captioning',
-        { device: 'webgpu' }
-      );
-      
-      const result = await recognizer(imageData);
-      let fullText = '';
-      
-      if (Array.isArray(result)) {
-        (result as ImageToTextResult[]).forEach(item => {
-          fullText += item.generated_text + '\n';
-        });
-      } else {
-        const singleResult = result as ImageToTextResult;
-        fullText += singleResult.generated_text + '\n';
-      }
-      
-      console.log('AI processed text:', fullText);
-      return fullText;
-    } catch (error) {
-      console.error('AI processing error:', error);
-      throw error;
-    }
+  const handleStreamError = (error: Error) => {
+    console.error('Error accessing camera:', error);
+    setHasPermission(false);
   };
 
   const captureImage = async () => {
@@ -121,8 +66,7 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
 
     try {
       setIsProcessing(true);
-      const text = await processWithAI(dataUrl);
-      const extractedFields = extractFieldsFromText(text);
+      const extractedFields = await processAndExtractFields(dataUrl);
       
       if (Object.keys(extractedFields).length === 0) {
         toast({
@@ -138,7 +82,6 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
           duration: 3000,
         });
         onScan(extractedFields);
-        stopCamera();
         onClose();
       }
     } catch (error) {
@@ -154,13 +97,6 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
     }
   };
 
-  React.useEffect(() => {
-    startCamera();
-    return () => {
-      stopCamera();
-    };
-  }, [stopCamera]);
-
   if (!hasPermission) {
     return <CameraPermissionError onClose={onClose} />;
   }
@@ -174,6 +110,11 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
             <X className="h-4 w-4" />
           </Button>
         </div>
+
+        <CameraHandler
+          onStreamReady={handleStreamReady}
+          onError={handleStreamError}
+        />
 
         <CameraPreview
           videoRef={videoRef}

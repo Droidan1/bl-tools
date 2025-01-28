@@ -84,13 +84,16 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
             ? segment.mask.toDataURL() 
             : segment.mask;
             
-          const textResult = await recognizer(maskData, {
-            task: 'image-to-text',
-            model: 'microsoft/trocr-base-printed'
-          });
+          const textResult = await recognizer(maskData);
           
-          if (textResult && Array.isArray(textResult) && textResult[0]?.text) {
-            fullText += textResult[0].text + '\n';
+          // Handle the result based on its structure
+          if (Array.isArray(textResult)) {
+            const generated_text = textResult[0]?.generated_text;
+            if (generated_text) {
+              fullText += generated_text + '\n';
+            }
+          } else if ('generated_text' in textResult) {
+            fullText += textResult.generated_text + '\n';
           }
         }
       }

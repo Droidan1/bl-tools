@@ -21,7 +21,8 @@ const WinSheet = () => {
     otherRemarks: '',
     associates: [''],
     zones: [''],
-    project: '' // New field for project input
+    project: '',
+    priorities: '' // New field for priorities
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -92,6 +93,12 @@ const WinSheet = () => {
             }),
             new Paragraph({
               children: [new TextRun({ text: formData.otherRemarks })]
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: "This Week's Priorities", bold: true, size: 28 })]
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: formData.priorities })]
             }),
             new Paragraph({
               children: [new TextRun({ text: "Project", bold: true, size: 28 })]
@@ -209,6 +216,17 @@ const WinSheet = () => {
                 onAdd={addAssociateZone}
               />
               
+              <div className="mt-6 pt-6 border-t">
+                <h3 className="text-lg font-medium mb-4">This Week's Priorities</h3>
+                <div className="space-y-2">
+                  <Input
+                    placeholder="Enter this week's priorities"
+                    value={formData.priorities}
+                    onChange={(e) => handleInputChange('priorities', e.target.value)}
+                  />
+                </div>
+              </div>
+
               <div className="mt-6 pt-6 border-t">
                 <h3 className="text-lg font-medium mb-4">Project Details</h3>
                 <div className="space-y-2">

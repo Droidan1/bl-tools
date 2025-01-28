@@ -1,18 +1,18 @@
 import { PageHeader } from '@/components/ui/page-header';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { Input } from "@/components/ui/input";
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { useState } from 'react';
 import { toast } from "sonner";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Sun, CloudRain, CloudSnow, CloudSun, Cloud } from "lucide-react";
+import { WeatherSelector } from '@/components/win-sheet/WeatherSelector';
+import { StaffZones } from '@/components/win-sheet/StaffZones';
+import { TextSection } from '@/components/win-sheet/TextSection';
 
 const WinSheet = () => {
   const [formData, setFormData] = useState({
     salesGoal: '',
-    weather: 'sunny', // Default weather
+    weather: 'sunny',
     operationalIssues: '',
     customerFeedback: '',
     staffingDetails: '',
@@ -21,14 +21,6 @@ const WinSheet = () => {
     associates: [''],
     zones: ['']
   });
-
-  const weatherOptions = [
-    { value: 'sunny', icon: Sun, label: 'Sunny' },
-    { value: 'rain', icon: CloudRain, label: 'Rain' },
-    { value: 'snow', icon: CloudSnow, label: 'Snow' },
-    { value: 'cold', icon: Cloud, label: 'Cold' },
-    { value: 'hot', icon: CloudSun, label: 'Hot' }
-  ];
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -135,7 +127,6 @@ const WinSheet = () => {
         <PageHeader title="Win Sheet" />
         
         <form className="space-y-6">
-          {/* Header Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <label htmlFor="salesGoal" className="text-sm font-medium">
@@ -148,149 +139,59 @@ const WinSheet = () => {
                 onChange={(e) => handleInputChange('salesGoal', e.target.value)}
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Weather
-              </label>
-              <RadioGroup
-                value={formData.weather}
-                onValueChange={(value) => handleInputChange('weather', value)}
-                className="flex flex-wrap gap-4"
-              >
-                {weatherOptions.map(({ value, icon: Icon, label }) => (
-                  <div key={value} className="flex flex-col items-center gap-1">
-                    <div className="relative">
-                      <RadioGroupItem
-                        value={value}
-                        id={value}
-                        className="peer sr-only"
-                      />
-                      <label
-                        htmlFor={value}
-                        className="flex flex-col items-center justify-center w-16 h-16 rounded-lg border-2 border-muted peer-data-[state=checked]:border-primary peer-data-[state=checked]:text-primary cursor-pointer transition-colors"
-                      >
-                        <Icon className="w-8 h-8" />
-                        <span className="text-xs mt-1">{label}</span>
-                      </label>
-                    </div>
-                  </div>
-                ))}
-              </RadioGroup>
-            </div>
+            <WeatherSelector 
+              value={formData.weather}
+              onChange={(value) => handleInputChange('weather', value)}
+            />
           </div>
 
-          {/* Main Sections */}
           <div className="space-y-6">
-            <Card className="p-4 space-y-2">
-              <label htmlFor="operationalIssues" className="text-sm font-medium">
-                Operational Issues
-              </label>
-              <Textarea
-                id="operationalIssues"
-                placeholder="Enter operational issues"
-                className="min-h-[100px]"
-                value={formData.operationalIssues}
-                onChange={(e) => handleInputChange('operationalIssues', e.target.value)}
-              />
-            </Card>
+            <TextSection
+              label="Operational Issues"
+              value={formData.operationalIssues}
+              onChange={(value) => handleInputChange('operationalIssues', value)}
+              placeholder="Enter operational issues"
+            />
 
-            <Card className="p-4 space-y-2">
-              <label htmlFor="customerFeedback" className="text-sm font-medium">
-                Customer Feedback
-              </label>
-              <Textarea
-                id="customerFeedback"
-                placeholder="Enter customer feedback"
-                className="min-h-[100px]"
-                value={formData.customerFeedback}
-                onChange={(e) => handleInputChange('customerFeedback', e.target.value)}
-              />
-            </Card>
+            <TextSection
+              label="Customer Feedback"
+              value={formData.customerFeedback}
+              onChange={(value) => handleInputChange('customerFeedback', value)}
+              placeholder="Enter customer feedback"
+            />
 
-            <Card className="p-4 space-y-2">
-              <label htmlFor="staffingDetails" className="text-sm font-medium">
-                Staffing Details
-              </label>
-              <Textarea
-                id="staffingDetails"
-                placeholder="Enter staffing details"
-                className="min-h-[100px]"
-                value={formData.staffingDetails}
-                onChange={(e) => handleInputChange('staffingDetails', e.target.value)}
-              />
-            </Card>
+            <TextSection
+              label="Staffing Details"
+              value={formData.staffingDetails}
+              onChange={(value) => handleInputChange('staffingDetails', value)}
+              placeholder="Enter staffing details"
+            />
 
-            <Card className="p-4 space-y-2">
-              <label htmlFor="safetyObservations" className="text-sm font-medium">
-                Safety Observations
-              </label>
-              <Textarea
-                id="safetyObservations"
-                placeholder="Enter safety observations"
-                className="min-h-[100px]"
-                value={formData.safetyObservations}
-                onChange={(e) => handleInputChange('safetyObservations', e.target.value)}
-              />
-            </Card>
+            <TextSection
+              label="Safety Observations"
+              value={formData.safetyObservations}
+              onChange={(value) => handleInputChange('safetyObservations', value)}
+              placeholder="Enter safety observations"
+            />
 
-            <Card className="p-4 space-y-2">
-              <label htmlFor="otherRemarks" className="text-sm font-medium">
-                Other Remarks
-              </label>
-              <Textarea
-                id="otherRemarks"
-                placeholder="Enter other remarks"
-                className="min-h-[100px]"
-                value={formData.otherRemarks}
-                onChange={(e) => handleInputChange('otherRemarks', e.target.value)}
-              />
-            </Card>
+            <TextSection
+              label="Other Remarks"
+              value={formData.otherRemarks}
+              onChange={(value) => handleInputChange('otherRemarks', value)}
+              placeholder="Enter other remarks"
+            />
           </div>
 
-          {/* Staff Working Zones Section */}
           <Card className="p-4">
-            <h3 className="text-lg font-medium mb-4">Staff Working Zones</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <h4 className="text-sm font-medium mb-2">Associates</h4>
-                <div className="space-y-2">
-                  {formData.associates.map((associate, index) => (
-                    <Input
-                      key={`associate-${index}`}
-                      placeholder={`Associate ${index + 1}`}
-                      value={associate}
-                      onChange={(e) => handleAssociateChange(index, e.target.value)}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium mb-2">Zone</h4>
-                <div className="space-y-2">
-                  {formData.zones.map((zone, index) => (
-                    <Input
-                      key={`zone-${index}`}
-                      placeholder={`Zone ${index + 1}`}
-                      value={zone}
-                      onChange={(e) => handleZoneChange(index, e.target.value)}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="mt-4">
-              <Button 
-                type="button" 
-                onClick={addAssociateZone}
-                variant="outline"
-                className="w-full"
-              >
-                Add Associate & Zone
-              </Button>
-            </div>
+            <StaffZones
+              associates={formData.associates}
+              zones={formData.zones}
+              onAssociateChange={handleAssociateChange}
+              onZoneChange={handleZoneChange}
+              onAdd={addAssociateZone}
+            />
           </Card>
 
-          {/* Export Button */}
           <div className="flex justify-end">
             <Button 
               type="button" 

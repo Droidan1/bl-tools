@@ -130,7 +130,7 @@ const WinSheet = () => {
         <Tabs defaultValue="general" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="general">Daily Remarks</TabsTrigger>
-            <TabsTrigger value="staff">Staff Working Zones</TabsTrigger>
+            <TabsTrigger value="staff">Projects & Zones</TabsTrigger>
           </TabsList>
 
           <TabsContent value="general">

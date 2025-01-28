@@ -6,11 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { useState } from 'react';
 import { toast } from "sonner";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Sun, CloudRain, CloudSnow, CloudSun, Cloud } from "lucide-react";
 
 const WinSheet = () => {
   const [formData, setFormData] = useState({
     salesGoal: '',
-    weather: '',
+    weather: 'sunny', // Default weather
     operationalIssues: '',
     customerFeedback: '',
     staffingDetails: '',
@@ -19,6 +21,14 @@ const WinSheet = () => {
     associates: [''],
     zones: ['']
   });
+
+  const weatherOptions = [
+    { value: 'sunny', icon: Sun, label: 'Sunny' },
+    { value: 'rain', icon: CloudRain, label: 'Rain' },
+    { value: 'snow', icon: CloudSnow, label: 'Snow' },
+    { value: 'cold', icon: Cloud, label: 'Cold' },
+    { value: 'hot', icon: CloudSun, label: 'Hot' }
+  ];
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -139,15 +149,33 @@ const WinSheet = () => {
               />
             </div>
             <div className="space-y-2">
-              <label htmlFor="weather" className="text-sm font-medium">
+              <label className="text-sm font-medium">
                 Weather
               </label>
-              <Input 
-                id="weather" 
-                placeholder="Enter weather conditions"
+              <RadioGroup
                 value={formData.weather}
-                onChange={(e) => handleInputChange('weather', e.target.value)}
-              />
+                onValueChange={(value) => handleInputChange('weather', value)}
+                className="flex flex-wrap gap-4"
+              >
+                {weatherOptions.map(({ value, icon: Icon, label }) => (
+                  <div key={value} className="flex flex-col items-center gap-1">
+                    <div className="relative">
+                      <RadioGroupItem
+                        value={value}
+                        id={value}
+                        className="peer sr-only"
+                      />
+                      <label
+                        htmlFor={value}
+                        className="flex flex-col items-center justify-center w-16 h-16 rounded-lg border-2 border-muted peer-data-[state=checked]:border-primary peer-data-[state=checked]:text-primary cursor-pointer transition-colors"
+                      >
+                        <Icon className="w-8 h-8" />
+                        <span className="text-xs mt-1">{label}</span>
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </RadioGroup>
             </div>
           </div>
 

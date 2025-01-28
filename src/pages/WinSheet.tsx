@@ -16,8 +16,8 @@ const WinSheet = () => {
     staffingDetails: '',
     safetyObservations: '',
     otherRemarks: '',
-    associates: Array(5).fill(''),
-    zones: Array(5).fill('')
+    associates: [''],
+    zones: ['']
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -34,6 +34,14 @@ const WinSheet = () => {
     const newZones = [...formData.zones];
     newZones[index] = value;
     setFormData(prev => ({ ...prev, zones: newZones }));
+  };
+
+  const addAssociateZone = () => {
+    setFormData(prev => ({
+      ...prev,
+      associates: [...prev.associates, ''],
+      zones: [...prev.zones, '']
+    }));
   };
 
   const exportToWord = async () => {
@@ -218,12 +226,12 @@ const WinSheet = () => {
               <div>
                 <h4 className="text-sm font-medium mb-2">Associates</h4>
                 <div className="space-y-2">
-                  {[1, 2, 3, 4, 5].map((index) => (
+                  {formData.associates.map((associate, index) => (
                     <Input
                       key={`associate-${index}`}
-                      placeholder={`Associate ${index}`}
-                      value={formData.associates[index - 1]}
-                      onChange={(e) => handleAssociateChange(index - 1, e.target.value)}
+                      placeholder={`Associate ${index + 1}`}
+                      value={associate}
+                      onChange={(e) => handleAssociateChange(index, e.target.value)}
                     />
                   ))}
                 </div>
@@ -231,16 +239,26 @@ const WinSheet = () => {
               <div>
                 <h4 className="text-sm font-medium mb-2">Zone</h4>
                 <div className="space-y-2">
-                  {[1, 2, 3, 4, 5].map((index) => (
+                  {formData.zones.map((zone, index) => (
                     <Input
                       key={`zone-${index}`}
-                      placeholder={`Zone ${index}`}
-                      value={formData.zones[index - 1]}
-                      onChange={(e) => handleZoneChange(index - 1, e.target.value)}
+                      placeholder={`Zone ${index + 1}`}
+                      value={zone}
+                      onChange={(e) => handleZoneChange(index, e.target.value)}
                     />
                   ))}
                 </div>
               </div>
+            </div>
+            <div className="mt-4">
+              <Button 
+                type="button" 
+                onClick={addAssociateZone}
+                variant="outline"
+                className="w-full"
+              >
+                Add Associate & Zone
+              </Button>
             </div>
           </Card>
 

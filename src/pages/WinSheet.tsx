@@ -198,7 +198,7 @@ const WinSheet = () => {
               onClick={exportToWord}
               className="bg-primary hover:bg-primary/90"
             >
-              Export to Word
+              Export
             </Button>
           </div>
         </form>

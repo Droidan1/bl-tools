@@ -62,43 +62,27 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
 
   const processWithAI = async (imageData: string) => {
     try {
-      // Initialize the AI pipeline for image segmentation
-      const segmenter = await pipeline('image-segmentation', 'Xenova/segformer-b0-finetuned-ade-512-512', {
-        device: 'webgpu'
-      });
+      // Initialize the text recognition pipeline with a different model
+      const recognizer = await pipeline(
+        'image-to-text',
+        'Xenova/vit-gpt2-image-captioning',
+        { device: 'webgpu' }
+      );
       
-      // Process the image
-      const segments = await segmenter(imageData);
+      // Process the image directly
+      const result = await recognizer(imageData);
       
-      // Initialize text recognition pipeline
-      const recognizer = await pipeline('image-to-text', 'microsoft/trocr-base-printed', {
-        device: 'webgpu'
-      });
-      
-      // Process text segments
       let fullText = '';
-      for (const segment of segments) {
-        if (segment.label === 'text') {
-          // Convert mask to base64 string if needed
-          const maskData = segment.mask instanceof HTMLCanvasElement 
-            ? segment.mask.toDataURL() 
-            : segment.mask;
-            
-          const textResult = await recognizer(maskData);
-          
-          // Handle the result based on its structure
-          if (Array.isArray(textResult)) {
-            const text = textResult[0]?.text || '';
-            if (text) {
-              fullText += text + '\n';
-            }
-          } else if (typeof textResult === 'object' && textResult !== null) {
-            const text = (textResult as { text?: string }).text || '';
-            if (text) {
-              fullText += text + '\n';
-            }
+      
+      // Handle the result based on its structure
+      if (Array.isArray(result)) {
+        result.forEach(item => {
+          if (typeof item === 'object' && item !== null && 'generated_text' in item) {
+            fullText += item.generated_text + '\n';
           }
-        }
+        });
+      } else if (typeof result === 'object' && result !== null && 'generated_text' in result) {
+        fullText += result.generated_text + '\n';
       }
       
       console.log('AI processed text:', fullText);

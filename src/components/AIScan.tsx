@@ -71,7 +71,7 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
       const segments = await segmenter(imageData);
       
       // Initialize text recognition pipeline
-      const recognizer = await pipeline('text-detection-recognition', 'microsoft/trocr-base-printed', {
+      const recognizer = await pipeline('text-recognition', 'microsoft/trocr-base-printed', {
         device: 'webgpu'
       });
       
@@ -79,10 +79,13 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
       let fullText = '';
       for (const segment of segments) {
         if (segment.label === 'text') {
-          const textResult = await recognizer(segment.mask, {
-            task: 'text-recognition'
-          });
-          if (typeof textResult === 'object' && 'text' in textResult) {
+          // Convert mask to base64 string if it's not already
+          const maskData = typeof segment.mask === 'string' 
+            ? segment.mask 
+            : segment.mask.toDataURL();
+            
+          const textResult = await recognizer(maskData);
+          if (textResult && typeof textResult === 'object' && 'text' in textResult) {
             fullText += textResult.text + '\n';
           }
         }

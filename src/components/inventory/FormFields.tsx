@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormField } from './FormField';
 import { QuantityInput } from './QuantityInput';
 import { BarcodeInputField } from './BarcodeInputField';
 import { Button } from '../ui/button';
@@ -16,7 +15,6 @@ interface FormFieldsProps {
   onQuantityIncrement: () => void;
   onQuantityDecrement: () => void;
   barcodeInputRef: React.RefObject<HTMLInputElement>;
-  onScanClick?: () => void;
   onOCRClick?: () => void;
   onAIScanClick?: () => void;
 }
@@ -31,7 +29,6 @@ export const FormFields = ({
   onQuantityIncrement,
   onQuantityDecrement,
   barcodeInputRef,
-  onScanClick,
   onOCRClick,
   onAIScanClick,
 }: FormFieldsProps) => (
@@ -66,14 +63,18 @@ export const FormFields = ({
       />
     </div>
 
-    <FormField
-      id="sapNumber"
-      label="SAP Item #"
-      value={sapNumber}
-      onChange={onSAPNumberChange}
-      placeholder="Enter SAP Item number"
-      required
-    />
+    <div className="space-y-2">
+      <label htmlFor="sapNumber" className="block text-sm font-medium text-gray-700">
+        SAP Item #
+      </label>
+      <Input
+        id="sapNumber"
+        value={sapNumber}
+        onChange={(e) => onSAPNumberChange(e.target.value)}
+        placeholder="Enter SAP Item number"
+        required
+      />
+    </div>
 
     <QuantityInput
       quantity={quantity}

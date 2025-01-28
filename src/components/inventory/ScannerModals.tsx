@@ -1,11 +1,13 @@
 import React from 'react';
 import { BarcodeScanner } from '../BarcodeScanner';
 import { OCRScanner } from '../OCRScanner';
+import { AIScan } from '../AIScan';
 import { PhotoCapture } from '../PhotoCapture';
 
 interface ScannerModalsProps {
   showScanner: boolean;
   showOCRScanner: boolean;
+  showAIScanner: boolean;
   showCamera: boolean;
   onScan: (result: string) => void;
   onOCRScan: (fields: {
@@ -21,6 +23,7 @@ interface ScannerModalsProps {
 export const ScannerModals = ({
   showScanner,
   showOCRScanner,
+  showAIScanner,
   showCamera,
   onScan,
   onOCRScan,
@@ -36,6 +39,12 @@ export const ScannerModals = ({
     )}
     {showOCRScanner && (
       <OCRScanner
+        onScan={onOCRScan}
+        onClose={onClose}
+      />
+    )}
+    {showAIScanner && (
+      <AIScan
         onScan={onOCRScan}
         onClose={onClose}
       />

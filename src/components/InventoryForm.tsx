@@ -16,19 +16,8 @@ interface InventoryFormProps {
 }
 
 export const InventoryForm = ({ onSubmit, initialValues, storeLocation }: InventoryFormProps) => {
-  console.log('InventoryForm received initialValues:', initialValues);
-  console.log('InventoryForm received storeLocation:', storeLocation);
-  
   const barcodeInputRef = useRef<HTMLInputElement>(null);
   const formState = useFormState(initialValues, storeLocation);
-
-  console.log('Current form state:', {
-    sapNumber: formState.sapNumber,
-    quantity: formState.quantity,
-    barcode: formState.barcode,
-    storeLocation: formState.storeLocation,
-    photoUrl: formState.photoUrl
-  });
 
   const handlePhotoDelete = () => {
     formState.setPhotoUrl(null);
@@ -59,7 +48,7 @@ export const InventoryForm = ({ onSubmit, initialValues, storeLocation }: Invent
     formState.setBarcode(e.target.value);
   };
 
-  const handleOCRScan = (fields: {
+  const handleScan = (fields: {
     sapNumber?: string;
     barcode?: string;
     storeLocation?: string;
@@ -70,6 +59,7 @@ export const InventoryForm = ({ onSubmit, initialValues, storeLocation }: Invent
     if (fields.storeLocation) formState.setStoreLocation(fields.storeLocation);
     if (fields.quantity) formState.setQuantity(fields.quantity);
     formState.setShowOCRScanner(false);
+    formState.setShowAIScanner(false);
   };
 
   useEffect(() => {
@@ -97,6 +87,7 @@ export const InventoryForm = ({ onSubmit, initialValues, storeLocation }: Invent
         onQuantityDecrement={() => formState.setQuantity(prev => Math.max(1, prev - 1))}
         barcodeInputRef={barcodeInputRef}
         onOCRClick={() => formState.setShowOCRScanner(true)}
+        onAIScanClick={() => formState.setShowAIScanner(true)}
       />
 
       <PhotoSection
@@ -113,15 +104,17 @@ export const InventoryForm = ({ onSubmit, initialValues, storeLocation }: Invent
       <ScannerModals
         showScanner={false}
         showOCRScanner={formState.showOCRScanner}
+        showAIScanner={formState.showAIScanner}
         showCamera={formState.showCamera}
         onScan={() => {}}
-        onOCRScan={handleOCRScan}
+        onOCRScan={handleScan}
         onPhotoCapture={(photoUrl: string) => {
           formState.setPhotoUrl(photoUrl);
           formState.setShowCamera(false);
         }}
         onClose={() => {
           formState.setShowOCRScanner(false);
+          formState.setShowAIScanner(false);
           formState.setShowCamera(false);
         }}
       />

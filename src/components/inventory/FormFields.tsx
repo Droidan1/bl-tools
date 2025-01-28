@@ -2,6 +2,8 @@ import React from 'react';
 import { FormField } from './FormField';
 import { QuantityInput } from './QuantityInput';
 import { BarcodeInputField } from './BarcodeInputField';
+import { Button } from '../ui/button';
+import { Brain } from 'lucide-react';
 
 interface FormFieldsProps {
   barcode: string;
@@ -15,6 +17,7 @@ interface FormFieldsProps {
   barcodeInputRef: React.RefObject<HTMLInputElement>;
   onScanClick?: () => void;
   onOCRClick?: () => void;
+  onAIScanClick?: () => void;
 }
 
 export const FormFields = ({
@@ -29,15 +32,38 @@ export const FormFields = ({
   barcodeInputRef,
   onScanClick,
   onOCRClick,
+  onAIScanClick,
 }: FormFieldsProps) => (
   <>
-    <BarcodeInputField
-      barcode={barcode}
-      onChange={onBarcodeChange}
-      inputRef={barcodeInputRef}
-      onScanClick={onScanClick}
-      onOCRClick={onOCRClick}
-    />
+    <div className="space-y-4">
+      <div className="flex justify-center gap-2 mb-2">
+        <Button
+          type="button"
+          onClick={onOCRClick}
+          className="flex-1"
+          variant="outline"
+        >
+          Scan
+        </Button>
+        <Button
+          type="button"
+          onClick={onAIScanClick}
+          className="flex-1"
+          variant="outline"
+        >
+          <Brain className="mr-2 h-4 w-4" />
+          AI Scan
+        </Button>
+      </div>
+      <Input
+        id="barcode"
+        value={barcode}
+        onChange={onBarcodeChange}
+        placeholder="Enter or scan barcode"
+        ref={barcodeInputRef}
+        required
+      />
+    </div>
 
     <FormField
       id="sapNumber"

@@ -20,7 +20,8 @@ const WinSheet = () => {
     safetyObservations: '',
     otherRemarks: '',
     associates: [''],
-    zones: ['']
+    zones: [''],
+    project: '' // New field for project input
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -91,6 +92,12 @@ const WinSheet = () => {
             }),
             new Paragraph({
               children: [new TextRun({ text: formData.otherRemarks })]
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: "Project", bold: true, size: 28 })]
+            }),
+            new Paragraph({
+              children: [new TextRun({ text: formData.project })]
             }),
             new Paragraph({
               children: [new TextRun({ text: "Staff Working Zones", bold: true, size: 28 })]
@@ -193,7 +200,15 @@ const WinSheet = () => {
           </TabsContent>
 
           <TabsContent value="staff">
-            <Card className="p-4">
+            <Card className="p-4 space-y-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Project</label>
+                <Input
+                  placeholder="Enter project details"
+                  value={formData.project}
+                  onChange={(e) => handleInputChange('project', e.target.value)}
+                />
+              </div>
               <StaffZones
                 associates={formData.associates}
                 zones={formData.zones}

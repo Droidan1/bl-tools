@@ -1,14 +1,11 @@
 import { PageHeader } from '@/components/ui/page-header';
-import { Input } from "@/components/ui/input";
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { useState } from 'react';
 import { toast } from "sonner";
-import { WeatherSelector } from '@/components/win-sheet/WeatherSelector';
-import { StaffZones } from '@/components/win-sheet/StaffZones';
-import { TextSection } from '@/components/win-sheet/TextSection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DailyRemarks } from '@/components/win-sheet/DailyRemarks';
+import { ProjectsAndZones } from '@/components/win-sheet/ProjectsAndZones';
 
 const WinSheet = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +19,7 @@ const WinSheet = () => {
     associates: [''],
     zones: [''],
     project: '',
-    priorities: '' // New field for priorities
+    priorities: ''
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -148,96 +145,20 @@ const WinSheet = () => {
           </TabsList>
 
           <TabsContent value="general">
-            <form className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="salesGoal" className="text-sm font-medium">
-                    Sales Goal
-                  </label>
-                  <Input 
-                    id="salesGoal" 
-                    placeholder="Enter sales goal"
-                    value={formData.salesGoal}
-                    onChange={(e) => handleInputChange('salesGoal', e.target.value)}
-                  />
-                </div>
-                <WeatherSelector 
-                  value={formData.weather}
-                  onChange={(value) => handleInputChange('weather', value)}
-                />
-              </div>
-
-              <div className="space-y-6">
-                <TextSection
-                  label="Operational Issues"
-                  value={formData.operationalIssues}
-                  onChange={(value) => handleInputChange('operationalIssues', value)}
-                  placeholder="Enter operational issues"
-                />
-
-                <TextSection
-                  label="Customer Feedback"
-                  value={formData.customerFeedback}
-                  onChange={(value) => handleInputChange('customerFeedback', value)}
-                  placeholder="Enter customer feedback"
-                />
-
-                <TextSection
-                  label="Staffing Details"
-                  value={formData.staffingDetails}
-                  onChange={(value) => handleInputChange('staffingDetails', value)}
-                  placeholder="Enter staffing details"
-                />
-
-                <TextSection
-                  label="Safety Observations"
-                  value={formData.safetyObservations}
-                  onChange={(value) => handleInputChange('safetyObservations', value)}
-                  placeholder="Enter safety observations"
-                />
-
-                <TextSection
-                  label="Other Remarks"
-                  value={formData.otherRemarks}
-                  onChange={(value) => handleInputChange('otherRemarks', value)}
-                  placeholder="Enter other remarks"
-                />
-              </div>
-            </form>
+            <DailyRemarks 
+              {...formData}
+              onInputChange={handleInputChange}
+            />
           </TabsContent>
 
           <TabsContent value="staff">
-            <Card className="p-4 space-y-6">
-              <StaffZones
-                associates={formData.associates}
-                zones={formData.zones}
-                onAssociateChange={handleAssociateChange}
-                onZoneChange={handleZoneChange}
-                onAdd={addAssociateZone}
-              />
-              
-              <div className="mt-6 pt-6 border-t">
-                <h3 className="text-lg font-medium mb-4">This Week's Priorities</h3>
-                <div className="space-y-2">
-                  <Input
-                    placeholder="Enter this week's priorities"
-                    value={formData.priorities}
-                    onChange={(e) => handleInputChange('priorities', e.target.value)}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6 pt-6 border-t">
-                <h3 className="text-lg font-medium mb-4">Project Details</h3>
-                <div className="space-y-2">
-                  <Input
-                    placeholder="Enter project details"
-                    value={formData.project}
-                    onChange={(e) => handleInputChange('project', e.target.value)}
-                  />
-                </div>
-              </div>
-            </Card>
+            <ProjectsAndZones 
+              {...formData}
+              onAssociateChange={handleAssociateChange}
+              onZoneChange={handleZoneChange}
+              onAdd={addAssociateZone}
+              onInputChange={handleInputChange}
+            />
           </TabsContent>
         </Tabs>
 

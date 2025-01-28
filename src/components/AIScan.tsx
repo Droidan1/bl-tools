@@ -88,12 +88,15 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
           
           // Handle the result based on its structure
           if (Array.isArray(textResult)) {
-            const generated_text = textResult[0]?.generated_text;
-            if (generated_text) {
-              fullText += generated_text + '\n';
+            const text = textResult[0]?.text || '';
+            if (text) {
+              fullText += text + '\n';
             }
-          } else if ('generated_text' in textResult) {
-            fullText += textResult.generated_text + '\n';
+          } else if (typeof textResult === 'object' && textResult !== null) {
+            const text = (textResult as { text?: string }).text || '';
+            if (text) {
+              fullText += text + '\n';
+            }
           }
         }
       }

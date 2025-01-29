@@ -7,8 +7,8 @@ const Landing = () => {
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
       <div className="text-center mb-12">
         <img 
-          src="/lovable-uploads/4d315d91-eb2b-471d-b65c-3a8168848ade.png"
-          alt="Dollar Sign Mascot"
+          src="/lovable-uploads/7ed70ca5-aac2-4afe-8bc9-92ca717e7ba7.png"
+          alt="Dollar Sign Mascot with Shopping Cart"
           className="w-48 h-48 mx-auto mb-6"
         />
         <h1 className="text-4xl md:text-5xl font-bold text-[#2a8636] mb-4 font-['Luckiest_Guy']">

@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { SidebarNav } from "@/components/ui/sidebar-nav";
+import Landing from "./pages/Landing";
 import Index from "./pages/Index";
 import PhotoPage from "./pages/photos/[id]";
 import Labor from "./pages/Labor";
@@ -25,18 +26,29 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <div className="flex h-screen">
-          <SidebarNav />
-          <div className="flex-1 overflow-y-auto">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/photos/:id" element={<PhotoPage />} />
-              <Route path="/labor" element={<Labor />} />
-              <Route path="/winsheet" element={<WinSheet />} />
-              <Route path="/links" element={<Links />} />
-            </Routes>
-          </div>
-        </div>
+        <Routes>
+          <Route
+            path="/"
+            element={<Landing />}
+          />
+          <Route
+            path="/*"
+            element={
+              <div className="flex h-screen">
+                <SidebarNav />
+                <div className="flex-1 overflow-y-auto">
+                  <Routes>
+                    <Route path="/inventory" element={<Index />} />
+                    <Route path="/photos/:id" element={<PhotoPage />} />
+                    <Route path="/labor" element={<Labor />} />
+                    <Route path="/winsheet" element={<WinSheet />} />
+                    <Route path="/links" element={<Links />} />
+                  </Routes>
+                </div>
+              </div>
+            }
+          />
+        </Routes>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

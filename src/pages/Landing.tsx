@@ -2,8 +2,28 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Grid, FileText, Calculator, Link as LinkIcon } from "lucide-react";
 import { Typewriter } from "@/components/ui/typewriter-text";
+import { PopoverForm, PopoverFormSuccess } from "@/components/ui/popover-form";
+import { useState } from "react";
 
 const Landing = () => {
+  const [open, setOpen] = useState(false);
+  const [formState, setFormState] = useState<"idle" | "loading" | "success">("idle");
+  const [feedback, setFeedback] = useState("");
+
+  const handleSubmit = () => {
+    if (!feedback) return;
+    setFormState("loading");
+    setTimeout(() => {
+      setFormState("success");
+    }, 1500);
+
+    setTimeout(() => {
+      setOpen(false);
+      setFormState("idle");
+      setFeedback("");
+    }, 3300);
+  };
+
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
       <div className="text-center mb-12">
@@ -22,7 +42,7 @@ const Landing = () => {
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl w-full mb-12">
         <Link to="/inventory" className="no-underline">
           <Button
             variant="outline"
@@ -62,6 +82,56 @@ const Landing = () => {
             Links
           </Button>
         </Link>
+      </div>
+
+      <div className="fixed bottom-4">
+        <PopoverForm
+          title="Feedback"
+          open={open}
+          setOpen={setOpen}
+          width="364px"
+          height="192px"
+          showCloseButton={formState !== "success"}
+          showSuccess={formState === "success"}
+          openChild={
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
+              className=""
+            >
+              <div className="relative">
+                <textarea
+                  autoFocus
+                  placeholder="Share your feedback..."
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  className="h-32 w-full resize-none rounded-t-lg p-3 text-sm outline-none"
+                  required
+                />
+              </div>
+              <div className="relative flex h-12 items-center px-[10px]">
+                <button
+                  type="submit"
+                  className="ml-auto flex h-6 items-center justify-center overflow-hidden rounded-md bg-[#2a8636] px-3 text-xs font-semibold text-white"
+                >
+                  {formState === "loading" ? (
+                    <Loader className="animate-spin h-3 w-3" />
+                  ) : (
+                    "Submit"
+                  )}
+                </button>
+              </div>
+            </form>
+          }
+          successChild={
+            <PopoverFormSuccess
+              title="Feedback Received"
+              description="Thank you for helping us improve!"
+            />
+          }
+        />
       </div>
     </div>
   );

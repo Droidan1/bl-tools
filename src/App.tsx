@@ -27,12 +27,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Landing />} />
           <Route
-            path="/"
-            element={<Landing />}
-          />
-          <Route
-            path="/*"
             element={
               <div className="flex h-screen">
                 <SidebarNav />
@@ -47,7 +43,13 @@ const App = () => (
                 </div>
               </div>
             }
-          />
+          >
+            <Route path="/inventory" element={<Index />} />
+            <Route path="/photos/:id" element={<PhotoPage />} />
+            <Route path="/labor" element={<Labor />} />
+            <Route path="/winsheet" element={<WinSheet />} />
+            <Route path="/links" element={<Links />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

@@ -25,7 +25,57 @@ const Landing = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4 relative">
+      <div className="absolute top-4 right-4">
+        <PopoverForm
+          title="Feedback"
+          open={open}
+          setOpen={setOpen}
+          width="364px"
+          height="192px"
+          showCloseButton={formState !== "success"}
+          showSuccess={formState === "success"}
+          openChild={
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
+              className=""
+            >
+              <div className="relative">
+                <textarea
+                  autoFocus
+                  placeholder="Share your feedback..."
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  className="h-32 w-full resize-none rounded-t-lg p-3 text-sm outline-none"
+                  required
+                />
+              </div>
+              <div className="relative flex h-12 items-center px-[10px]">
+                <button
+                  type="submit"
+                  className="ml-auto flex h-6 items-center justify-center overflow-hidden rounded-md bg-[#2a8636] px-3 text-xs font-semibold text-white"
+                >
+                  {formState === "loading" ? (
+                    <Loader className="animate-spin h-3 w-3" />
+                  ) : (
+                    "Submit"
+                  )}
+                </button>
+              </div>
+            </form>
+          }
+          successChild={
+            <PopoverFormSuccess
+              title="Feedback Received"
+              description="Thank you for helping us improve!"
+            />
+          }
+        />
+      </div>
+
       <div className="text-center mb-12">
         <img 
           src="/lovable-uploads/7ed70ca5-aac2-4afe-8bc9-92ca717e7ba7.png"
@@ -82,56 +132,6 @@ const Landing = () => {
             Links
           </Button>
         </Link>
-      </div>
-
-      <div className="fixed bottom-4">
-        <PopoverForm
-          title="Feedback"
-          open={open}
-          setOpen={setOpen}
-          width="364px"
-          height="192px"
-          showCloseButton={formState !== "success"}
-          showSuccess={formState === "success"}
-          openChild={
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleSubmit();
-              }}
-              className=""
-            >
-              <div className="relative">
-                <textarea
-                  autoFocus
-                  placeholder="Share your feedback..."
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  className="h-32 w-full resize-none rounded-t-lg p-3 text-sm outline-none"
-                  required
-                />
-              </div>
-              <div className="relative flex h-12 items-center px-[10px]">
-                <button
-                  type="submit"
-                  className="ml-auto flex h-6 items-center justify-center overflow-hidden rounded-md bg-[#2a8636] px-3 text-xs font-semibold text-white"
-                >
-                  {formState === "loading" ? (
-                    <Loader className="animate-spin h-3 w-3" />
-                  ) : (
-                    "Submit"
-                  )}
-                </button>
-              </div>
-            </form>
-          }
-          successChild={
-            <PopoverFormSuccess
-              title="Feedback Received"
-              description="Thank you for helping us improve!"
-            />
-          }
-        />
       </div>
     </div>
   );

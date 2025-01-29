@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import PhotoPage from "./pages/photos/[id]";
 import Labor from "./pages/Labor";
 import WinSheet from "./pages/WinSheet";
+import Links from "./pages/Links";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,6 +33,7 @@ const App = () => (
               <Route path="/photos/:id" element={<PhotoPage />} />
               <Route path="/labor" element={<Labor />} />
               <Route path="/winsheet" element={<WinSheet />} />
+              <Route path="/links" element={<Links />} />
             </Routes>
           </div>
         </div>

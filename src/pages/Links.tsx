@@ -10,10 +10,16 @@ const Links = () => {
       </div>
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Placeholder for links content */}
         <div className="p-6 bg-white rounded-xl shadow-custom hover:shadow-elevated transition-shadow">
           <h2 className="mb-4 text-xl font-semibold">Important Links</h2>
-          <p className="text-gray-600">Add your important links here.</p>
+          <a 
+            href="https://wms.retjg.com/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+          >
+            WMS System
+          </a>
         </div>
       </div>
     </div>

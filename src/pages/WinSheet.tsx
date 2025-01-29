@@ -7,6 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DailyRemarks } from '@/components/win-sheet/DailyRemarks';
 import { ProjectsAndZones } from '@/components/win-sheet/ProjectsAndZones';
 
+interface Priority {
+  id: string;
+  text: string;
+  status: 'need-to-start' | 'working-on' | 'completed';
+}
+
 const WinSheet = () => {
   const [formData, setFormData] = useState({
     salesGoal: '',
@@ -19,7 +25,7 @@ const WinSheet = () => {
     associates: [''],
     zones: [''],
     project: '',
-    priorities: ''
+    priorities: [] as Priority[]
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -43,6 +49,36 @@ const WinSheet = () => {
       ...prev,
       associates: [...prev.associates, ''],
       zones: [...prev.zones, '']
+    }));
+  };
+
+  const handleAddPriority = (text: string) => {
+    const newPriority: Priority = {
+      id: crypto.randomUUID(),
+      text,
+      status: 'need-to-start'
+    };
+    setFormData(prev => ({
+      ...prev,
+      priorities: [...prev.priorities, newPriority]
+    }));
+    toast.success("Priority added successfully");
+  };
+
+  const handleRemovePriority = (id: string) => {
+    setFormData(prev => ({
+      ...prev,
+      priorities: prev.priorities.filter(priority => priority.id !== id)
+    }));
+    toast.success("Priority removed successfully");
+  };
+
+  const handleUpdatePriorityStatus = (id: string, status: Priority['status']) => {
+    setFormData(prev => ({
+      ...prev,
+      priorities: prev.priorities.map(priority =>
+        priority.id === id ? { ...priority, status } : priority
+      )
     }));
   };
 
@@ -94,9 +130,13 @@ const WinSheet = () => {
             new Paragraph({
               children: [new TextRun({ text: "This Week's Priorities", bold: true, size: 28 })]
             }),
-            new Paragraph({
-              children: [new TextRun({ text: formData.priorities })]
-            }),
+            ...formData.priorities.map(priority => 
+              new Paragraph({
+                children: [new TextRun({ 
+                  text: `${priority.text} - Status: ${priority.status.replace(/-/g, ' ').toUpperCase()}` 
+                })]
+              })
+            ),
             new Paragraph({
               children: [new TextRun({ text: "Project", bold: true, size: 28 })]
             }),
@@ -158,6 +198,9 @@ const WinSheet = () => {
               onZoneChange={handleZoneChange}
               onAdd={addAssociateZone}
               onInputChange={handleInputChange}
+              onAddPriority={handleAddPriority}
+              onRemovePriority={handleRemovePriority}
+              onUpdatePriorityStatus={handleUpdatePriorityStatus}
             />
           </TabsContent>
         </Tabs>

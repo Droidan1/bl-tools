@@ -54,3 +54,19 @@ body {
   box-shadow: 0 0 0 2px rgba(59, 181, 74, 0.1);
   outline: none;
 }
+
+@keyframes title-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-enter {
+  opacity: 0;
+  animation: title-enter 1s ease-out forwards;
+}

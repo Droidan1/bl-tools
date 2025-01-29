@@ -9,9 +9,14 @@ const Landing = () => {
         <img 
           src="/lovable-uploads/7ed70ca5-aac2-4afe-8bc9-92ca717e7ba7.png"
           alt="Dollar Sign Mascot with Shopping Cart"
-          className="w-48 h-48 mx-auto mb-6"
+          className="w-48 h-48 mx-auto mb-6 animate-fade-in"
         />
-        <h1 className="text-4xl md:text-5xl font-bold text-[#2a8636] mb-4 font-['Luckiest_Guy']">
+        <h1 
+          className="text-4xl md:text-5xl font-bold text-[#2a8636] mb-4 font-['Luckiest_Guy'] animate-enter"
+          style={{
+            animation: "title-enter 1s ease-out forwards",
+          }}
+        >
           Welcome to Bargain Lane Tools
         </h1>
       </div>

@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Grid, FileText, Calculator, Link as LinkIcon } from "lucide-react";
+import { Typewriter } from "@/components/ui/typewriter-text";
 
 const Landing = () => {
   return (
@@ -9,15 +10,15 @@ const Landing = () => {
         <img 
           src="/lovable-uploads/7ed70ca5-aac2-4afe-8bc9-92ca717e7ba7.png"
           alt="Dollar Sign Mascot with Shopping Cart"
-          className="w-48 h-48 mx-auto mb-6 animate-fade-in"
+          className="w-48 h-48 mx-auto mb-6"
         />
-        <h1 
-          className="text-4xl md:text-5xl font-bold text-[#2a8636] mb-4 font-['Luckiest_Guy'] animate-enter"
-          style={{
-            animation: "title-enter 1s ease-out forwards",
-          }}
-        >
-          Welcome to Bargain Lane Tools
+        <h1 className="text-4xl md:text-5xl font-bold text-[#2a8636] mb-4 font-['Luckiest_Guy']">
+          <Typewriter
+            text="Welcome to Bargain Lane Tools"
+            speed={100}
+            cursor="|"
+            className="inline-block"
+          />
         </h1>
       </div>
 

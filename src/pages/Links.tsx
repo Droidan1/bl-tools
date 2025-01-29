@@ -12,14 +12,24 @@ const Links = () => {
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <div className="p-6 bg-white rounded-xl shadow-custom hover:shadow-elevated transition-shadow">
           <h2 className="mb-4 text-xl font-semibold">Important Links</h2>
-          <a 
-            href="https://wms.retjg.com/" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
-          >
-            Paisley
-          </a>
+          <div className="flex flex-col space-y-3">
+            <a 
+              href="https://wms.retjg.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            >
+              Paisley
+            </a>
+            <a 
+              href="https://docs.google.com/spreadsheets/d/1tc5_aKmPH0NEhRWFOcyOhjOM8RXtJO5BShBwui4TJF0/edit?gid=1670296379#gid=1670296379" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 hover:underline transition-colors"
+            >
+              Labor Budget
+            </a>
+          </div>
         </div>
       </div>
     </div>

@@ -6,6 +6,11 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center p-4">
       <div className="text-center mb-12">
+        <img 
+          src="/lovable-uploads/4d315d91-eb2b-471d-b65c-3a8168848ade.png"
+          alt="Dollar Sign Mascot"
+          className="w-48 h-48 mx-auto mb-6"
+        />
         <h1 className="text-4xl md:text-5xl font-bold text-[#2a8636] mb-4 font-['Luckiest_Guy']">
           Welcome to Bargain Lane Tools
         </h1>

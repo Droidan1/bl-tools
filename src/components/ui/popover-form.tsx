@@ -320,5 +320,3 @@ export function PopoverFormCutOutRightIcon() {
     </svg>
   )
 }
-
-export { PopoverForm };

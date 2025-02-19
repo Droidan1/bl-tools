@@ -74,7 +74,7 @@ const Index = () => {
                     </div>}
                 </div>
               </div>
-            </div> : <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20">
+            </div> : <div className="bg-gradient-to-br from-[#2a8636] to-[#3BB54A] p-4 sm:p-6 rounded-xl shadow-sm backdrop-blur-sm border border-white/20 px-[12px] py-[12px]">
               <div className="group relative w-full">
                 <label htmlFor="search-input" className="origin-start absolute top-1/2 block -translate-y-1/2 cursor-text px-1 text-white/70 text-sm transition-all group-focus-within:pointer-events-none group-focus-within:top-0 group-focus-within:cursor-default group-focus-within:text-xs group-focus-within:font-medium group-focus-within:text-white has-[+input:not(:placeholder-shown)]:pointer-events-none has-[+input:not(:placeholder-shown)]:top-0 has-[+input:not(:placeholder-shown)]:cursor-default has-[+input:not(:placeholder-shown)]:text-xs has-[+input:not(:placeholder-shown)]:font-medium has-[+input:not(:placeholder-shown)]:text-white">
                   <span className="inline-flex bg-gradient-to-br from-[#2a8636] to-[#3BB54A] px-2">Search inventory</span>

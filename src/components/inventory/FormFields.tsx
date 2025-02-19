@@ -44,7 +44,7 @@ export const FormFields = ({
     </div>
 
     <div className="space-y-2">
-      <label htmlFor="sapNumber" className="block text-sm font-medium text-White-700">
+      <label htmlFor="sapNumber" className="block text-sm font-medium text-White">
         SAP Item #
       </label>
       <Input id="sapNumber" value={sapNumber} onChange={e => onSAPNumberChange(e.target.value)} placeholder="Enter SAP Item number" required />

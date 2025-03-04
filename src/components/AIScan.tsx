@@ -40,11 +40,11 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
         try {
           const capabilities = videoTrack.getCapabilities();
           // Check if zoom is supported before accessing it
-          if (capabilities && 'zoom' in capabilities) {
+          if (capabilities) {
             videoTrack.applyConstraints({
               advanced: [{ 
-                // Only include standard constraints that are part of MediaTrackConstraintSet
-                focusMode: 'continuous',
+                // Remove non-standard constraints to fix TypeScript error
+                // We'll manage effects using CSS/canvas instead
               }]
             }).catch(e => console.error('Failed to apply camera constraints:', e));
           }
@@ -81,14 +81,14 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
       if (videoTrack && 'applyConstraints' in videoTrack) {
         try {
           const capabilities = videoTrack.getCapabilities();
-          // Check if zoom is supported before accessing it
-          if (capabilities && 'zoom' in capabilities) {
+          // Check capabilities but don't try to access non-standard properties
+          if (capabilities) {
             videoTrack.applyConstraints({
               advanced: [{ 
-                // Don't include non-standard properties like zoom
-                // Instead, we'll manage the zoom effect using CSS transforms
+                // Don't include any non-standard properties
+                // Use CSS transforms for visual effects instead
               }]
-            }).catch(e => console.error('Failed to apply zoom constraints:', e));
+            }).catch(e => console.error('Failed to apply constraints:', e));
           }
         } catch (e) {
           console.error('Error updating camera settings:', e);

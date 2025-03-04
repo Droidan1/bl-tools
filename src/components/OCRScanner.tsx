@@ -306,6 +306,7 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       // Sort and take the median to avoid outliers
       quantities.sort((a, b) => a - b);
       const medianIndex = Math.floor(quantities.length / 2);
+      // Fix: Ensure we're not returning a string here, but a number
       merged.quantity = quantities[medianIndex];
     }
     

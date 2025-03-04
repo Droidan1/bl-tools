@@ -1,4 +1,5 @@
-import { Package, Calculator, FileText, Link } from "lucide-react";
+
+import { Package, Calculator, FileText, Link, LayoutPanelLeft } from "lucide-react";
 import { SidebarLink } from "../sidebar";
 
 export const links = [
@@ -16,6 +17,11 @@ export const links = [
     label: "Win Sheet",
     href: "/winsheet",
     icon: <FileText className="text-white h-5 w-5 flex-shrink-0" />
+  },
+  {
+    label: "Projects & Zones",
+    href: "/projects-zones",
+    icon: <LayoutPanelLeft className="text-white h-5 w-5 flex-shrink-0" />
   },
   {
     label: "Links",

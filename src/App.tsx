@@ -10,6 +10,7 @@ import PhotoPage from "./pages/photos/[id]";
 import Labor from "./pages/Labor";
 import WinSheet from "./pages/WinSheet";
 import Links from "./pages/Links";
+import ProjectsAndZonesPage from "./pages/ProjectsAndZones";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,6 +39,7 @@ const App = () => (
                     <Route path="/photos/:id" element={<PhotoPage />} />
                     <Route path="/labor" element={<Labor />} />
                     <Route path="/winsheet" element={<WinSheet />} />
+                    <Route path="/projects-zones" element={<ProjectsAndZonesPage />} />
                     <Route path="/links" element={<Links />} />
                   </Routes>
                 </div>
@@ -48,6 +50,7 @@ const App = () => (
             <Route path="/photos/:id" element={<PhotoPage />} />
             <Route path="/labor" element={<Labor />} />
             <Route path="/winsheet" element={<WinSheet />} />
+            <Route path="/projects-zones" element={<ProjectsAndZonesPage />} />
             <Route path="/links" element={<Links />} />
           </Route>
         </Routes>

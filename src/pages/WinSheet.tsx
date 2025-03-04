@@ -1,11 +1,11 @@
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
-import { Document, Packer, Paragraph, TextRun } from 'docx';
 import { useState } from 'react';
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DailyRemarks } from '@/components/win-sheet/DailyRemarks';
 import { ProjectsAndZones } from '@/components/win-sheet/ProjectsAndZones';
+import jsPDF from 'jspdf';
 
 interface Priority {
   id: string;
@@ -82,91 +82,123 @@ const WinSheet = () => {
     }));
   };
 
-  const exportToWord = async () => {
+  const exportToPdf = () => {
     try {
-      const doc = new Document({
-        sections: [{
-          properties: {},
-          children: [
-            new Paragraph({
-              children: [new TextRun({ text: "Win Sheet Report", bold: true, size: 32 })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: `Sales Goal: ${formData.salesGoal}`, size: 24 })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: `Weather: ${formData.weather}`, size: 24 })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: "Operational Issues", bold: true, size: 28 })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: formData.operationalIssues })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: "Customer Feedback", bold: true, size: 28 })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: formData.customerFeedback })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: "Staffing Details", bold: true, size: 28 })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: formData.staffingDetails })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: "Safety Observations", bold: true, size: 28 })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: formData.safetyObservations })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: "Other Remarks", bold: true, size: 28 })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: formData.otherRemarks })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: "This Week's Priorities", bold: true, size: 28 })]
-            }),
-            ...formData.priorities.map(priority => 
-              new Paragraph({
-                children: [new TextRun({ 
-                  text: `${priority.text} - Status: ${priority.status.replace(/-/g, ' ').toUpperCase()}` 
-                })]
-              })
-            ),
-            new Paragraph({
-              children: [new TextRun({ text: "Project", bold: true, size: 28 })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: formData.project })]
-            }),
-            new Paragraph({
-              children: [new TextRun({ text: "Staff Working Zones", bold: true, size: 28 })]
-            }),
-            ...formData.associates.map((associate, index) => 
-              new Paragraph({
-                children: [new TextRun({ 
-                  text: `${associate} - ${formData.zones[index]}` 
-                })]
-              })
-            )
-          ]
-        }]
-      });
+      const doc = new jsPDF();
+      let yPosition = 20;
+      const leftMargin = 20;
+      const lineHeight = 10;
 
-      const blob = await Packer.toBlob(doc);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `win-sheet-${new Date().toISOString().split('T')[0]}.docx`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      toast.success("Win Sheet exported successfully!");
+      // Title
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Win Sheet Report', leftMargin, yPosition);
+      yPosition += lineHeight + 5;
+      
+      // Add sales goal and weather
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Sales Goal: ${formData.salesGoal}`, leftMargin, yPosition);
+      yPosition += lineHeight;
+      doc.text(`Weather: ${formData.weather}`, leftMargin, yPosition);
+      yPosition += lineHeight * 1.5;
+      
+      // Operational Issues
+      doc.setFont('helvetica', 'bold');
+      doc.text("Operational Issues", leftMargin, yPosition);
+      yPosition += lineHeight;
+      doc.setFont('helvetica', 'normal');
+      const operationalIssuesLines = doc.splitTextToSize(formData.operationalIssues, 170);
+      doc.text(operationalIssuesLines, leftMargin, yPosition);
+      yPosition += (operationalIssuesLines.length * lineHeight) + 5;
+      
+      // Customer Feedback
+      doc.setFont('helvetica', 'bold');
+      doc.text("Customer Feedback", leftMargin, yPosition);
+      yPosition += lineHeight;
+      doc.setFont('helvetica', 'normal');
+      const customerFeedbackLines = doc.splitTextToSize(formData.customerFeedback, 170);
+      doc.text(customerFeedbackLines, leftMargin, yPosition);
+      yPosition += (customerFeedbackLines.length * lineHeight) + 5;
+      
+      // Staffing Details
+      doc.setFont('helvetica', 'bold');
+      doc.text("Staffing Details", leftMargin, yPosition);
+      yPosition += lineHeight;
+      doc.setFont('helvetica', 'normal');
+      const staffingDetailsLines = doc.splitTextToSize(formData.staffingDetails, 170);
+      doc.text(staffingDetailsLines, leftMargin, yPosition);
+      yPosition += (staffingDetailsLines.length * lineHeight) + 5;
+      
+      // Safety Observations
+      doc.setFont('helvetica', 'bold');
+      doc.text("Safety Observations", leftMargin, yPosition);
+      yPosition += lineHeight;
+      doc.setFont('helvetica', 'normal');
+      const safetyObservationsLines = doc.splitTextToSize(formData.safetyObservations, 170);
+      doc.text(safetyObservationsLines, leftMargin, yPosition);
+      yPosition += (safetyObservationsLines.length * lineHeight) + 5;
+      
+      // Other Remarks
+      doc.setFont('helvetica', 'bold');
+      doc.text("Other Remarks", leftMargin, yPosition);
+      yPosition += lineHeight;
+      doc.setFont('helvetica', 'normal');
+      const otherRemarksLines = doc.splitTextToSize(formData.otherRemarks, 170);
+      doc.text(otherRemarksLines, leftMargin, yPosition);
+      yPosition += (otherRemarksLines.length * lineHeight) + 5;
+      
+      // Check if we need a new page before adding priorities
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      
+      // This Week's Priorities
+      doc.setFont('helvetica', 'bold');
+      doc.text("This Week's Priorities", leftMargin, yPosition);
+      yPosition += lineHeight;
+      doc.setFont('helvetica', 'normal');
+      formData.priorities.forEach(priority => {
+        const priorityText = `${priority.text} - Status: ${priority.status.replace(/-/g, ' ').toUpperCase()}`;
+        const priorityLines = doc.splitTextToSize(priorityText, 170);
+        doc.text(priorityLines, leftMargin, yPosition);
+        yPosition += (priorityLines.length * lineHeight);
+      });
+      yPosition += 5;
+      
+      // Check if we need a new page before adding project info
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+      
+      // Project
+      doc.setFont('helvetica', 'bold');
+      doc.text("Project", leftMargin, yPosition);
+      yPosition += lineHeight;
+      doc.setFont('helvetica', 'normal');
+      const projectLines = doc.splitTextToSize(formData.project, 170);
+      doc.text(projectLines, leftMargin, yPosition);
+      yPosition += (projectLines.length * lineHeight) + 5;
+      
+      // Staff Working Zones
+      doc.setFont('helvetica', 'bold');
+      doc.text("Staff Working Zones", leftMargin, yPosition);
+      yPosition += lineHeight;
+      doc.setFont('helvetica', 'normal');
+      formData.associates.forEach((associate, index) => {
+        if (associate.trim()) {
+          const zoneText = `${associate} - ${formData.zones[index] || 'No zone assigned'}`;
+          doc.text(zoneText, leftMargin, yPosition);
+          yPosition += lineHeight;
+        }
+      });
+      
+      // Save PDF
+      const fileName = `win-sheet-${new Date().toISOString().split('T')[0]}.pdf`;
+      doc.save(fileName);
+      toast.success("Win Sheet exported successfully as PDF!");
     } catch (error) {
       console.error('Export failed:', error);
       toast.error("Failed to export Win Sheet");
@@ -208,7 +240,7 @@ const WinSheet = () => {
         <div className="flex justify-end mt-6">
           <Button 
             type="button" 
-            onClick={exportToWord}
+            onClick={exportToPdf}
             className="bg-primary hover:bg-primary/90"
           >
             Export

@@ -299,18 +299,13 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     // For quantity, use the most reasonable value
     const quantities = fieldSets
       .map(set => set.quantity)
-      .filter(val => val !== undefined) as number[];
+      .filter(val => val !== undefined && typeof val === 'number') as number[];
     
     if (quantities.length > 0) {
       // Sort and take the median to avoid outliers
       quantities.sort((a, b) => a - b);
       const medianIndex = Math.floor(quantities.length / 2);
-      
-      // Fix: Properly handle the quantity field with correct type
-      const medianQuantity = quantities[medianIndex];
-      if (typeof medianQuantity === 'number') {
-        merged.quantity = medianQuantity;
-      }
+      merged.quantity = quantities[medianIndex];
     }
     
     return merged;

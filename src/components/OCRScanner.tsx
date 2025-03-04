@@ -1,4 +1,3 @@
-
 import React, { useRef, useCallback, useState } from 'react';
 import { Button } from './ui/button';
 import { X } from 'lucide-react';
@@ -40,10 +39,7 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
           width: { ideal: 3840 }, // 4K resolution
           height: { ideal: 2160 },
           aspectRatio: { ideal: 1.7777777778 },
-          // Add auto-focus constraints
-          focusMode: { ideal: 'continuous' },
-          exposureMode: { ideal: 'continuous' },
-          whiteBalanceMode: { ideal: 'continuous' },
+          frameRate: { ideal: 30 },
         }
       };
       
@@ -53,34 +49,29 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
         
-        // Try to optimize camera settings after starting
         try {
           const track = stream.getVideoTracks()[0];
           const capabilities = track.getCapabilities();
           console.log('Camera capabilities:', capabilities);
           
-          // If the camera supports these settings, apply them
-          if (capabilities.focusDistance) {
-            await track.applyConstraints({
-              advanced: [{ focusMode: 'manual', focusDistance: capabilities.focusDistance.max }],
-            });
+          const extendedCapabilities = capabilities as any;
+          
+          const advancedSettings: Record<string, any> = {};
+          
+          if (extendedCapabilities.focusMode) {
+            advancedSettings.focusMode = 'continuous';
           }
           
-          if (capabilities.brightness || capabilities.exposureCompensation) {
-            // Apply optimal exposure settings
-            const exposureKey = capabilities.exposureCompensation ? 'exposureCompensation' : 'brightness';
-            const mid = capabilities[exposureKey]?.max 
-              ? (capabilities[exposureKey].max + capabilities[exposureKey].min) / 2
-              : undefined;
-              
-            if (mid) {
-              await track.applyConstraints({
-                advanced: [{ [exposureKey]: mid }],
-              });
-            }
+          if (extendedCapabilities.exposureMode) {
+            advancedSettings.exposureMode = 'continuous';
+          }
+          
+          if (Object.keys(advancedSettings).length > 0) {
+            await track.applyConstraints({
+              advanced: [advancedSettings]
+            });
           }
         } catch (settingsError) {
-          // Continue if camera settings optimization fails
           console.error('Could not optimize camera settings:', settingsError);
         }
       }
@@ -112,7 +103,6 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
   const captureAndProcessFrames = async () => {
     if (!videoRef.current) return;
     
-    // Multi-frame approach: Capture several frames with slightly different settings
     setIsProcessing(true);
     
     toast({
@@ -124,33 +114,26 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     const canvas = document.createElement('canvas');
     const video = videoRef.current;
     
-    // Set canvas to maximum resolution
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
     
-    // First frame - capture preview image with current settings
     if (video.style.transform.includes('scaleX(-1)')) {
       ctx.scale(-1, 1);
       ctx.translate(-canvas.width, 0);
     }
     
-    // Apply image processing for better OCR with current settings
     ctx.filter = `brightness(${cameraSettings.brightness}%) contrast(${cameraSettings.contrast}%) saturate(${cameraSettings.saturation}%)`;
     ctx.drawImage(video, 0, 0);
     const dataUrl = canvas.toDataURL('image/jpeg', 1.0);
     setPreviewUrl(dataUrl);
     
-    // Prepare to process multiple frames with different filters
     const frameResults = [];
     const filters = [
-      // Current user settings
       { brightness: cameraSettings.brightness/100, contrast: cameraSettings.contrast/100, saturation: cameraSettings.saturation/100 },
-      // High contrast 
       { brightness: 1.1, contrast: 1.3, saturation: 1.0 },
-      // Balanced
       { brightness: 1.0, contrast: 1.2, saturation: 0.9 },
     ];
     
@@ -167,11 +150,9 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
         tessedit_ocr_engine_mode: '1',
       });
       
-      // Process each frame with different settings
       for (const filter of filters) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
-        // Reset transformations
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         
         if (video.style.transform.includes('scaleX(-1)')) {
@@ -179,11 +160,9 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
           ctx.translate(-canvas.width, 0);
         }
         
-        // Apply different filter for this frame
         ctx.filter = `brightness(${filter.brightness * 100}%) contrast(${filter.contrast * 100}%) saturate(${filter.saturation * 100}%)`;
         ctx.drawImage(video, 0, 0);
         
-        // Process this frame
         const { data } = await worker.recognize(canvas);
         const text = data.text;
         
@@ -196,7 +175,6 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       
       await worker.terminate();
       
-      // Merge results from all frames
       console.log('Multi-frame results:', frameResults);
       const mergedFields = mergeExtractedFields(frameResults.map(r => r.fields));
       
@@ -230,7 +208,6 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     }
   };
 
-  // Merge results from multiple frames, preferring non-empty values
   const mergeExtractedFields = (fieldsArray: Array<{
     sapNumber?: string;
     barcode?: string;
@@ -249,14 +226,12 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       quantity?: number;
     } = {};
     
-    // Handle string fields
     for (const fieldName of stringFieldNames) {
       const values = fieldsArray
         .map(fields => fields[fieldName])
         .filter((val): val is string => val !== undefined && val !== '');
       
       if (values.length > 0) {
-        // Use the most common value or the first one
         const valueCounts = values.reduce((acc, val) => {
           acc[val] = (acc[val] || 0) + 1;
           return acc;
@@ -269,13 +244,11 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       }
     }
     
-    // Handle quantity field separately since it's a number
     const quantities = fieldsArray
       .map(fields => fields.quantity)
       .filter((val): val is number => val !== undefined);
     
     if (quantities.length > 0) {
-      // Use the most common quantity or the median
       const sortedQuantities = [...quantities].sort((a, b) => a - b);
       const medianIndex = Math.floor(sortedQuantities.length / 2);
       result.quantity = sortedQuantities[medianIndex];

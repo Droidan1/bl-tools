@@ -1,4 +1,3 @@
-
 import React, { RefObject, useState } from 'react';
 import { Camera, Zap, ZapOff, Contrast, Focus, Target } from 'lucide-react';
 import { Button } from '../ui/button';
@@ -38,15 +37,23 @@ export const CameraPreview: React.FC<CameraPreviewProps> = ({
       const stream = videoRef.current.srcObject as MediaStream;
       const track = stream.getVideoTracks()[0];
       
-      // Check if torch is supported
+      // Check if torch is supported using type assertion for non-standard property
       const capabilities = track.getCapabilities();
-      if (!capabilities.torch) {
+      const extendedCapabilities = capabilities as any;
+      
+      if (!extendedCapabilities.torch) {
         console.log('Torch not supported on this device');
         return;
       }
       
       const newTorchState = !torchEnabled;
-      await track.applyConstraints({ advanced: [{ torch: newTorchState }] });
+      
+      // Use type assertion for non-standard constraints
+      const constraints = { 
+        advanced: [{ torch: newTorchState } as any] 
+      };
+      
+      await track.applyConstraints(constraints);
       setTorchEnabled(newTorchState);
     } catch (error) {
       console.error('Error toggling torch:', error);

@@ -18,11 +18,6 @@ export const CameraHandler = ({ onStreamReady, onError }: CameraHandlerProps) =>
           width: { ideal: 3840 }, // 4K resolution
           height: { ideal: 2160 },
           aspectRatio: { ideal: 1.7777777778 },
-          // Add advanced focus and exposure settings
-          focusMode: { ideal: 'continuous' },
-          exposureMode: { ideal: 'continuous' },
-          whiteBalanceMode: { ideal: 'continuous' },
-          // Request high-quality stream if available
           frameRate: { ideal: 30 },
         }
       };
@@ -36,37 +31,20 @@ export const CameraHandler = ({ onStreamReady, onError }: CameraHandlerProps) =>
         const capabilities = track.getCapabilities();
         console.log('Camera capabilities:', capabilities);
         
-        // Apply advanced settings if available
+        // Apply advanced settings if available using standard API properties
         const advancedSettings: Record<string, any> = {};
         
-        // Optimize focus
-        if (capabilities.focusDistance) {
+        // We'll use type assertions and safety checks for non-standard properties
+        const extendedCapabilities = capabilities as any;
+        
+        // Handle focus
+        if (extendedCapabilities.focusMode) {
           advancedSettings.focusMode = 'manual';
-          // Use middle of the range for barcode scanning
-          advancedSettings.focusDistance = 
-            (capabilities.focusDistance.max + capabilities.focusDistance.min) / 2;
         }
         
-        // Optimize exposure
-        if (capabilities.exposureCompensation) {
+        // Handle exposure
+        if (extendedCapabilities.exposureMode) {
           advancedSettings.exposureMode = 'manual';
-          // Slightly brighter for barcode scanning
-          advancedSettings.exposureCompensation = capabilities.exposureCompensation.max * 0.7;
-        }
-        
-        // Optimize brightness
-        if (capabilities.brightness) {
-          advancedSettings.brightness = capabilities.brightness.max * 0.6;
-        }
-        
-        // Optimize contrast
-        if (capabilities.contrast) {
-          advancedSettings.contrast = capabilities.contrast.max * 0.7;
-        }
-        
-        // Optimize sharpness
-        if (capabilities.sharpness) {
-          advancedSettings.sharpness = capabilities.sharpness.max;
         }
         
         // Apply settings if we have any

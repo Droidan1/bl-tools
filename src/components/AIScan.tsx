@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from 'react';
 import { Button } from './ui/button';
 import { X } from 'lucide-react';
@@ -23,6 +24,11 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
   const [hasPermission, setHasPermission] = useState<boolean>(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [cameraSettings, setCameraSettings] = useState({
+    brightness: 100,
+    contrast: 100,
+    saturation: 100,
+  });
   const { toast } = useToast();
 
   const handleStreamReady = (stream: MediaStream) => {
@@ -35,6 +41,14 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
   const handleStreamError = (error: Error) => {
     console.error('Error accessing camera:', error);
     setHasPermission(false);
+  };
+
+  const handleSettingsChange = (settings: {
+    brightness: number;
+    contrast: number;
+    saturation: number;
+  }) => {
+    setCameraSettings(settings);
   };
 
   const captureImage = async () => {
@@ -54,6 +68,8 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
       ctx.translate(-canvas.width, 0);
     }
 
+    // Apply image processing with current settings
+    ctx.filter = `brightness(${cameraSettings.brightness}%) contrast(${cameraSettings.contrast}%) saturate(${cameraSettings.saturation}%)`;
     ctx.drawImage(video, 0, 0);
     const dataUrl = canvas.toDataURL('image/jpeg', 1.0);
     setPreviewUrl(dataUrl);
@@ -121,6 +137,7 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
           isProcessing={isProcessing}
           previewUrl={previewUrl}
           onCapture={captureImage}
+          onSettingsChange={handleSettingsChange}
         />
       </div>
     </div>

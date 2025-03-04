@@ -1,3 +1,4 @@
+
 import { pipeline } from '@huggingface/transformers';
 import { extractFieldsFromText } from './ocrUtils';
 

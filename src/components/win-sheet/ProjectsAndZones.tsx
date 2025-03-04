@@ -51,7 +51,7 @@ export const ProjectsAndZones = ({
         <h3 className="text-lg font-medium mb-4">Today's Projects</h3>
         <form onSubmit={handleAddPriority} className="flex gap-2 mb-4">
           <Input name="priority" placeholder="Add a new priority" className="flex-1" />
-          <Button type="submit">Add Priority</Button>
+          <Button type="submit">Add Project</Button>
         </form>
         <div className="space-y-2">
           {priorities.map(priority => <div key={priority.id} className="flex items-center gap-2">

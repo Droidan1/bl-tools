@@ -1,3 +1,4 @@
+
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { X, Camera, RotateCw, ZoomIn, ZoomOut, SunMoon, Scan } from 'lucide-react';
@@ -268,9 +269,11 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       quantity?: number;
     } = {};
     
-    // Get most frequent value for each field
-    ['sapNumber', 'barcode', 'storeLocation', 'bolNumber'].forEach(field => {
-      const fieldName = field as keyof typeof merged;
+    // Define string field names to handle separately from quantity
+    const stringFieldNames: Array<keyof typeof merged> = ['sapNumber', 'barcode', 'storeLocation', 'bolNumber'];
+    
+    // Get most frequent value for each string field
+    stringFieldNames.forEach(fieldName => {
       const values = fieldSets
         .map(set => set[fieldName])
         .filter(val => val !== undefined) as string[];
@@ -296,10 +299,10 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       }
     });
     
-    // For quantity, use the most reasonable value
+    // For quantity, use the most reasonable value - handle separately with proper type checking
     const quantities = fieldSets
       .map(set => set.quantity)
-      .filter(val => val !== undefined && typeof val === 'number') as number[];
+      .filter((val): val is number => val !== undefined && typeof val === 'number');
     
     if (quantities.length > 0) {
       // Sort and take the median to avoid outliers

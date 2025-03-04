@@ -1,3 +1,4 @@
+
 interface ExtractedFields {
   sapNumber?: string;
   barcode?: string;
@@ -27,8 +28,11 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       fields.quantity = parseInt(unitsMatch[1], 10);
     }
 
-    // Extract SAP number specifically after "I:" or "Item:"
-    const sapMatch = cleanLine.match(/(?:I:|Item:)\s*(\d{5,6})/i);
+    // Extract SAP number from multiple patterns:
+    // 1. After "I:" or "Item:"
+    // 2. After "F:" (as seen in the example)
+    // 3. Also check for common OCR misreads like "I" becoming "F", "1", etc.
+    const sapMatch = cleanLine.match(/(?:I:|Item:|F\s*:|J\s*:)\s*(\d{5,6})/i);
     if (sapMatch) {
       console.log('Found SAP match:', sapMatch[1]);
       fields.sapNumber = sapMatch[1];
@@ -67,9 +71,9 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
       }
     }
 
-    // Fallback for SAP number specifically after "I:" or "Item:"
+    // Fallback for SAP number with expanded pattern matching
     if (!fields.sapNumber) {
-      const sapMatch = fullText.match(/(?:I:|Item:)\s*(\d{5,6})/i);
+      const sapMatch = fullText.match(/(?:I:|Item:|F\s*:|J\s*:)\s*(\d{5,6})/i);
       if (sapMatch) {
         console.log('Found SAP from fulltext:', sapMatch[1]);
         fields.sapNumber = sapMatch[1];

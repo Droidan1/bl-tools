@@ -39,16 +39,8 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
           facingMode: 'environment',
           width: { ideal: 3840 }, // 4K resolution
           height: { ideal: 2160 },
-          aspectRatio: { ideal: 1.7777777778 },
-          // Advanced camera constraints
-          advanced: [
-            { 
-              zoom: zoom,
-              focusMode: 'continuous',
-              focusDistance: 1.0, // Focus for close-up scanning
-              whiteBalanceMode: 'continuous'
-            }
-          ]
+          aspectRatio: { ideal: 1.7777777778 }
+          // Remove advanced constraints that use non-standard properties
         }
       };
       
@@ -78,7 +70,8 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
   const adjustZoom = (direction: 'in' | 'out') => {
     const newZoom = direction === 'in' ? Math.min(zoom + 0.1, 3.0) : Math.max(zoom - 0.1, 1.0);
     setZoom(newZoom);
-    updateCameraSettings();
+    // Instead of trying to update camera settings directly,
+    // we'll apply zoom effect during capture
   };
 
   const adjustBrightness = () => {
@@ -92,11 +85,8 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       if (videoTrack && 'applyConstraints' in videoTrack) {
         try {
           const capabilities = videoTrack.getCapabilities();
-          if (capabilities.zoom) {
-            videoTrack.applyConstraints({
-              advanced: [{ zoom: zoom }]
-            }).catch(e => console.error('Failed to apply zoom constraints:', e));
-          }
+          // We won't attempt to apply zoom constraints directly
+          // since they're not standard and vary by browser
         } catch (e) {
           console.error('Error updating camera settings:', e);
         }
@@ -106,7 +96,7 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
 
   // Update camera settings when zoom changes
   useEffect(() => {
-    updateCameraSettings();
+    // Don't try to set non-standard zoom constraints
   }, [zoom]);
 
   const captureFrame = () => {
@@ -130,7 +120,24 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
 
     // Apply image processing adjustments
     ctx.filter = `contrast(${contrast}) brightness(${brightness})`;
-    ctx.drawImage(video, 0, 0);
+    
+    // Apply zoom effect during capture
+    if (zoom !== 1.0) {
+      const zoomX = canvas.width / 2;
+      const zoomY = canvas.height / 2;
+      const scaledWidth = canvas.width / zoom;
+      const scaledHeight = canvas.height / zoom;
+      const offsetX = (canvas.width - scaledWidth) / 2;
+      const offsetY = (canvas.height - scaledHeight) / 2;
+      
+      ctx.drawImage(
+        video, 
+        offsetX, offsetY, scaledWidth, scaledHeight,
+        0, 0, canvas.width, canvas.height
+      );
+    } else {
+      ctx.drawImage(video, 0, 0);
+    }
     
     const dataUrl = canvas.toDataURL('image/jpeg', 1.0);
     return { canvas, dataUrl };

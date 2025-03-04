@@ -39,12 +39,12 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
       if (videoTrack) {
         try {
           const capabilities = videoTrack.getCapabilities();
-          if (capabilities.zoom) {
+          // Check if zoom is supported before accessing it
+          if (capabilities && 'zoom' in capabilities) {
             videoTrack.applyConstraints({
               advanced: [{ 
-                zoom: zoom,
+                // Only include standard constraints that are part of MediaTrackConstraintSet
                 focusMode: 'continuous',
-                focusDistance: 1.0, // Focus for close-up scanning
               }]
             }).catch(e => console.error('Failed to apply camera constraints:', e));
           }
@@ -81,9 +81,13 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
       if (videoTrack && 'applyConstraints' in videoTrack) {
         try {
           const capabilities = videoTrack.getCapabilities();
-          if (capabilities.zoom) {
+          // Check if zoom is supported before accessing it
+          if (capabilities && 'zoom' in capabilities) {
             videoTrack.applyConstraints({
-              advanced: [{ zoom: zoom }]
+              advanced: [{ 
+                // Don't include non-standard properties like zoom
+                // Instead, we'll manage the zoom effect using CSS transforms
+              }]
             }).catch(e => console.error('Failed to apply zoom constraints:', e));
           }
         } catch (e) {
@@ -117,7 +121,25 @@ export const AIScan = ({ onScan, onClose }: AIScanProps) => {
 
     // Apply image processing adjustments for better AI recognition
     ctx.filter = `contrast(${contrast}) brightness(${brightness})`;
-    ctx.drawImage(video, 0, 0);
+    
+    // Apply zoom effect during capture by adjusting drawing parameters
+    if (zoom !== 1.0) {
+      const zoomX = canvas.width / 2;
+      const zoomY = canvas.height / 2;
+      const scaledWidth = canvas.width / zoom;
+      const scaledHeight = canvas.height / zoom;
+      const offsetX = (canvas.width - scaledWidth) / 2;
+      const offsetY = (canvas.height - scaledHeight) / 2;
+      
+      ctx.drawImage(
+        video, 
+        offsetX, offsetY, scaledWidth, scaledHeight,
+        0, 0, canvas.width, canvas.height
+      );
+    } else {
+      ctx.drawImage(video, 0, 0);
+    }
+    
     const dataUrl = canvas.toDataURL('image/jpeg', 1.0);
     setPreviewUrl(dataUrl);
     

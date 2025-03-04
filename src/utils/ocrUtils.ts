@@ -74,6 +74,18 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
   console.log('Processed text:', text);
   console.log('Split into lines:', lines);
 
+  // Define barcode patterns here so they're accessible throughout the function
+  const prmPatterns = [
+    /PRM[-\s]*(\d+)[-\s]*(\d+)/i,
+    /P(?:RM|RH)[-.\s]*(\d+)[-.\s]*(\d+)/i,
+    /(?:PR|RP|RR)[-.\s]*(\d+)[-.\s]*(\d+)/i
+  ];
+  
+  const pPatterns = [
+    /P[-\s]*(\d+)[-\s]*(\d+)/i,
+    /P[-.\s,]*(\d+)[-.\s,]*(\d+)/i
+  ];
+
   // Process each line for exact and fuzzy matches
   lines.forEach(line => {
     const cleanLine = line.trim();
@@ -102,17 +114,6 @@ export const extractFieldsFromText = (text: string): ExtractedFields => {
     }
 
     // Enhanced barcode pattern matching with fuzzy matching
-    const prmPatterns = [
-      /PRM[-\s]*(\d+)[-\s]*(\d+)/i,
-      /P(?:RM|RH)[-.\s]*(\d+)[-.\s]*(\d+)/i,
-      /(?:PR|RP|RR)[-.\s]*(\d+)[-.\s]*(\d+)/i
-    ];
-    
-    const pPatterns = [
-      /P[-\s]*(\d+)[-\s]*(\d+)/i,
-      /P[-.\s,]*(\d+)[-.\s,]*(\d+)/i
-    ];
-    
     // Try all PRM patterns
     for (const pattern of prmPatterns) {
       const match = cleanLine.match(pattern);

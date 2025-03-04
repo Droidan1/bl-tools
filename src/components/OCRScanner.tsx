@@ -270,13 +270,14 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     } = {};
     
     // Define string field names to handle separately from quantity
-    const stringFieldNames: Array<keyof typeof merged> = ['sapNumber', 'barcode', 'storeLocation', 'bolNumber'];
+    const stringFieldNames = ['sapNumber', 'barcode', 'storeLocation', 'bolNumber'] as const;
+    type StringFieldName = typeof stringFieldNames[number];
     
     // Get most frequent value for each string field
     stringFieldNames.forEach(fieldName => {
       const values = fieldSets
         .map(set => set[fieldName])
-        .filter(val => val !== undefined) as string[];
+        .filter((val): val is string => val !== undefined) as string[];
       
       if (values.length > 0) {
         // Find most frequent value

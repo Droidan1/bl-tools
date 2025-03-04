@@ -24,11 +24,6 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
   const [hasPermission, setHasPermission] = React.useState<boolean>(true);
   const [isProcessing, setIsProcessing] = React.useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [cameraSettings, setCameraSettings] = useState({
-    brightness: 100,
-    contrast: 100,
-    saturation: 100,
-  });
   const { toast } = useToast();
 
   const startCamera = async () => {
@@ -39,7 +34,6 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
           width: { ideal: 3840 }, // 4K resolution
           height: { ideal: 2160 },
           aspectRatio: { ideal: 1.7777777778 },
-          frameRate: { ideal: 30 },
         }
       };
       
@@ -48,32 +42,6 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
         streamRef.current = stream;
-        
-        try {
-          const track = stream.getVideoTracks()[0];
-          const capabilities = track.getCapabilities();
-          console.log('Camera capabilities:', capabilities);
-          
-          const extendedCapabilities = capabilities as any;
-          
-          const advancedSettings: Record<string, any> = {};
-          
-          if (extendedCapabilities.focusMode) {
-            advancedSettings.focusMode = 'continuous';
-          }
-          
-          if (extendedCapabilities.exposureMode) {
-            advancedSettings.exposureMode = 'continuous';
-          }
-          
-          if (Object.keys(advancedSettings).length > 0) {
-            await track.applyConstraints({
-              advanced: [advancedSettings]
-            });
-          }
-        } catch (settingsError) {
-          console.error('Could not optimize camera settings:', settingsError);
-        }
       }
       setHasPermission(true);
     } catch (error) {
@@ -92,52 +60,38 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     }
   }, []);
 
-  const handleSettingsChange = (settings: {
-    brightness: number;
-    contrast: number;
-    saturation: number;
-  }) => {
-    setCameraSettings(settings);
-  };
-
-  const captureAndProcessFrames = async () => {
+  const captureImage = async () => {
     if (!videoRef.current) return;
-    
-    setIsProcessing(true);
-    
-    toast({
-      title: "Image captured",
-      description: "Processing multiple frames for better accuracy...",
-      duration: 3000,
-    });
-    
+
     const canvas = document.createElement('canvas');
     const video = videoRef.current;
     
+    // Set canvas to maximum resolution
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
+
     if (video.style.transform.includes('scaleX(-1)')) {
       ctx.scale(-1, 1);
       ctx.translate(-canvas.width, 0);
     }
-    
-    ctx.filter = `brightness(${cameraSettings.brightness}%) contrast(${cameraSettings.contrast}%) saturate(${cameraSettings.saturation}%)`;
+
+    // Apply image processing for better OCR
+    ctx.filter = 'contrast(1.2) brightness(1.1)';
     ctx.drawImage(video, 0, 0);
     const dataUrl = canvas.toDataURL('image/jpeg', 1.0);
     setPreviewUrl(dataUrl);
     
-    const frameResults = [];
-    const filters = [
-      { brightness: cameraSettings.brightness/100, contrast: cameraSettings.contrast/100, saturation: cameraSettings.saturation/100 },
-      { brightness: 1.1, contrast: 1.3, saturation: 1.0 },
-      { brightness: 1.0, contrast: 1.2, saturation: 0.9 },
-    ];
-    
+    toast({
+      title: "Image captured",
+      description: "Processing image...",
+      duration: 3000,
+    });
+
     try {
+      setIsProcessing(true);
       const worker = await createWorker();
       
       await worker.setParameters({
@@ -150,38 +104,18 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
         tessedit_ocr_engine_mode: '1',
       });
       
-      for (const filter of filters) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        
-        if (video.style.transform.includes('scaleX(-1)')) {
-          ctx.scale(-1, 1);
-          ctx.translate(-canvas.width, 0);
-        }
-        
-        ctx.filter = `brightness(${filter.brightness * 100}%) contrast(${filter.contrast * 100}%) saturate(${filter.saturation * 100}%)`;
-        ctx.drawImage(video, 0, 0);
-        
-        const { data } = await worker.recognize(canvas);
-        const text = data.text;
-        
-        console.log('Frame OCR text:', text);
-        console.log('Original text:', text);
-        
-        const fields = extractFieldsFromText(text);
-        frameResults.push({ text, fields });
-      }
+      // Try multiple recognition attempts with different image processing
+      let text = '';
+      const { data } = await worker.recognize(canvas);
+      text = data.text;
       
-      await worker.terminate();
+      console.log('Raw OCR text:', text);
+      const extractedFields = extractFieldsFromText(text);
       
-      console.log('Multi-frame results:', frameResults);
-      const mergedFields = mergeExtractedFields(frameResults.map(r => r.fields));
-      
-      if (Object.keys(mergedFields).length === 0) {
+      if (Object.keys(extractedFields).length === 0) {
         toast({
           title: "No data found",
-          description: "Could not extract any information from the images. Please try again with better lighting and focus.",
+          description: "Could not extract any information from the image. Please try again with better lighting and focus.",
           variant: "destructive",
           duration: 3000,
         });
@@ -191,10 +125,11 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
           description: "Data extracted successfully",
           duration: 3000,
         });
-        onScan(mergedFields);
+        onScan(extractedFields);
         stopCamera();
         onClose();
       }
+      await worker.terminate();
     } catch (error) {
       console.error('OCR Error:', error);
       toast({
@@ -206,55 +141,6 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
     } finally {
       setIsProcessing(false);
     }
-  };
-
-  const mergeExtractedFields = (fieldsArray: Array<{
-    sapNumber?: string;
-    barcode?: string;
-    storeLocation?: string;
-    bolNumber?: string;
-    quantity?: number;
-  }>) => {
-    const stringFieldNames = ['sapNumber', 'barcode', 'storeLocation', 'bolNumber'] as const;
-    type StringFieldName = typeof stringFieldNames[number];
-    
-    const result: {
-      sapNumber?: string;
-      barcode?: string;
-      storeLocation?: string;
-      bolNumber?: string;
-      quantity?: number;
-    } = {};
-    
-    for (const fieldName of stringFieldNames) {
-      const values = fieldsArray
-        .map(fields => fields[fieldName])
-        .filter((val): val is string => val !== undefined && val !== '');
-      
-      if (values.length > 0) {
-        const valueCounts = values.reduce((acc, val) => {
-          acc[val] = (acc[val] || 0) + 1;
-          return acc;
-        }, {} as Record<string, number>);
-        
-        const mostCommonValue = Object.entries(valueCounts)
-          .sort((a, b) => b[1] - a[1])[0][0];
-        
-        result[fieldName] = mostCommonValue;
-      }
-    }
-    
-    const quantities = fieldsArray
-      .map(fields => fields.quantity)
-      .filter((val): val is number => val !== undefined);
-    
-    if (quantities.length > 0) {
-      const sortedQuantities = [...quantities].sort((a, b) => a - b);
-      const medianIndex = Math.floor(sortedQuantities.length / 2);
-      result.quantity = sortedQuantities[medianIndex];
-    }
-    
-    return result;
   };
 
   const handleClose = () => {
@@ -287,8 +173,7 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
           videoRef={videoRef}
           isProcessing={isProcessing}
           previewUrl={previewUrl}
-          onCapture={captureAndProcessFrames}
-          onSettingsChange={handleSettingsChange}
+          onCapture={captureImage}
         />
       </div>
     </div>

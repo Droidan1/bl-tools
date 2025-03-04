@@ -1,4 +1,3 @@
-
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { X, Camera, RotateCw, ZoomIn, ZoomOut, SunMoon, Scan } from 'lucide-react';
@@ -306,8 +305,12 @@ export const OCRScanner = ({ onScan, onClose }: OCRScannerProps) => {
       // Sort and take the median to avoid outliers
       quantities.sort((a, b) => a - b);
       const medianIndex = Math.floor(quantities.length / 2);
-      // Fix: Ensure we're not returning a string here, but a number
-      merged.quantity = quantities[medianIndex];
+      
+      // Fix: Properly handle the quantity field with correct type
+      const medianQuantity = quantities[medianIndex];
+      if (typeof medianQuantity === 'number') {
+        merged.quantity = medianQuantity;
+      }
     }
     
     return merged;

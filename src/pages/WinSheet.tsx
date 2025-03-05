@@ -2,9 +2,9 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { toast } from "sonner";
-import { Link } from 'react-router-dom';
 import jsPDF from 'jspdf';
 import { DailyRemarks } from '@/components/win-sheet/DailyRemarks';
+import { Link } from 'react-router-dom';
 
 const WinSheet = () => {
   const [formData, setFormData] = useState({
@@ -102,9 +102,6 @@ const WinSheet = () => {
       <div className="container px-4 py-2 mx-auto max-w-7xl">
         <div className="flex justify-between items-center">
           <PageHeader title="Win Sheet" />
-          <Button asChild variant="outline" className="mb-4">
-            <Link to="/projects">Go to Projects & Zones</Link>
-          </Button>
         </div>
         
         <DailyRemarks 

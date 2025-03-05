@@ -2,9 +2,9 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { toast } from "sonner";
-import { Link } from 'react-router-dom';
-import { LayoutPanelLeft } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { DailyRemarks } from '@/components/win-sheet/DailyRemarks';
+import { ProjectsAndZones } from '@/components/win-sheet/ProjectsAndZones';
 import jsPDF from 'jspdf';
 
 interface Priority {
@@ -208,18 +208,34 @@ const WinSheet = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="container px-4 py-2 mx-auto max-w-7xl">
-        <div className="flex justify-between items-center">
-          <PageHeader title="Win Sheet" />
-          <Link to="/projects-zones" className="flex items-center gap-2 text-primary hover:text-primary/80">
-            <LayoutPanelLeft className="h-5 w-5" />
-            <span>Projects & Zones</span>
-          </Link>
-        </div>
+        <PageHeader title="Win Sheet" />
         
-        <DailyRemarks 
-          {...formData}
-          onInputChange={handleInputChange}
-        />
+        <Tabs defaultValue="general" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="general">Daily Remarks</TabsTrigger>
+            <TabsTrigger value="staff">Projects & Zones</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="general">
+            <DailyRemarks 
+              {...formData}
+              onInputChange={handleInputChange}
+            />
+          </TabsContent>
+
+          <TabsContent value="staff">
+            <ProjectsAndZones 
+              {...formData}
+              onAssociateChange={handleAssociateChange}
+              onZoneChange={handleZoneChange}
+              onAdd={addAssociateZone}
+              onInputChange={handleInputChange}
+              onAddPriority={handleAddPriority}
+              onRemovePriority={handleRemovePriority}
+              onUpdatePriorityStatus={handleUpdatePriorityStatus}
+            />
+          </TabsContent>
+        </Tabs>
 
         <div className="flex justify-end mt-6">
           <Button 

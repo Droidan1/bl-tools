@@ -37,6 +37,11 @@ export const SignagePreview = ({ signageData }: SignagePreviewProps) => {
 
   useEffect(() => {
     if (fabricRef.current) {
+      // Adjust canvas dimensions when orientation changes
+      const isLandscape = signageData.dimensions === "11 in x 8.5 in";
+      fabricRef.current.setWidth(isLandscape ? 550 : 425);
+      fabricRef.current.setHeight(isLandscape ? 425 : 550);
+      
       // Update canvas with the new signage data
       renderSignageTemplate(fabricRef.current, signageData);
     }

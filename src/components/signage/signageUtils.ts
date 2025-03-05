@@ -14,9 +14,9 @@ export const generateSignagePDF = async (
       const tempCanvas = document.createElement('canvas');
       const isLandscape = signageData.dimensions === "11 in x 8.5 in";
       
-      // Set dimensions for PDF output
-      tempCanvas.width = isLandscape ? 1100 : 850;
-      tempCanvas.height = isLandscape ? 850 : 1100;
+      // Set dimensions for PDF output - make it high resolution for better quality
+      tempCanvas.width = isLandscape ? 1650 : 1275;
+      tempCanvas.height = isLandscape ? 1275 : 1650;
       
       const fabricCanvas = new Canvas(tempCanvas);
       
@@ -37,7 +37,7 @@ export const generateSignagePDF = async (
       pdf.addImage(imgData, 'PNG', 0, 0, 8.5, 11);
       
       // Generate filename
-      const filename = `signage-${signageData.saleType.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`;
+      const filename = `bargain-lane-${signageData.saleType.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.pdf`;
       
       if (download) {
         pdf.save(filename);

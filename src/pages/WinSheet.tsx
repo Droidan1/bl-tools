@@ -1,13 +1,15 @@
 
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import jsPDF from 'jspdf';
 import { DailyRemarks } from '@/components/win-sheet/DailyRemarks';
 import { Link } from 'react-router-dom';
+import { format } from 'date-fns';
 
 const WinSheet = () => {
+  const [currentDate, setCurrentDate] = useState(new Date());
   const [formData, setFormData] = useState({
     salesGoal: '',
     weather: 'sunny',
@@ -19,6 +21,8 @@ const WinSheet = () => {
   });
 
   const handleInputChange = (field: string, value: string) => {
+    // Update the date whenever any input changes
+    setCurrentDate(new Date());
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -35,9 +39,13 @@ const WinSheet = () => {
       doc.text('Journal Report', leftMargin, yPosition);
       yPosition += lineHeight + 5;
       
-      // Add sales goal and weather
+      // Add date to PDF
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
+      doc.text(`Date: ${format(currentDate, 'MMMM dd, yyyy')}`, leftMargin, yPosition);
+      yPosition += lineHeight;
+      
+      // Add sales goal and weather
       doc.text(`Sales Goal: ${formData.salesGoal}`, leftMargin, yPosition);
       yPosition += lineHeight;
       doc.text(`Weather: ${formData.weather}`, leftMargin, yPosition);
@@ -89,7 +97,7 @@ const WinSheet = () => {
       yPosition += (otherRemarksLines.length * lineHeight) + 5;
       
       // Save PDF
-      const fileName = `journal-${new Date().toISOString().split('T')[0]}.pdf`;
+      const fileName = `journal-${format(currentDate, 'yyyy-MM-dd')}.pdf`;
       doc.save(fileName);
       toast.success("Journal exported successfully as PDF!");
     } catch (error) {
@@ -101,8 +109,13 @@ const WinSheet = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="container px-4 py-2 mx-auto max-w-7xl">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-4">
           <PageHeader title="Journal" />
+        </div>
+        
+        <div className="bg-gray-100 rounded-lg p-4 mb-6 text-center">
+          <h2 className="text-xl font-semibold">Today's Journal</h2>
+          <p className="text-lg">{format(currentDate, 'MMMM dd, yyyy')}</p>
         </div>
         
         <DailyRemarks 

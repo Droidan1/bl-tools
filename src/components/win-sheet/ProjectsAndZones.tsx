@@ -1,3 +1,4 @@
+
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { StaffZones } from './StaffZones';
@@ -70,13 +71,6 @@ export const ProjectsAndZones = ({
                 <X className="h-4 w-4" />
               </Button>
             </div>)}
-        </div>
-      </div>
-
-      <div className="mt-6 pt-6 border-t">
-        <h3 className="text-lg font-medium mb-4">Project Details</h3>
-        <div className="space-y-2">
-          <Input placeholder="Enter project details" value={project} onChange={e => onInputChange('project', e.target.value)} />
         </div>
       </div>
     </Card>;

@@ -18,7 +18,7 @@ const ProjectsAndZonesPage = () => {
   const [formData, setFormData] = useState({
     associates: [''],
     zones: [''],
-    project: '',
+    project: '', // keeping this for now to avoid prop type changes
     priorities: [] as Priority[]
   });
 
@@ -89,18 +89,9 @@ const ProjectsAndZonesPage = () => {
       doc.text('Projects & Zones Report', leftMargin, yPosition);
       yPosition += lineHeight * 2;
       
-      // Project
-      doc.setFont('helvetica', 'bold');
-      doc.text("Project Details", leftMargin, yPosition);
-      yPosition += lineHeight;
-      doc.setFont('helvetica', 'normal');
-      const projectLines = doc.splitTextToSize(formData.project, 170);
-      doc.text(projectLines, leftMargin, yPosition);
-      yPosition += (projectLines.length * lineHeight) + 5;
-      
       // This Week's Priorities
       doc.setFont('helvetica', 'bold');
-      doc.text("This Week's Priorities", leftMargin, yPosition);
+      doc.text("Today's Projects", leftMargin, yPosition);
       yPosition += lineHeight;
       doc.setFont('helvetica', 'normal');
       formData.priorities.forEach(priority => {

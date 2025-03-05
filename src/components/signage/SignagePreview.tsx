@@ -2,7 +2,7 @@
 import { useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { SignageData } from "@/types/signage";
-import { Canvas, ICanvas } from "fabric/fabric-impl";
+import { Canvas } from "fabric";
 import { renderSignageTemplate } from "./signageTemplates";
 
 interface SignagePreviewProps {
@@ -11,7 +11,7 @@ interface SignagePreviewProps {
 
 export const SignagePreview = ({ signageData }: SignagePreviewProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fabricRef = useRef<ICanvas | null>(null);
+  const fabricRef = useRef<Canvas | null>(null);
 
   useEffect(() => {
     // Initialize canvas on mount

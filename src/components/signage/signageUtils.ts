@@ -2,7 +2,7 @@
 import { jsPDF } from "jspdf";
 import { SignageData } from "@/types/signage";
 import { renderSignageTemplate } from "./signageTemplates";
-import { Canvas } from "fabric/fabric-impl";
+import { Canvas } from "fabric";
 
 export const generateSignagePDF = async (
   signageData: SignageData, 

@@ -1,5 +1,5 @@
 
-import { ICanvas, IText, Text, Rect } from "fabric/fabric-impl";
+import { Canvas, Text, Rect } from "fabric";
 import { SignageData } from "@/types/signage";
 
 // Common styles for different sale types
@@ -26,7 +26,7 @@ const saleTypeStyles = {
   }
 };
 
-export const renderSignageTemplate = (canvas: ICanvas, signageData: SignageData) => {
+export const renderSignageTemplate = (canvas: Canvas, signageData: SignageData) => {
   // Clear any existing objects
   canvas.clear();
   

@@ -1,6 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Grid, FileText, Calculator, Link as LinkIcon, Loader } from "lucide-react";
+import { Grid, FileText, Calculator, Link as LinkIcon, Loader, Layout } from "lucide-react";
 import { Typewriter } from "@/components/ui/typewriter-text";
 import { PopoverForm, PopoverFormSuccess } from "@/components/ui/popover-form";
 import { useState } from "react";
@@ -47,7 +48,7 @@ const Landing = () => {
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl w-full mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl w-full mb-12">
         <Link to="/inventory" className="no-underline">
           <Button variant="outline" className="w-full h-32 flex flex-col items-center justify-center gap-2 text-lg hover:bg-[#2a8636] hover:text-white transition-all">
             <Grid className="h-8 w-8" />
@@ -66,6 +67,13 @@ const Landing = () => {
           <Button variant="outline" className="w-full h-32 flex flex-col items-center justify-center gap-2 text-lg hover:bg-[#2a8636] hover:text-white transition-all">
             <FileText className="h-8 w-8" />
             Journal
+          </Button>
+        </Link>
+
+        <Link to="/projects" className="no-underline">
+          <Button variant="outline" className="w-full h-32 flex flex-col items-center justify-center gap-2 text-lg hover:bg-[#2a8636] hover:text-white transition-all">
+            <Layout className="h-8 w-8" />
+            Projects & Zones
           </Button>
         </Link>
 

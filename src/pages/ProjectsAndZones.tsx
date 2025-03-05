@@ -1,3 +1,4 @@
+
 import { PageHeader } from '@/components/ui/page-header';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,11 @@ import { toast } from "sonner";
 import { StaffZones } from '@/components/win-sheet/StaffZones';
 import { ProjectsAndZones as ProjectsAndZonesComponent } from '@/components/win-sheet/ProjectsAndZones';
 import { jsPDF } from 'jspdf';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
 
 interface Priority {
   id: string;
@@ -22,11 +28,6 @@ const ProjectsAndZonesPage = () => {
   });
   const [date, setDate] = useState(new Date());
 
-  // Effect to update date on any form change
-  useEffect(() => {
-    setDate(new Date());
-  }, [formData]);
-
   const handleAssociateChange = (index: number, value: string) => {
     const newAssociates = [...formData.associates];
     newAssociates[index] = value;
@@ -37,6 +38,12 @@ const ProjectsAndZonesPage = () => {
     const newZones = [...formData.zones];
     newZones[index] = value;
     setFormData(prev => ({ ...prev, zones: newZones }));
+  };
+
+  const handleDateChange = (newDate: Date | undefined) => {
+    if (newDate) {
+      setDate(newDate);
+    }
   };
 
   const addAssociateZone = () => {
@@ -97,7 +104,7 @@ const ProjectsAndZonesPage = () => {
       // Date
       doc.setFontSize(12);
       doc.setFont('helvetica', 'normal');
-      doc.text(`Date: ${date.toLocaleDateString()}`, leftMargin, yPosition);
+      doc.text(`Date: ${format(date, 'MMMM dd, yyyy')}`, leftMargin, yPosition);
       yPosition += lineHeight * 1.5;
       
       // This Week's Priorities
@@ -127,7 +134,7 @@ const ProjectsAndZonesPage = () => {
       });
       
       // Save PDF
-      const fileName = `projects-zones-${date.toISOString().split('T')[0]}.pdf`;
+      const fileName = `projects-zones-${format(date, 'yyyy-MM-dd')}.pdf`;
       doc.save(fileName);
       toast.success("Projects & Zones exported successfully as PDF!");
     } catch (error) {
@@ -139,7 +146,33 @@ const ProjectsAndZonesPage = () => {
   return (
     <div className="min-h-screen bg-white">
       <div className="container px-4 py-2 mx-auto max-w-7xl">
-        <PageHeader title="Projects & Zones" />
+        <div className="flex justify-between items-center mb-4">
+          <PageHeader title="Projects & Zones" />
+          
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-[240px] justify-start text-left font-normal",
+                  "border border-input"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {format(date, 'MMMM dd, yyyy')}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="end">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={handleDateChange}
+                initialFocus
+                className="p-3 pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
         
         <Card className="p-6 mb-6">
           <ProjectsAndZonesComponent 

@@ -1,5 +1,5 @@
 
-import { Canvas, Rect, Text } from "fabric";
+import { Rect, Text } from "fabric";
 import { saleTypeStyles } from "../styles/saleTypeStyles";
 
 export const createSaleTypeElements = (

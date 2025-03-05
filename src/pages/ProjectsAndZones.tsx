@@ -1,4 +1,3 @@
-
 import { PageHeader } from '@/components/ui/page-header';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { StaffZones } from '@/components/win-sheet/StaffZones';
 import { ProjectsAndZones as ProjectsAndZonesComponent } from '@/components/win-sheet/ProjectsAndZones';
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 
 interface Priority {
   id: string;

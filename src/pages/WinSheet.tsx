@@ -3,7 +3,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
-import jsPDF from 'jspdf';
+import { jsPDF } from 'jspdf';
 import { DailyRemarks } from '@/components/win-sheet/DailyRemarks';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';

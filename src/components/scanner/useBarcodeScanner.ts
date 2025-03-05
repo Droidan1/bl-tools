@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { BrowserQRCodeReader } from '@zxing/library';
 import { useToast } from "@/components/ui/use-toast";

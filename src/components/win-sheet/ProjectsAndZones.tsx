@@ -4,12 +4,15 @@ import { Input } from "@/components/ui/input";
 import { StaffZones } from './StaffZones';
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 interface Priority {
   id: string;
   text: string;
   status: 'need-to-start' | 'working-on' | 'completed';
 }
+
 interface ProjectsAndZonesProps {
   associates: string[];
   zones: string[];
@@ -22,7 +25,9 @@ interface ProjectsAndZonesProps {
   onAddPriority: (priority: string) => void;
   onRemovePriority: (id: string) => void;
   onUpdatePriorityStatus: (id: string, status: Priority['status']) => void;
+  date: Date;
 }
+
 export const ProjectsAndZones = ({
   associates,
   zones,
@@ -34,7 +39,8 @@ export const ProjectsAndZones = ({
   onInputChange,
   onAddPriority,
   onRemovePriority,
-  onUpdatePriorityStatus
+  onUpdatePriorityStatus,
+  date
 }: ProjectsAndZonesProps) => {
   const handleAddPriority = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -45,7 +51,15 @@ export const ProjectsAndZones = ({
       input.value = '';
     }
   };
+
   return <Card className="p-4 space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-medium">Staff Zones</h3>
+        <div className="text-sm text-gray-500 font-medium">
+          {format(date, "MMMM dd, yyyy")}
+        </div>
+      </div>
+      
       <StaffZones associates={associates} zones={zones} onAssociateChange={onAssociateChange} onZoneChange={onZoneChange} onAdd={onAdd} />
       
       <div className="mt-6 pt-6 border-t">

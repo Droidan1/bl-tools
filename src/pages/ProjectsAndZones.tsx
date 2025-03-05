@@ -2,7 +2,7 @@
 import { PageHeader } from '@/components/ui/page-header';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { StaffZones } from '@/components/win-sheet/StaffZones';
 import { ProjectsAndZones as ProjectsAndZonesComponent } from '@/components/win-sheet/ProjectsAndZones';
@@ -21,6 +21,12 @@ const ProjectsAndZonesPage = () => {
     project: '', // keeping this for now to avoid prop type changes
     priorities: [] as Priority[]
   });
+  const [date, setDate] = useState(new Date());
+
+  // Effect to update date on any form change
+  useEffect(() => {
+    setDate(new Date());
+  }, [formData]);
 
   const handleAssociateChange = (index: number, value: string) => {
     const newAssociates = [...formData.associates];
@@ -89,6 +95,12 @@ const ProjectsAndZonesPage = () => {
       doc.text('Projects & Zones Report', leftMargin, yPosition);
       yPosition += lineHeight * 2;
       
+      // Date
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Date: ${date.toLocaleDateString()}`, leftMargin, yPosition);
+      yPosition += lineHeight * 1.5;
+      
       // This Week's Priorities
       doc.setFont('helvetica', 'bold');
       doc.text("Today's Projects", leftMargin, yPosition);
@@ -116,7 +128,7 @@ const ProjectsAndZonesPage = () => {
       });
       
       // Save PDF
-      const fileName = `projects-zones-${new Date().toISOString().split('T')[0]}.pdf`;
+      const fileName = `projects-zones-${date.toISOString().split('T')[0]}.pdf`;
       doc.save(fileName);
       toast.success("Projects & Zones exported successfully as PDF!");
     } catch (error) {
@@ -133,6 +145,7 @@ const ProjectsAndZonesPage = () => {
         <Card className="p-6 mb-6">
           <ProjectsAndZonesComponent 
             {...formData}
+            date={date}
             onAssociateChange={handleAssociateChange}
             onZoneChange={handleZoneChange}
             onAdd={addAssociateZone}

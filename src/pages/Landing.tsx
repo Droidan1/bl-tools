@@ -4,10 +4,12 @@ import { Grid, FileText, Calculator, Link as LinkIcon, Loader } from "lucide-rea
 import { Typewriter } from "@/components/ui/typewriter-text";
 import { PopoverForm, PopoverFormSuccess } from "@/components/ui/popover-form";
 import { useState } from "react";
+
 const Landing = () => {
   const [open, setOpen] = useState(false);
   const [formState, setFormState] = useState<"idle" | "loading" | "success">("idle");
   const [feedback, setFeedback] = useState("");
+
   const handleSubmit = () => {
     if (!feedback) return;
     setFormState("loading");
@@ -20,6 +22,7 @@ const Landing = () => {
       setFeedback("");
     }, 3300);
   };
+
   return <div className="min-h-screen flex flex-col items-center justify-center p-4 relative bg-green-200 hover:bg-green-100">
       <div className="absolute top-4 right-4">
         <PopoverForm title="Feedback" open={open} setOpen={setOpen} width="364px" height="192px" showCloseButton={formState !== "success"} showSuccess={formState === "success"} openChild={<form onSubmit={e => {
@@ -62,7 +65,7 @@ const Landing = () => {
         <Link to="/winsheet" className="no-underline">
           <Button variant="outline" className="w-full h-32 flex flex-col items-center justify-center gap-2 text-lg hover:bg-[#2a8636] hover:text-white transition-all">
             <FileText className="h-8 w-8" />
-            Win Sheet
+            Journal
           </Button>
         </Link>
 
@@ -75,4 +78,5 @@ const Landing = () => {
       </div>
     </div>;
 };
+
 export default Landing;

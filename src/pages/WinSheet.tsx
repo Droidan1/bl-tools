@@ -1,3 +1,4 @@
+
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
@@ -31,7 +32,7 @@ const WinSheet = () => {
       // Title
       doc.setFontSize(20);
       doc.setFont('helvetica', 'bold');
-      doc.text('Win Sheet Report', leftMargin, yPosition);
+      doc.text('Journal Report', leftMargin, yPosition);
       yPosition += lineHeight + 5;
       
       // Add sales goal and weather
@@ -88,12 +89,12 @@ const WinSheet = () => {
       yPosition += (otherRemarksLines.length * lineHeight) + 5;
       
       // Save PDF
-      const fileName = `win-sheet-${new Date().toISOString().split('T')[0]}.pdf`;
+      const fileName = `journal-${new Date().toISOString().split('T')[0]}.pdf`;
       doc.save(fileName);
-      toast.success("Win Sheet exported successfully as PDF!");
+      toast.success("Journal exported successfully as PDF!");
     } catch (error) {
       console.error('Export failed:', error);
-      toast.error("Failed to export Win Sheet");
+      toast.error("Failed to export Journal");
     }
   };
 
@@ -101,7 +102,7 @@ const WinSheet = () => {
     <div className="min-h-screen bg-white">
       <div className="container px-4 py-2 mx-auto max-w-7xl">
         <div className="flex justify-between items-center">
-          <PageHeader title="Win Sheet" />
+          <PageHeader title="Journal" />
         </div>
         
         <DailyRemarks 

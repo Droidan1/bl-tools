@@ -14,7 +14,7 @@ export const links = [
     icon: <Calculator className="text-white h-5 w-5 flex-shrink-0" />
   },
   {
-    label: "Win Sheet",
+    label: "Journal",
     href: "/winsheet",
     icon: <FileText className="text-white h-5 w-5 flex-shrink-0" />
   },

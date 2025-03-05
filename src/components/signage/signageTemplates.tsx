@@ -1,3 +1,4 @@
+
 import { Canvas, Text, Rect, Group } from "fabric";
 import { SignageData } from "@/types/signage";
 
@@ -35,7 +36,7 @@ export const renderSignageTemplate = (canvas: Canvas, signageData: SignageData) 
   const canvasWidth = canvas.getWidth() || (isLandscape ? 550 : 425);
   const canvasHeight = canvas.getHeight() || (isLandscape ? 425 : 550);
   
-  // Add white background with green border
+  // Add white background with green border all the way around
   const background = new Rect({
     left: 0,
     top: 0,
@@ -47,55 +48,6 @@ export const renderSignageTemplate = (canvas: Canvas, signageData: SignageData) 
     selectable: false
   });
   canvas.add(background);
-
-  // Add the BARGAIN LANE logo on top left
-  const logoTextShop = new Text("SHOP RETAIL, PALLETS, BINS & MORE", {
-    left: 130,
-    top: 33,
-    fontSize: isLandscape ? 12 : 10,
-    fontFamily: 'Arial',
-    fontWeight: '400',
-    fill: '#3BB54A',
-    originX: 'left',
-    originY: 'center',
-    selectable: false
-  });
-  
-  const logoTextMain = new Text("BARGAIN LANE", {
-    left: 130,
-    top: 65,
-    fontSize: isLandscape ? 30 : 24,
-    fontFamily: 'Impact, Arial',
-    fontWeight: 'bold',
-    fill: '#3BB54A',
-    originX: 'left',
-    originY: 'center',
-    selectable: false
-  });
-  
-  // Add dollar sign circle logo
-  const logoCircle = new Rect({
-    left: 65,
-    top: 65,
-    width: 60,
-    height: 60,
-    rx: 30,
-    ry: 30,
-    fill: '#3BB54A',
-    selectable: false
-  });
-  
-  const dollarSign = new Text("$", {
-    left: 65,
-    top: 65,
-    fontSize: isLandscape ? 36 : 30,
-    fontFamily: 'Arial',
-    fontWeight: 'bold',
-    fill: '#FFFFFF',
-    originX: 'center',
-    originY: 'center',
-    selectable: false
-  });
 
   // Add sale type background in top right
   const saleStyle = saleTypeStyles[signageData.saleType as keyof typeof saleTypeStyles] || saleTypeStyles.Sale;
@@ -109,7 +61,7 @@ export const renderSignageTemplate = (canvas: Canvas, signageData: SignageData) 
     selectable: false
   });
   
-  const saleTypeText = new Text("SALE TYPE", {
+  const saleTypeText = new Text(signageData.saleType, {
     left: canvasWidth - canvasWidth * 0.15,
     top: canvasHeight * 0.075,
     fontSize: isLandscape ? 36 : 30,
@@ -123,9 +75,9 @@ export const renderSignageTemplate = (canvas: Canvas, signageData: SignageData) 
   
   // Dollar sign for price
   const priceDollarSign = new Text("$", {
-    left: canvasWidth * 0.3,
+    left: canvasWidth * 0.4,
     top: canvasHeight * 0.4,
-    fontSize: isLandscape ? 48 : 40,
+    fontSize: isLandscape ? 60 : 50,
     fontWeight: 'bold',
     fontFamily: 'Arial',
     fill: '#000000',
@@ -134,7 +86,7 @@ export const renderSignageTemplate = (canvas: Canvas, signageData: SignageData) 
     selectable: false
   });
   
-  // Price display - very large
+  // Price display - centered
   const priceText = new Text(signageData.price || '10', {
     left: canvasWidth * 0.5,
     top: canvasHeight * 0.4,
@@ -147,11 +99,11 @@ export const renderSignageTemplate = (canvas: Canvas, signageData: SignageData) 
     selectable: false
   });
   
-  // Green bottom bar for product description
+  // Green bottom bar for product description (moved to bottom)
   const descriptionRect = new Rect({
-    left: canvasWidth * 0.1,
-    top: canvasHeight * 0.7,
-    width: canvasWidth * 0.8,
+    left: 0,
+    top: canvasHeight - canvasHeight * 0.15,
+    width: canvasWidth,
     height: canvasHeight * 0.15,
     fill: '#3BB54A',
     selectable: false
@@ -160,13 +112,13 @@ export const renderSignageTemplate = (canvas: Canvas, signageData: SignageData) 
   // Product description on green bar
   const descriptionText = new Text(signageData.productDescription.toUpperCase() || 'PRODUCT DESCRIPTION', {
     left: canvasWidth * 0.5,
-    top: canvasHeight * 0.775,
+    top: canvasHeight - canvasHeight * 0.075,
     fontSize: isLandscape ? 36 : 30,
     fontWeight: 'bold',
     fontFamily: 'Impact, Arial',
     textAlign: 'center',
     fill: '#FFFFFF',
-    width: canvasWidth * 0.7,
+    width: canvasWidth * 0.9,
     originX: 'center',
     originY: 'center',
     selectable: false
@@ -226,10 +178,6 @@ export const renderSignageTemplate = (canvas: Canvas, signageData: SignageData) 
   }
   
   // Add all objects to canvas
-  canvas.add(logoCircle);
-  canvas.add(dollarSign);
-  canvas.add(logoTextShop);
-  canvas.add(logoTextMain);
   canvas.add(saleTypeRect);
   canvas.add(saleTypeText);
   canvas.add(priceDollarSign);

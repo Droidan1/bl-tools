@@ -118,7 +118,7 @@ const WinSheet = () => {
         <DailyRemarks {...formData} onInputChange={handleInputChange} />
 
         <div className="flex justify-end mt-6">
-          <Button type="button" onClick={exportToPdf} className="bg-primary hover:bg-primary/90">
+          <Button type="button" onClick={exportToPdf} className="bg-green-700 hover:bg-green-600 font-bold">
             Export
           </Button>
         </div>

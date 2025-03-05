@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { QuantityInput } from './QuantityInput';
 import { BarcodeInputField } from './BarcodeInputField';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Brain } from 'lucide-react';
+
 interface FormFieldsProps {
   barcode: string;
   sapNumber: string;
@@ -15,8 +16,9 @@ interface FormFieldsProps {
   onQuantityDecrement: () => void;
   barcodeInputRef: React.RefObject<HTMLInputElement>;
   onOCRClick?: () => void;
-  onAIScanClick?: () => void;
+  onAIScanClick?: () => void; // Keeping this in the interface for now to avoid breaking changes elsewhere
 }
+
 export const FormFields = ({
   barcode,
   sapNumber,
@@ -28,16 +30,11 @@ export const FormFields = ({
   onQuantityDecrement,
   barcodeInputRef,
   onOCRClick,
-  onAIScanClick
 }: FormFieldsProps) => <>
     <div className="space-y-4">
-      <div className="flex justify-center gap-2 mb-2">
+      <div className="flex justify-center mb-2">
         <Button type="button" onClick={onOCRClick} className="flex-1" variant="outline">
           Scan
-        </Button>
-        <Button type="button" onClick={onAIScanClick} className="flex-1" variant="outline">
-          <Brain className="mr-2 h-4 w-4" />
-          AI Scan
         </Button>
       </div>
       <Input id="barcode" value={barcode} onChange={onBarcodeChange} placeholder="Enter or scan barcode" ref={barcodeInputRef} required />

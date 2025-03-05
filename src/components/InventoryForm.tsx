@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 import { FormContainer } from './inventory/FormContainer';
 import { SubmitButton } from './inventory/SubmitButton';
@@ -87,7 +88,6 @@ export const InventoryForm = ({ onSubmit, initialValues, storeLocation }: Invent
         onQuantityDecrement={() => formState.setQuantity(prev => Math.max(1, prev - 1))}
         barcodeInputRef={barcodeInputRef}
         onOCRClick={() => formState.setShowOCRScanner(true)}
-        onAIScanClick={() => formState.setShowAIScanner(true)}
       />
 
       <PhotoSection

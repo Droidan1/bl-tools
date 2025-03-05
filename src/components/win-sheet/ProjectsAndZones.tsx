@@ -3,9 +3,12 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { StaffZones } from './StaffZones';
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
+import { X, CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
 
 interface Priority {
   id: string;
@@ -26,6 +29,7 @@ interface ProjectsAndZonesProps {
   onRemovePriority: (id: string) => void;
   onUpdatePriorityStatus: (id: string, status: Priority['status']) => void;
   date: Date;
+  onDateChange?: (date: Date) => void;
 }
 
 export const ProjectsAndZones = ({
@@ -40,7 +44,8 @@ export const ProjectsAndZones = ({
   onAddPriority,
   onRemovePriority,
   onUpdatePriorityStatus,
-  date
+  date,
+  onDateChange
 }: ProjectsAndZonesProps) => {
   const handleAddPriority = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,8 +60,36 @@ export const ProjectsAndZones = ({
   return <Card className="p-4 space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">Staff Zones</h3>
-        <div className="text-sm text-gray-500 font-medium">
-          {format(date, "MMMM dd, yyyy")}
+        <div className="flex items-center gap-2">
+          {onDateChange ? (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "text-sm text-gray-500 font-medium",
+                    "border border-input"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {format(date, "MMMM dd, yyyy")}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(newDate) => newDate && onDateChange(newDate)}
+                  initialFocus
+                  className="p-3 pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+          ) : (
+            <div className="text-sm text-gray-500 font-medium">
+              {format(date, "MMMM dd, yyyy")}
+            </div>
+          )}
         </div>
       </div>
       

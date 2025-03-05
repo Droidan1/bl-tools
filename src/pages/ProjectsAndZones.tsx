@@ -24,8 +24,9 @@ const ProjectsAndZonesPage = () => {
 
   // Effect to update date on any form change
   useEffect(() => {
-    setDate(new Date());
-  }, [formData]);
+    // This effect is no longer needed as we're allowing manual date changes
+    // But we'll keep it for reference and remove the dependency on formData
+  }, []);
 
   const handleAssociateChange = (index: number, value: string) => {
     const newAssociates = [...formData.associates];
@@ -79,6 +80,10 @@ const ProjectsAndZonesPage = () => {
         priority.id === id ? { ...priority, status } : priority
       )
     }));
+  };
+
+  const handleDateChange = (newDate: Date) => {
+    setDate(newDate);
   };
 
   const exportToPdf = () => {
@@ -152,6 +157,7 @@ const ProjectsAndZonesPage = () => {
             onAddPriority={handleAddPriority}
             onRemovePriority={handleRemovePriority}
             onUpdatePriorityStatus={handleUpdatePriorityStatus}
+            onDateChange={handleDateChange}
           />
         </Card>
 

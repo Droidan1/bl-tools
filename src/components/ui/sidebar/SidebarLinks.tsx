@@ -5,7 +5,7 @@ import { SidebarLink } from "../sidebar";
 export const links = [
   {
     label: "Inventory Receiver",
-    href: "/",
+    href: "/inventory",
     icon: <Package className="text-white h-5 w-5 flex-shrink-0" />
   },
   {

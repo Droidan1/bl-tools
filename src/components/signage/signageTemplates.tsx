@@ -1,5 +1,5 @@
 
-import { Canvas, Text, Rect, Group, ITextOptions } from "fabric";
+import { Canvas, Text, Rect, Group, TextOptions } from "fabric";
 import { SignageData } from "@/types/signage";
 
 // Common styles for different sale types

@@ -63,7 +63,11 @@ export const MOSAddItemForm = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="BL1">BL1</SelectItem>
+                <SelectItem value="BL2">BL2</SelectItem>
                 <SelectItem value="BL4">BL4</SelectItem>
+                <SelectItem value="BL8">BL8</SelectItem>
+                <SelectItem value="BL10">BL10</SelectItem>
+                <SelectItem value="BL12">BL12</SelectItem>
               </SelectContent>
             </Select>
           </div>

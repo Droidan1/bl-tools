@@ -59,27 +59,35 @@ export const useBarcodeScanner = (
                 const scannedText = result.getText();
                 console.log('Raw scanned text:', scannedText);
                 
-                // Extract 5 digits after "BL - " prefix if present
+                // Extract digits from the BL-xxxxx-x format
                 let extractedCode = '';
                 
-                if (scannedText.includes("BL - ")) {
-                  const afterPrefix = scannedText.split("BL - ")[1];
-                  if (afterPrefix && afterPrefix.length >= 5) {
-                    extractedCode = afterPrefix.substring(0, 5);
-                  } else if (afterPrefix) {
-                    extractedCode = afterPrefix;
+                // Check if the scanned text contains "BL-"
+                if (scannedText.includes("BL-")) {
+                  // Split by "BL-" and get the part after it
+                  const afterPrefix = scannedText.split("BL-")[1];
+                  
+                  if (afterPrefix) {
+                    // Extract the first continuous block of digits
+                    const digitMatches = afterPrefix.match(/^\d+/);
+                    if (digitMatches && digitMatches[0]) {
+                      // Take the first 5 digits or all if less than 5
+                      extractedCode = digitMatches[0].substring(0, 5);
+                    }
                   }
                 } else {
-                  // Fallback to original behavior if prefix not found
-                  extractedCode = scannedText.length > 5 
-                    ? scannedText.substring(0, 5) 
-                    : scannedText;
+                  // Fallback to original behavior if "BL-" not found
+                  const digitMatches = scannedText.match(/\d+/);
+                  extractedCode = digitMatches && digitMatches[0] 
+                    ? digitMatches[0].substring(0, 5) 
+                    : scannedText.substring(0, 5);
                 }
                 
                 console.log('Extracted code:', extractedCode);
                 
                 // Only process the code if it's different from the last scanned code
-                if (extractedCode !== lastScannedCode) {
+                // and if we successfully extracted a code
+                if (extractedCode && extractedCode !== lastScannedCode) {
                   setLastScannedCode(extractedCode);
                   onScan(extractedCode);
                   handleClose();

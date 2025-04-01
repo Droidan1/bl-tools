@@ -6,7 +6,6 @@ import { useToast } from "@/hooks/use-toast";
 import { MOSHeader } from "@/components/mos/MOSHeader";
 import { MOSAddItemForm } from "@/components/mos/MOSAddItemForm";
 import { MOSInventoryTable } from "@/components/mos/MOSInventoryTable";
-import { MOSGoogleSheetSync } from "@/components/mos/MOSGoogleSheetSync";
 import type { MOSItem } from "@/types/mos";
 import { saveMOSItem, getMOSItems, clearMOSItems } from "@/services/mosService";
 
@@ -159,15 +158,12 @@ const MOS = () => {
       <MOSHeader />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-8">
-        <TabsList className="grid w-full grid-cols-3 bg-[#2a8636]/20">
+        <TabsList className="grid w-full grid-cols-2 bg-[#2a8636]/20">
           <TabsTrigger value="scan" className="data-[state=active]:bg-[#2a8636] data-[state=active]:text-white">
             Scan & Add
           </TabsTrigger>
           <TabsTrigger value="inventory" className="data-[state=active]:bg-[#2a8636] data-[state=active]:text-white">
             Inventory
-          </TabsTrigger>
-          <TabsTrigger value="sync" className="data-[state=active]:bg-[#2a8636] data-[state=active]:text-white">
-            Google Sync
           </TabsTrigger>
         </TabsList>
 
@@ -197,10 +193,6 @@ const MOS = () => {
             onClearAll={handleClearAll}
             isLoading={isLoading}
           />
-        </TabsContent>
-
-        <TabsContent value="sync" className="mt-4">
-          <MOSGoogleSheetSync />
         </TabsContent>
       </Tabs>
 

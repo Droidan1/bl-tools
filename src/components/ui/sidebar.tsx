@@ -4,19 +4,11 @@ import { Link } from "react-router-dom";
 import React, { useState, createContext, useContext } from "react";
 import { Menu, X } from "lucide-react";
 
-interface Links {
-  label: string;
-  href: string;
-  icon: React.JSX.Element | React.ReactNode;
-}
-
-interface SidebarContextProps {
+const SidebarContext = createContext<{
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen: (open: boolean) => void;
   animate: boolean;
-}
-
-const SidebarContext = createContext<SidebarContextProps | undefined>(undefined);
+} | undefined>(undefined);
 
 export const useSidebar = () => {
   const context = useContext(SidebarContext);
@@ -34,16 +26,21 @@ export const SidebarProvider = ({
 }: {
   children: React.ReactNode;
   open?: boolean;
-  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen?: (open: boolean) => void;
   animate?: boolean;
 }) => {
   const [openState, setOpenState] = useState(false);
-
   const open = openProp !== undefined ? openProp : openState;
   const setOpen = setOpenProp !== undefined ? setOpenProp : setOpenState;
 
   return (
-    <SidebarContext.Provider value={{ open, setOpen, animate }}>
+    <SidebarContext.Provider
+      value={{
+        open,
+        setOpen,
+        animate,
+      }}
+    >
       {children}
     </SidebarContext.Provider>
   );
@@ -57,7 +54,7 @@ export const Sidebar = ({
 }: {
   children: React.ReactNode;
   open?: boolean;
-  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpen?: (open: boolean) => void;
   animate?: boolean;
 }) => {
   return (
@@ -67,11 +64,14 @@ export const Sidebar = ({
   );
 };
 
-export const SidebarBody = (props: React.ComponentProps<"div">) => {
+export const SidebarBody = (props: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   return (
     <>
       <DesktopSidebar {...props} />
-      <MobileSidebar {...(props as any)} />
+      <MobileSidebar {...props} />
     </>
   );
 };
@@ -80,8 +80,12 @@ export const DesktopSidebar = ({
   className,
   children,
   ...props
-}: React.ComponentProps<"div">) => {
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) => {
   const { open, setOpen, animate } = useSidebar();
+
   return (
     <div
       className={cn(
@@ -90,7 +94,7 @@ export const DesktopSidebar = ({
       )}
       style={{
         width: animate ? (open ? "300px" : "60px") : "300px",
-        transition: "width 0.3s ease"
+        transition: "width 0.2s ease-in-out",
       }}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
@@ -108,9 +112,9 @@ export const MobileSidebar = ({
 }: {
   className?: string;
   children: React.ReactNode;
-  [key: string]: any;
 }) => {
   const { open, setOpen } = useSidebar();
+
   return (
     <>
       <div
@@ -120,20 +124,15 @@ export const MobileSidebar = ({
         {...props}
       >
         <div className="flex justify-end z-20 w-full">
-          <Menu
-            className="text-white cursor-pointer"
-            onClick={() => setOpen(!open)}
-          />
+          <Menu className="text-white cursor-pointer" onClick={() => setOpen(!open)} />
         </div>
+        
         {open && (
           <div
             className={cn(
               "fixed h-full w-full inset-0 bg-[#2a8636] dark:bg-[#3BB54A] p-10 z-[100] flex flex-col justify-between",
               className
             )}
-            style={{
-              animation: "slideIn 0.3s ease-in-out"
-            }}
           >
             <div
               className="absolute right-10 top-10 z-50 text-white cursor-pointer"
@@ -144,39 +143,34 @@ export const MobileSidebar = ({
             {children}
           </div>
         )}
-        <style jsx>{`
-          @keyframes slideIn {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-          }
-        `}</style>
       </div>
     </>
   );
 };
 
-export const SidebarLink = ({
-  link,
-  className,
-}: {
-  link: Links;
+interface SidebarLinkProps {
+  link: { 
+    href: string; 
+    label: string; 
+    icon: React.ReactNode;
+  };
   className?: string;
-}) => {
+}
+
+export const SidebarLink = ({ link, className }: SidebarLinkProps) => {
   const { open, animate } = useSidebar();
+
   return (
     <Link
       to={link.href}
-      className={cn(
-        "flex items-center justify-start gap-2 group/sidebar py-2",
-        className
-      )}
+      className={cn("flex items-center justify-start gap-2 group/sidebar py-2", className)}
     >
       {link.icon}
       <span
         style={{
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
-          transition: "opacity 0.3s ease"
+          transition: "opacity 0.2s ease-in-out",
         }}
         className="text-white text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
       >

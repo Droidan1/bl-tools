@@ -1,7 +1,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { BrowserQRCodeReader } from '@zxing/library';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export const useBarcodeScanner = (
   onScan: (result: string) => void,
@@ -48,11 +48,21 @@ export const useBarcodeScanner = (
             (result, error) => {
               if (result) {
                 console.log('Barcode detected:', result.getText());
-                onScan(result.getText());
+                const scannedText = result.getText();
+                // Extract first 5 digits if longer
+                const extractedCode = scannedText.length > 5 
+                  ? scannedText.substring(0, 5) 
+                  : scannedText;
+                
+                console.log('Extracted code:', extractedCode);
+                onScan(extractedCode);
                 handleClose();
               }
               if (error) {
-                console.log('Scanning error:', error);
+                // Only log actual errors, not the regular "not found yet" errors
+                if (error.name !== 'NotFoundException') {
+                  console.log('Scanning error:', error);
+                }
               }
             }
           );

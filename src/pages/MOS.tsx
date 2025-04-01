@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { QrCode, Download, Trash2, Package, Search } from "lucide-react";
 import { toast } from "sonner";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BarcodeScanner } from "@/components/BarcodeScanner";
@@ -30,8 +30,8 @@ const MOS = () => {
   const { toast } = useToast();
 
   const handleScan = (result: string) => {
-    // Extract first 5 digits if the scanned result is longer
-    const code = result.length > 5 ? result.substring(0, 5) : result;
+    // Code should be exactly 5 digits
+    const code = result.substring(0, 5);
     setCurrentCode(code);
     setShowScanner(false);
     toast({
@@ -178,10 +178,10 @@ const MOS = () => {
                   <Input
                     id="code"
                     value={currentCode}
-                    onChange={(e) => setCurrentCode(e.target.value)}
+                    onChange={(e) => setCurrentCode(e.target.value.substring(0, 5))}
                     placeholder="Enter code or scan QR"
                     className="w-full"
-                    readOnly
+                    maxLength={5}
                   />
                 </div>
 

@@ -173,7 +173,7 @@ const MOS = () => {
 
                 <div className="space-y-2">
                   <label htmlFor="code" className="text-sm font-medium">
-                    Code (First 5 digits)
+                    SAP item #
                   </label>
                   <Input
                     id="code"

@@ -9,7 +9,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { createJournalPdf } from '@/utils/pdfUtils';
+import { createJournalPdf, printHtml } from '@/utils/pdfUtils';
 
 const WinSheet = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -38,9 +38,9 @@ const WinSheet = () => {
 
   const exportToPdf = () => {
     try {
-      const { doc, fileName } = createJournalPdf(currentDate, formData);
-      doc.save(fileName);
-      toast.success("Journal exported successfully as PDF!");
+      const { printContent } = createJournalPdf(currentDate, formData);
+      printHtml(printContent);
+      toast.success("Journal exported successfully for printing!");
     } catch (error) {
       console.error('Export failed:', error);
       toast.error("Failed to export Journal");

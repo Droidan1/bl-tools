@@ -1,10 +1,11 @@
+
 import { PageHeader } from '@/components/ui/page-header';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
 import { ProjectsAndZones as ProjectsAndZonesComponent } from '@/components/win-sheet/ProjectsAndZones';
-import { createProjectsAndZonesPdf } from '@/utils/pdfUtils';
+import { createProjectsAndZonesPdf, printHtml } from '@/utils/pdfUtils';
 
 interface Priority {
   id: string;
@@ -87,9 +88,9 @@ const ProjectsAndZonesPage = () => {
 
   const exportToPdf = () => {
     try {
-      const { doc, fileName } = createProjectsAndZonesPdf(date, formData);
-      doc.save(fileName);
-      toast.success("Projects & Zones exported successfully as PDF!");
+      const { printContent } = createProjectsAndZonesPdf(date, formData);
+      printHtml(printContent);
+      toast.success("Projects & Zones exported successfully for printing!");
     } catch (error) {
       console.error('Export failed:', error);
       toast.error("Failed to export Projects & Zones");

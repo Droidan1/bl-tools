@@ -1,7 +1,7 @@
-import { jsPDF } from "jspdf";
+
 import { format } from "date-fns";
 
-// Helper to create Journal PDF exports
+// Simple PDF data preparation - we'll use printable HTML instead of jsPDF
 export const createJournalPdf = (
   currentDate: Date,
   formData: {
@@ -14,81 +14,70 @@ export const createJournalPdf = (
     otherRemarks: string;
   }
 ) => {
-  const doc = new jsPDF();
-  let yPosition = 20;
-  const leftMargin = 20;
-  const lineHeight = 10;
-
-  // Title
-  doc.setFontSize(20);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Journal Report', leftMargin, yPosition);
-  yPosition += lineHeight + 5;
-
-  // Add date to PDF
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`Date: ${format(currentDate, 'MMMM dd, yyyy')}`, leftMargin, yPosition);
-  yPosition += lineHeight;
-
-  // Add sales goal and weather
-  doc.text(`Sales Goal: ${formData.salesGoal}`, leftMargin, yPosition);
-  yPosition += lineHeight;
-  doc.text(`Weather: ${formData.weather}`, leftMargin, yPosition);
-  yPosition += lineHeight * 1.5;
-
-  // Operational Issues
-  doc.setFont('helvetica', 'bold');
-  doc.text("Operational Issues", leftMargin, yPosition);
-  yPosition += lineHeight;
-  doc.setFont('helvetica', 'normal');
-  const operationalIssuesLines = doc.splitTextToSize(formData.operationalIssues, 170);
-  doc.text(operationalIssuesLines, leftMargin, yPosition);
-  yPosition += operationalIssuesLines.length * lineHeight + 5;
-
-  // Customer Feedback
-  doc.setFont('helvetica', 'bold');
-  doc.text("Customer Feedback", leftMargin, yPosition);
-  yPosition += lineHeight;
-  doc.setFont('helvetica', 'normal');
-  const customerFeedbackLines = doc.splitTextToSize(formData.customerFeedback, 170);
-  doc.text(customerFeedbackLines, leftMargin, yPosition);
-  yPosition += customerFeedbackLines.length * lineHeight + 5;
-
-  // Staffing Details
-  doc.setFont('helvetica', 'bold');
-  doc.text("Staffing Details", leftMargin, yPosition);
-  yPosition += lineHeight;
-  doc.setFont('helvetica', 'normal');
-  const staffingDetailsLines = doc.splitTextToSize(formData.staffingDetails, 170);
-  doc.text(staffingDetailsLines, leftMargin, yPosition);
-  yPosition += staffingDetailsLines.length * lineHeight + 5;
-
-  // Safety Observations
-  doc.setFont('helvetica', 'bold');
-  doc.text("Safety Observations", leftMargin, yPosition);
-  yPosition += lineHeight;
-  doc.setFont('helvetica', 'normal');
-  const safetyObservationsLines = doc.splitTextToSize(formData.safetyObservations, 170);
-  doc.text(safetyObservationsLines, leftMargin, yPosition);
-  yPosition += safetyObservationsLines.length * lineHeight + 5;
-
-  // Other Remarks
-  doc.setFont('helvetica', 'bold');
-  doc.text("Other Remarks", leftMargin, yPosition);
-  yPosition += lineHeight;
-  doc.setFont('helvetica', 'normal');
-  const otherRemarksLines = doc.splitTextToSize(formData.otherRemarks, 170);
-  doc.text(otherRemarksLines, leftMargin, yPosition);
+  // Create a printable HTML string
+  const fileName = `journal-${format(currentDate, 'yyyy-MM-dd')}.html`;
   
-  // Return the document for saving
+  // Return data for browser-based PDF creation
   return {
-    doc,
-    fileName: `journal-${format(currentDate, 'yyyy-MM-dd')}.pdf`
+    fileName,
+    printContent: `
+      <html>
+      <head>
+        <title>Journal Report - ${format(currentDate, 'MMMM dd, yyyy')}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 30px; }
+          h1 { font-size: 24px; margin-bottom: 20px; }
+          .date { font-size: 16px; margin-bottom: 20px; }
+          .section { margin-bottom: 20px; }
+          .section-title { font-weight: bold; margin-bottom: 5px; }
+          .section-content { margin-left: 10px; }
+        </style>
+      </head>
+      <body>
+        <h1>Journal Report</h1>
+        <div class="date">Date: ${format(currentDate, 'MMMM dd, yyyy')}</div>
+        
+        <div class="section">
+          <div class="section-title">Sales Goal:</div>
+          <div class="section-content">${formData.salesGoal}</div>
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Weather:</div>
+          <div class="section-content">${formData.weather}</div>
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Operational Issues:</div>
+          <div class="section-content">${formData.operationalIssues}</div>
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Customer Feedback:</div>
+          <div class="section-content">${formData.customerFeedback}</div>
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Staffing Details:</div>
+          <div class="section-content">${formData.staffingDetails}</div>
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Safety Observations:</div>
+          <div class="section-content">${formData.safetyObservations}</div>
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Other Remarks:</div>
+          <div class="section-content">${formData.otherRemarks}</div>
+        </div>
+      </body>
+      </html>
+    `
   };
 };
 
-// Helper to create Projects & Zones PDF exports
+// Helper to create Projects & Zones HTML exports
 export const createProjectsAndZonesPdf = (
   date: Date,
   formData: {
@@ -101,52 +90,84 @@ export const createProjectsAndZonesPdf = (
     }>;
   }
 ) => {
-  const doc = new jsPDF();
-  let yPosition = 20;
-  const leftMargin = 20;
-  const lineHeight = 10;
-
-  // Title
-  doc.setFontSize(20);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Projects & Zones Report', leftMargin, yPosition);
-  yPosition += lineHeight * 2;
+  const fileName = `projects-zones-${date.toISOString().split('T')[0]}.html`;
   
-  // Date
-  doc.setFontSize(12);
-  doc.setFont('helvetica', 'normal');
-  doc.text(`Date: ${date.toLocaleDateString()}`, leftMargin, yPosition);
-  yPosition += lineHeight * 1.5;
-  
-  // This Week's Priorities
-  doc.setFont('helvetica', 'bold');
-  doc.text("Today's Projects", leftMargin, yPosition);
-  yPosition += lineHeight;
-  doc.setFont('helvetica', 'normal');
+  // Build priorities HTML
+  let prioritiesHtml = '';
   formData.priorities.forEach(priority => {
-    const priorityText = `${priority.text} - Status: ${priority.status.replace(/-/g, ' ').toUpperCase()}`;
-    const priorityLines = doc.splitTextToSize(priorityText, 170);
-    doc.text(priorityLines, leftMargin, yPosition);
-    yPosition += (priorityLines.length * lineHeight);
+    prioritiesHtml += `
+      <div class="priority-item">
+        ${priority.text} - Status: ${priority.status.replace(/-/g, ' ').toUpperCase()}
+      </div>
+    `;
   });
-  yPosition += 5;
   
-  // Staff Working Zones
-  doc.setFont('helvetica', 'bold');
-  doc.text("Staff Working Zones", leftMargin, yPosition);
-  yPosition += lineHeight;
-  doc.setFont('helvetica', 'normal');
+  // Build staff zones HTML
+  let zonesHtml = '';
   formData.associates.forEach((associate, index) => {
     if (associate.trim()) {
-      const zoneText = `${associate} - ${formData.zones[index] || 'No zone assigned'}`;
-      doc.text(zoneText, leftMargin, yPosition);
-      yPosition += lineHeight;
+      zonesHtml += `
+        <div class="zone-item">
+          ${associate} - ${formData.zones[index] || 'No zone assigned'}
+        </div>
+      `;
     }
   });
   
-  // Return the document for saving
   return {
-    doc,
-    fileName: `projects-zones-${date.toISOString().split('T')[0]}.pdf`
+    fileName,
+    printContent: `
+      <html>
+      <head>
+        <title>Projects & Zones Report - ${date.toLocaleDateString()}</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 30px; }
+          h1 { font-size: 24px; margin-bottom: 20px; }
+          .date { font-size: 16px; margin-bottom: 20px; }
+          .section { margin-bottom: 20px; }
+          .section-title { font-weight: bold; margin-bottom: 10px; font-size: 18px; }
+          .priority-item, .zone-item { margin-bottom: 8px; }
+        </style>
+      </head>
+      <body>
+        <h1>Projects & Zones Report</h1>
+        <div class="date">Date: ${date.toLocaleDateString()}</div>
+        
+        <div class="section">
+          <div class="section-title">Today's Projects</div>
+          ${prioritiesHtml || '<div>No projects added</div>'}
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Staff Working Zones</div>
+          ${zonesHtml || '<div>No staff zones assigned</div>'}
+        </div>
+      </body>
+      </html>
+    `
+  };
+};
+
+// Helper function to trigger print
+export const printHtml = (htmlContent: string) => {
+  // Create a new window for the printable content
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    alert('Please allow popups for this website to export PDF');
+    return;
+  }
+  
+  // Write the HTML content to the new window
+  printWindow.document.write(htmlContent);
+  printWindow.document.close();
+  
+  // Wait for content to load before printing
+  printWindow.onload = function() {
+    printWindow.print();
+    // Close the print window/tab after printing is complete or canceled
+    // We use a small delay to allow the print dialog to appear
+    setTimeout(() => {
+      printWindow.close();
+    }, 500);
   };
 };

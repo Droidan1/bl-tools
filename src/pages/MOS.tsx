@@ -112,10 +112,10 @@ const MOS = () => {
   };
 
   return (
-    <div className="container mx-auto py-6 px-4">
+    <div className="mx-auto py-3 px-3 max-w-md">
       <MOSHeader />
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-8">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-4">
         <TabsList className="grid w-full grid-cols-2 bg-[#2a8636]/20">
           <TabsTrigger value="scan" className="data-[state=active]:bg-[#2a8636] data-[state=active]:text-white">
             Scan & Add
@@ -125,7 +125,7 @@ const MOS = () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="scan" className="mt-4">
+        <TabsContent value="scan" className="mt-4 focus-visible:outline-none focus-visible:ring-0">
           <MOSAddItemForm 
             currentCode={currentCode}
             quantity={quantity}
@@ -140,7 +140,7 @@ const MOS = () => {
           />
         </TabsContent>
 
-        <TabsContent value="inventory" className="mt-4">
+        <TabsContent value="inventory" className="mt-4 focus-visible:outline-none focus-visible:ring-0">
           <MOSInventoryTable 
             items={mosItems}
             searchQuery={searchQuery}

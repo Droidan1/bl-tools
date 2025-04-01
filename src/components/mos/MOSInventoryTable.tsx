@@ -3,16 +3,9 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Download, Trash2, Package, Search } from "lucide-react";
+import { Download, Trash2, Package, Search, Loader2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-
-interface MOSItem {
-  id: string;
-  code: string;
-  quantity: number;
-  reason: string;
-  timestamp: Date;
-}
+import type { MOSItem } from "@/types/mos";
 
 interface MOSInventoryTableProps {
   items: MOSItem[];
@@ -20,6 +13,7 @@ interface MOSInventoryTableProps {
   setSearchQuery: (query: string) => void;
   onExport: () => void;
   onClearAll: () => void;
+  isLoading?: boolean;
 }
 
 export const MOSInventoryTable = ({
@@ -27,13 +21,24 @@ export const MOSInventoryTable = ({
   searchQuery,
   setSearchQuery,
   onExport,
-  onClearAll
+  onClearAll,
+  isLoading = false
 }: MOSInventoryTableProps) => {
   // Filter items based on search query
   const filteredItems = items.filter(item => 
     item.code.includes(searchQuery) || 
-    item.reason.toLowerCase().includes(searchQuery.toLowerCase())
+    item.reason.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (item.storeLocation && item.storeLocation.includes(searchQuery))
   );
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Loader2 className="h-8 w-8 animate-spin text-[#2a8636]" />
+        <span className="ml-2 text-lg">Loading inventory data...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -42,7 +47,7 @@ export const MOSInventoryTable = ({
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by code or reason..."
+              placeholder="Search by code, reason, or store..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-8"
@@ -78,13 +83,14 @@ export const MOSInventoryTable = ({
                 <TableHead>Code</TableHead>
                 <TableHead>Quantity</TableHead>
                 <TableHead>Reason</TableHead>
+                <TableHead>Store</TableHead>
                 <TableHead>Date & Time</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredItems.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-6">
+                  <TableCell colSpan={5} className="text-center py-6">
                     No items found
                   </TableCell>
                 </TableRow>
@@ -103,6 +109,7 @@ export const MOSInventoryTable = ({
                         {item.reason}
                       </div>
                     </TableCell>
+                    <TableCell>{item.storeLocation}</TableCell>
                     <TableCell>{item.timestamp.toLocaleString()}</TableCell>
                   </TableRow>
                 ))

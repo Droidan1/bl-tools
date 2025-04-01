@@ -42,17 +42,6 @@ export const MOSAddItemForm = ({
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-4">
-          <div className="flex justify-center mb-4">
-            <Button 
-              type="button"
-              onClick={onScanClick}
-              className="w-full flex items-center gap-2"
-            >
-              <QrCode className="h-4 w-4" />
-              Scan QR Code
-            </Button>
-          </div>
-
           <div className="space-y-2">
             <label htmlFor="storeLocation" className="text-sm font-medium">
               Store Location
@@ -70,6 +59,17 @@ export const MOSAddItemForm = ({
                 <SelectItem value="BL12">BL12</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="flex justify-center mb-4">
+            <Button 
+              type="button"
+              onClick={onScanClick}
+              className="w-full flex items-center gap-2"
+            >
+              <QrCode className="h-4 w-4" />
+              Scan QR Code
+            </Button>
           </div>
 
           <div className="space-y-2">

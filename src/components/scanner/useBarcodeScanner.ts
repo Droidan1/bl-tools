@@ -9,6 +9,8 @@ export const useBarcodeScanner = (
 ) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [permissionGranted, setPermissionGranted] = useState<boolean | null>(null);
+  const [lastScannedCode, setLastScannedCode] = useState<string | null>(null);
+  const codeReaderRef = useRef<BrowserQRCodeReader | null>(null);
   const { toast } = useToast();
 
   const stopCamera = () => {
@@ -16,6 +18,12 @@ export const useBarcodeScanner = (
       const stream = videoRef.current.srcObject as MediaStream;
       stream.getTracks().forEach(track => track.stop());
       videoRef.current.srcObject = null;
+    }
+    
+    // Clean up code reader
+    if (codeReaderRef.current) {
+      codeReaderRef.current.reset();
+      codeReaderRef.current = null;
     }
   };
 
@@ -31,6 +39,7 @@ export const useBarcodeScanner = (
       }
 
       const codeReader = new BrowserQRCodeReader();
+      codeReaderRef.current = codeReader;
       const devices = await codeReader.listVideoInputDevices();
       
       const selectedDeviceId = devices.find(device => 
@@ -47,7 +56,6 @@ export const useBarcodeScanner = (
             videoRef.current,
             (result, error) => {
               if (result) {
-                console.log('Barcode detected:', result.getText());
                 const scannedText = result.getText();
                 // Extract first 5 digits if longer
                 const extractedCode = scannedText.length > 5 
@@ -55,8 +63,13 @@ export const useBarcodeScanner = (
                   : scannedText;
                 
                 console.log('Extracted code:', extractedCode);
-                onScan(extractedCode);
-                handleClose();
+                
+                // Only process the code if it's different from the last scanned code
+                if (extractedCode !== lastScannedCode) {
+                  setLastScannedCode(extractedCode);
+                  onScan(extractedCode);
+                  handleClose();
+                }
               }
               if (error) {
                 // Only log actual errors, not the regular "not found yet" errors

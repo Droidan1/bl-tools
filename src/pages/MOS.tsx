@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarcodeScanner } from "@/components/BarcodeScanner";
@@ -55,7 +54,6 @@ const MOS = () => {
       description: `Added ${quantity} units with code ${currentCode}`,
     });
 
-    // Reset form
     setCurrentCode("");
     setQuantity(1);
   };
@@ -70,7 +68,6 @@ const MOS = () => {
       return;
     }
 
-    // Create CSV content
     const headers = ["Code", "Quantity", "Reason", "Store", "Timestamp"];
     const rows = mosItems.map(item => [
       item.code,
@@ -85,7 +82,6 @@ const MOS = () => {
       ...rows.map(row => row.join(','))
     ].join('\n');
     
-    // Create and trigger download
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -103,7 +99,6 @@ const MOS = () => {
   const incrementQuantity = () => setQuantity(prev => prev + 1);
   const decrementQuantity = () => setQuantity(prev => prev > 1 ? prev - 1 : 1);
 
-  // Clear all items
   const handleClearAll = () => {
     if (window.confirm("Are you sure you want to clear all items?")) {
       setMOSItems([]);
@@ -116,10 +111,7 @@ const MOS = () => {
 
   return (
     <div className="container mx-auto py-6 px-4">
-      <MOSHeader 
-        storeLocation={storeLocation} 
-        onStoreLocationChange={setStoreLocation} 
-      />
+      <MOSHeader />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-8">
         <TabsList className="grid w-full grid-cols-2 bg-[#2a8636]/20">
@@ -136,9 +128,11 @@ const MOS = () => {
             currentCode={currentCode}
             quantity={quantity}
             reason={reason}
+            storeLocation={storeLocation}
             setCurrentCode={setCurrentCode}
             setQuantity={setQuantity}
             setReason={setReason}
+            setStoreLocation={setStoreLocation}
             incrementQuantity={incrementQuantity}
             decrementQuantity={decrementQuantity}
             onSubmit={handleSubmit}

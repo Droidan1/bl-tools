@@ -10,9 +10,11 @@ interface MOSAddItemFormProps {
   currentCode: string;
   quantity: number;
   reason: string;
+  storeLocation: string;
   setCurrentCode: (code: string) => void;
   setQuantity: (quantity: number) => void;
   setReason: (reason: string) => void;
+  setStoreLocation: (location: string) => void;
   incrementQuantity: () => void;
   decrementQuantity: () => void;
   onSubmit: (e: React.FormEvent) => void;
@@ -23,9 +25,11 @@ export const MOSAddItemForm = ({
   currentCode,
   quantity,
   reason,
+  storeLocation,
   setCurrentCode,
   setQuantity,
   setReason,
+  setStoreLocation,
   incrementQuantity,
   decrementQuantity,
   onSubmit,
@@ -47,6 +51,21 @@ export const MOSAddItemForm = ({
               <QrCode className="h-4 w-4" />
               Scan QR Code
             </Button>
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="storeLocation" className="text-sm font-medium">
+              Store Location
+            </label>
+            <Select value={storeLocation} onValueChange={setStoreLocation}>
+              <SelectTrigger id="storeLocation" className="w-full">
+                <SelectValue placeholder="Select store location" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="BL1">BL1</SelectItem>
+                <SelectItem value="BL4">BL4</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">

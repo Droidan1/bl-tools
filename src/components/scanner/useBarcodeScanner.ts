@@ -57,10 +57,24 @@ export const useBarcodeScanner = (
             (result, error) => {
               if (result) {
                 const scannedText = result.getText();
-                // Extract first 5 digits if longer
-                const extractedCode = scannedText.length > 5 
-                  ? scannedText.substring(0, 5) 
-                  : scannedText;
+                console.log('Raw scanned text:', scannedText);
+                
+                // Extract 5 digits after "BL - " prefix if present
+                let extractedCode = '';
+                
+                if (scannedText.includes("BL - ")) {
+                  const afterPrefix = scannedText.split("BL - ")[1];
+                  if (afterPrefix && afterPrefix.length >= 5) {
+                    extractedCode = afterPrefix.substring(0, 5);
+                  } else if (afterPrefix) {
+                    extractedCode = afterPrefix;
+                  }
+                } else {
+                  // Fallback to original behavior if prefix not found
+                  extractedCode = scannedText.length > 5 
+                    ? scannedText.substring(0, 5) 
+                    : scannedText;
+                }
                 
                 console.log('Extracted code:', extractedCode);
                 

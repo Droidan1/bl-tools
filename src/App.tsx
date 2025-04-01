@@ -12,7 +12,6 @@ import Labor from "./pages/Labor";
 import WinSheet from "./pages/WinSheet";
 import Links from "./pages/Links";
 import ProjectsAndZonesPage from "./pages/ProjectsAndZones";
-import Signage from "./pages/Signage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -42,7 +41,6 @@ const App = () => (
                     <Route path="/labor" element={<Labor />} />
                     <Route path="/winsheet" element={<WinSheet />} />
                     <Route path="/projects" element={<ProjectsAndZonesPage />} />
-                    <Route path="/signage" element={<Signage />} />
                     <Route path="/links" element={<Links />} />
                   </Routes>
                 </div>
@@ -54,7 +52,6 @@ const App = () => (
             <Route path="/labor" element={<Labor />} />
             <Route path="/winsheet" element={<WinSheet />} />
             <Route path="/projects" element={<ProjectsAndZonesPage />} />
-            <Route path="/signage" element={<Signage />} />
             <Route path="/links" element={<Links />} />
           </Route>
         </Routes>

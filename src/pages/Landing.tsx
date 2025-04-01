@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Grid, FileText, Calculator, Link as LinkIcon, Loader, Layout } from "lucide-react";
+import { Grid, FileText, Calculator, Link as LinkIcon, Loader, Layout, QrCode } from "lucide-react";
 import { Typewriter } from "@/components/ui/typewriter-text";
 import { PopoverForm, PopoverFormSuccess } from "@/components/ui/popover-form";
 import { useState } from "react";
@@ -74,6 +74,13 @@ const Landing = () => {
           <Button variant="outline" className="w-full h-32 flex flex-col items-center justify-center gap-2 text-lg hover:bg-[#2a8636] hover:text-white transition-all">
             <Layout className="h-8 w-8" />
             Projects & Zones
+          </Button>
+        </Link>
+
+        <Link to="/mos" className="no-underline">
+          <Button variant="outline" className="w-full h-32 flex flex-col items-center justify-center gap-2 text-lg hover:bg-[#2a8636] hover:text-white transition-all">
+            <QrCode className="h-8 w-8" />
+            MOS
           </Button>
         </Link>
 

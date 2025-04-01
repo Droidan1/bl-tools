@@ -1,5 +1,5 @@
 
-import { Package, Calculator, FileText, Link, Layout } from "lucide-react";
+import { Package, Calculator, FileText, Link, Layout, QrCode } from "lucide-react";
 import { SidebarLink } from "../sidebar";
 
 export const links = [
@@ -22,6 +22,11 @@ export const links = [
     label: "Projects & Zones",
     href: "/projects",
     icon: <Layout className="text-white h-5 w-5 flex-shrink-0" />
+  },
+  {
+    label: "MOS",
+    href: "/mos",
+    icon: <QrCode className="text-white h-5 w-5 flex-shrink-0" />
   },
   {
     label: "Links",

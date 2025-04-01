@@ -1,7 +1,8 @@
+
 import React, { useRef, useCallback, useState } from 'react';
 import { Button } from './ui/button';
 import { X } from 'lucide-react';
-import { useToast } from './ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { CameraPermissionError } from './scanner/CameraPermissionError';
 import { CameraPreview } from './scanner/CameraPreview';
 import { createWorker, PSM } from 'tesseract.js';

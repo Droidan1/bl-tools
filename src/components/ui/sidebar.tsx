@@ -1,7 +1,7 @@
+
 import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import React, { useState, createContext, useContext } from "react";
-import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 interface Links {
@@ -67,7 +67,7 @@ export const Sidebar = ({
   );
 };
 
-export const SidebarBody = (props: React.ComponentProps<typeof motion.div>) => {
+export const SidebarBody = (props: React.ComponentProps<"div">) => {
   return (
     <>
       <DesktopSidebar {...props} />
@@ -80,23 +80,24 @@ export const DesktopSidebar = ({
   className,
   children,
   ...props
-}: React.ComponentProps<typeof motion.div>) => {
+}: React.ComponentProps<"div">) => {
   const { open, setOpen, animate } = useSidebar();
   return (
-    <motion.div
+    <div
       className={cn(
         "h-full px-4 py-4 hidden md:flex md:flex-col bg-[#2a8636] dark:bg-[#3BB54A] w-[300px] flex-shrink-0",
         className
       )}
-      animate={{
+      style={{
         width: animate ? (open ? "300px" : "60px") : "300px",
+        transition: "width 0.3s ease"
       }}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
       {...props}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -124,31 +125,31 @@ export const MobileSidebar = ({
             onClick={() => setOpen(!open)}
           />
         </div>
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{ x: "-100%", opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
-              transition={{
-                duration: 0.3,
-                ease: "easeInOut",
-              }}
-              className={cn(
-                "fixed h-full w-full inset-0 bg-[#2a8636] dark:bg-[#3BB54A] p-10 z-[100] flex flex-col justify-between",
-                className
-              )}
+        {open && (
+          <div
+            className={cn(
+              "fixed h-full w-full inset-0 bg-[#2a8636] dark:bg-[#3BB54A] p-10 z-[100] flex flex-col justify-between",
+              className
+            )}
+            style={{
+              animation: "slideIn 0.3s ease-in-out"
+            }}
+          >
+            <div
+              className="absolute right-10 top-10 z-50 text-white cursor-pointer"
+              onClick={() => setOpen(!open)}
             >
-              <div
-                className="absolute right-10 top-10 z-50 text-white cursor-pointer"
-                onClick={() => setOpen(!open)}
-              >
-                <X />
-              </div>
-              {children}
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <X />
+            </div>
+            {children}
+          </div>
+        )}
+        <style jsx>{`
+          @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+          }
+        `}</style>
       </div>
     </>
   );
@@ -171,15 +172,16 @@ export const SidebarLink = ({
       )}
     >
       {link.icon}
-      <motion.span
-        animate={{
+      <span
+        style={{
           display: animate ? (open ? "inline-block" : "none") : "inline-block",
           opacity: animate ? (open ? 1 : 0) : 1,
+          transition: "opacity 0.3s ease"
         }}
         className="text-white text-sm group-hover/sidebar:translate-x-1 transition duration-150 whitespace-pre inline-block !p-0 !m-0"
       >
         {link.label}
-      </motion.span>
+      </span>
     </Link>
   );
 };

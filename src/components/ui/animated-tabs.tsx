@@ -1,6 +1,6 @@
+
 "use client";
 
-import { motion } from "framer-motion";
 import { useState } from "react";
 
 interface Tab {
@@ -42,14 +42,6 @@ export function AnimatedTabs<T extends string>({
             WebkitTapHighlightColor: "transparent",
           }}
         >
-          {activeTab === tab.id && (
-            <motion.span
-              layoutId="bubble"
-              className="absolute inset-0 z-10 bg-white/10 mix-blend-overlay"
-              style={{ borderRadius: "var(--radius)" }}
-              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-            />
-          )}
           {tab.label}
         </button>
       ))}

@@ -46,3 +46,45 @@ export const clearMOSItems = async () => {
   
   return true;
 };
+
+// New function to fetch the Google Sheet config
+export const getGoogleSheetConfig = async () => {
+  const { data, error } = await supabase
+    .from('mos_config')
+    .select('sheet_url, last_synced')
+    .eq('id', 'google_sheet_config')
+    .single();
+  
+  if (error && error.code !== 'PGRST116') throw error; // PGRST116 is "no rows returned"
+  
+  return data || { sheet_url: null, last_synced: null };
+};
+
+// New function to save the Google Sheet config
+export const saveGoogleSheetConfig = async (sheetUrl: string) => {
+  const { data, error } = await supabase
+    .from('mos_config')
+    .upsert({ 
+      id: 'google_sheet_config', 
+      sheet_url: sheetUrl 
+    });
+  
+  if (error) throw error;
+  
+  return data;
+};
+
+// New function to update the last synced timestamp
+export const updateLastSynced = async () => {
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from('mos_config')
+    .upsert({ 
+      id: 'google_sheet_config', 
+      last_synced: now 
+    });
+  
+  if (error) throw error;
+  
+  return now;
+};

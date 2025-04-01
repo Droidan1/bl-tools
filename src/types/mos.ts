@@ -5,4 +5,5 @@ export interface MOSItem {
   quantity: number;
   reason: string;
   timestamp: Date;
+  storeLocation?: string;
 }

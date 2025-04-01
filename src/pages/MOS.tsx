@@ -16,6 +16,7 @@ const MOS = () => {
   const [currentCode, setCurrentCode] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [reason, setReason] = useState("to bins");
+  const [storeLocation, setStoreLocation] = useState("BL1");
   const { toast } = useToast();
 
   const handleScan = (result: string) => {
@@ -45,6 +46,7 @@ const MOS = () => {
       quantity,
       reason,
       timestamp: new Date(),
+      storeLocation,
     };
 
     setMOSItems(prev => [newItem, ...prev]);
@@ -69,11 +71,12 @@ const MOS = () => {
     }
 
     // Create CSV content
-    const headers = ["Code", "Quantity", "Reason", "Timestamp"];
+    const headers = ["Code", "Quantity", "Reason", "Store", "Timestamp"];
     const rows = mosItems.map(item => [
       item.code,
       item.quantity.toString(),
       item.reason,
+      item.storeLocation || storeLocation,
       item.timestamp.toLocaleString()
     ]);
     
@@ -87,7 +90,7 @@ const MOS = () => {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `mos-report-${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `mos-report-${storeLocation}-${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
     URL.revokeObjectURL(url);
     
@@ -113,7 +116,10 @@ const MOS = () => {
 
   return (
     <div className="container mx-auto py-6 px-4">
-      <MOSHeader />
+      <MOSHeader 
+        storeLocation={storeLocation} 
+        onStoreLocationChange={setStoreLocation} 
+      />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mb-8">
         <TabsList className="grid w-full grid-cols-2 bg-[#2a8636]/20">

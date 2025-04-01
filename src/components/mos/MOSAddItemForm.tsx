@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { QrCode, Minus, Plus } from "lucide-react";
+import { QrCode } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface MOSAddItemFormProps {
@@ -32,20 +32,22 @@ export const MOSAddItemForm = ({
   onScanClick
 }: MOSAddItemFormProps) => {
   return (
-    <Card className="w-full">
-      <CardHeader className="pb-2">
+    <Card>
+      <CardHeader>
         <CardTitle className="text-xl font-semibold">Add MOS Item</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-4">
-          <Button 
-            type="button"
-            onClick={onScanClick}
-            className="w-full flex items-center justify-center gap-2 mb-2"
-          >
-            <QrCode className="h-4 w-4" />
-            Scan QR Code
-          </Button>
+          <div className="flex justify-center mb-4">
+            <Button 
+              type="button"
+              onClick={onScanClick}
+              className="w-full flex items-center gap-2"
+            >
+              <QrCode className="h-4 w-4" />
+              Scan QR Code
+            </Button>
+          </div>
 
           <div className="space-y-2">
             <label htmlFor="code" className="text-sm font-medium">
@@ -58,8 +60,6 @@ export const MOSAddItemForm = ({
               placeholder="Enter code or scan QR"
               className="w-full"
               maxLength={5}
-              inputMode="numeric"
-              pattern="[0-9]*"
             />
           </div>
 
@@ -73,10 +73,9 @@ export const MOSAddItemForm = ({
                 variant="outline"
                 size="icon"
                 onClick={decrementQuantity}
-                className="h-10 w-10 flex items-center justify-center"
-                aria-label="Decrease quantity"
+                className="h-10 w-10"
               >
-                <Minus className="h-4 w-4" />
+                -
               </Button>
               <Input
                 id="quantity"
@@ -85,17 +84,15 @@ export const MOSAddItemForm = ({
                 value={quantity}
                 onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
                 className="mx-2 text-center"
-                inputMode="numeric"
               />
               <Button
                 type="button"
                 variant="outline"
                 size="icon"
                 onClick={incrementQuantity}
-                className="h-10 w-10 flex items-center justify-center"
-                aria-label="Increase quantity"
+                className="h-10 w-10"
               >
-                <Plus className="h-4 w-4" />
+                +
               </Button>
             </div>
           </div>

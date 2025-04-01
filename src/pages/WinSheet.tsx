@@ -1,15 +1,15 @@
+
 import { PageHeader } from '@/components/ui/page-header';
 import { Button } from '@/components/ui/button';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { toast } from "sonner";
-import { jsPDF } from 'jspdf';
 import { DailyRemarks } from '@/components/win-sheet/DailyRemarks';
-import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { createJournalPdf } from '@/utils/pdfUtils';
 
 const WinSheet = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -38,76 +38,7 @@ const WinSheet = () => {
 
   const exportToPdf = () => {
     try {
-      const doc = new jsPDF();
-      let yPosition = 20;
-      const leftMargin = 20;
-      const lineHeight = 10;
-
-      // Title
-      doc.setFontSize(20);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Journal Report', leftMargin, yPosition);
-      yPosition += lineHeight + 5;
-
-      // Add date to PDF
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Date: ${format(currentDate, 'MMMM dd, yyyy')}`, leftMargin, yPosition);
-      yPosition += lineHeight;
-
-      // Add sales goal and weather
-      doc.text(`Sales Goal: ${formData.salesGoal}`, leftMargin, yPosition);
-      yPosition += lineHeight;
-      doc.text(`Weather: ${formData.weather}`, leftMargin, yPosition);
-      yPosition += lineHeight * 1.5;
-
-      // Operational Issues
-      doc.setFont('helvetica', 'bold');
-      doc.text("Operational Issues", leftMargin, yPosition);
-      yPosition += lineHeight;
-      doc.setFont('helvetica', 'normal');
-      const operationalIssuesLines = doc.splitTextToSize(formData.operationalIssues, 170);
-      doc.text(operationalIssuesLines, leftMargin, yPosition);
-      yPosition += operationalIssuesLines.length * lineHeight + 5;
-
-      // Customer Feedback
-      doc.setFont('helvetica', 'bold');
-      doc.text("Customer Feedback", leftMargin, yPosition);
-      yPosition += lineHeight;
-      doc.setFont('helvetica', 'normal');
-      const customerFeedbackLines = doc.splitTextToSize(formData.customerFeedback, 170);
-      doc.text(customerFeedbackLines, leftMargin, yPosition);
-      yPosition += customerFeedbackLines.length * lineHeight + 5;
-
-      // Staffing Details
-      doc.setFont('helvetica', 'bold');
-      doc.text("Staffing Details", leftMargin, yPosition);
-      yPosition += lineHeight;
-      doc.setFont('helvetica', 'normal');
-      const staffingDetailsLines = doc.splitTextToSize(formData.staffingDetails, 170);
-      doc.text(staffingDetailsLines, leftMargin, yPosition);
-      yPosition += staffingDetailsLines.length * lineHeight + 5;
-
-      // Safety Observations
-      doc.setFont('helvetica', 'bold');
-      doc.text("Safety Observations", leftMargin, yPosition);
-      yPosition += lineHeight;
-      doc.setFont('helvetica', 'normal');
-      const safetyObservationsLines = doc.splitTextToSize(formData.safetyObservations, 170);
-      doc.text(safetyObservationsLines, leftMargin, yPosition);
-      yPosition += safetyObservationsLines.length * lineHeight + 5;
-
-      // Other Remarks
-      doc.setFont('helvetica', 'bold');
-      doc.text("Other Remarks", leftMargin, yPosition);
-      yPosition += lineHeight;
-      doc.setFont('helvetica', 'normal');
-      const otherRemarksLines = doc.splitTextToSize(formData.otherRemarks, 170);
-      doc.text(otherRemarksLines, leftMargin, yPosition);
-      yPosition += otherRemarksLines.length * lineHeight + 5;
-
-      // Save PDF
-      const fileName = `journal-${format(currentDate, 'yyyy-MM-dd')}.pdf`;
+      const { doc, fileName } = createJournalPdf(currentDate, formData);
       doc.save(fileName);
       toast.success("Journal exported successfully as PDF!");
     } catch (error) {

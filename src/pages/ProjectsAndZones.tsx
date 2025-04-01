@@ -3,9 +3,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from 'react';
 import { toast } from "sonner";
-import { StaffZones } from '@/components/win-sheet/StaffZones';
 import { ProjectsAndZones as ProjectsAndZonesComponent } from '@/components/win-sheet/ProjectsAndZones';
-import { jsPDF } from 'jspdf';
+import { createProjectsAndZonesPdf } from '@/utils/pdfUtils';
 
 interface Priority {
   id: string;
@@ -88,51 +87,7 @@ const ProjectsAndZonesPage = () => {
 
   const exportToPdf = () => {
     try {
-      const doc = new jsPDF();
-      let yPosition = 20;
-      const leftMargin = 20;
-      const lineHeight = 10;
-
-      // Title
-      doc.setFontSize(20);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Projects & Zones Report', leftMargin, yPosition);
-      yPosition += lineHeight * 2;
-      
-      // Date
-      doc.setFontSize(12);
-      doc.setFont('helvetica', 'normal');
-      doc.text(`Date: ${date.toLocaleDateString()}`, leftMargin, yPosition);
-      yPosition += lineHeight * 1.5;
-      
-      // This Week's Priorities
-      doc.setFont('helvetica', 'bold');
-      doc.text("Today's Projects", leftMargin, yPosition);
-      yPosition += lineHeight;
-      doc.setFont('helvetica', 'normal');
-      formData.priorities.forEach(priority => {
-        const priorityText = `${priority.text} - Status: ${priority.status.replace(/-/g, ' ').toUpperCase()}`;
-        const priorityLines = doc.splitTextToSize(priorityText, 170);
-        doc.text(priorityLines, leftMargin, yPosition);
-        yPosition += (priorityLines.length * lineHeight);
-      });
-      yPosition += 5;
-      
-      // Staff Working Zones
-      doc.setFont('helvetica', 'bold');
-      doc.text("Staff Working Zones", leftMargin, yPosition);
-      yPosition += lineHeight;
-      doc.setFont('helvetica', 'normal');
-      formData.associates.forEach((associate, index) => {
-        if (associate.trim()) {
-          const zoneText = `${associate} - ${formData.zones[index] || 'No zone assigned'}`;
-          doc.text(zoneText, leftMargin, yPosition);
-          yPosition += lineHeight;
-        }
-      });
-      
-      // Save PDF
-      const fileName = `projects-zones-${date.toISOString().split('T')[0]}.pdf`;
+      const { doc, fileName } = createProjectsAndZonesPdf(date, formData);
       doc.save(fileName);
       toast.success("Projects & Zones exported successfully as PDF!");
     } catch (error) {
